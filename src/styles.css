@@ -1,0 +1,173 @@
+/* style.css */
+:root {
+  --background-color: #f3f3f3;
+  --background-color-fade: #f6f6f6;
+  --foreground-color: #0f0f0f;
+  --foreground-color-fade: #2f2f2f;
+  --border-color: #e5e5e5;
+
+  --accent-color: #00a2ed;
+
+  --absolute-contrast: #fff;
+  --absolute-contrast-invert: #000;
+
+  --universal-border-radius: 5px;
+
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: lighter;
+
+  color: var(--foreground-color);
+  background-color: var(--background-color);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  overflow: hidden;
+}
+
+* {
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+a {
+  font-weight: 500;
+  color: var(--accent-color);
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: var(--accent-color);
+}
+
+input,
+button,
+textarea {
+  border: 1px solid var(--border-color);
+  border-radius: var(--universal-border-radius);
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--foreground-color);
+  background-color: var(--background-color-fade);
+  outline: none;
+  padding: 0.4em 0.8em;
+  transition: 0.2s;
+}
+
+input:disabled,
+textarea:disabled,
+button:disabled {
+  cursor: not-allowed;
+  filter: opacity(0.5);
+}
+
+textarea {
+  transition: unset;
+}
+
+input,
+textarea {
+  box-shadow: inset 0 -1px 0px var(--foreground-color-fade);
+}
+
+input:enabled:focus,
+textarea:enabled:focus {
+  box-shadow: inset 0 -2px 0px var(--accent-color);
+  background-color: var(--absolute-contrast);
+}
+
+button {
+  cursor: pointer;
+}
+
+input:enabled:hover,
+textarea:enabled:hover,
+button:enabled:hover {
+  filter: brightness(0.98);
+}
+
+button:enabled:active {
+  filter: opacity(0.7) brightness(0.98);
+}
+
+.accent-button {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+/* Scroll bar */
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 5px;
+  border-radius: var(--universal-border-radius);
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: var(--universal-border-radius);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--background-color-fade);
+  border-radius: var(--universal-border-radius);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-color);
+}
+
+/* Corner of scroll areas */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #202020;
+    --background-color-fade: #323232;
+    --foreground-color: #f6f6f6;
+    --foreground-color-fade: #dedede;
+    --border-color: #383838;
+
+    --absolute-contrast: #101010;
+    --absolute-contrast-invert: #fff;
+
+    color: var(--foreground-color);
+    background-color: var(--background-color);
+  }
+
+  a:hover {
+    color: var(--accent-color);
+  }
+
+  input,
+  textarea,
+  button {
+    color: var(--absolute-contrast-invert);
+  }
+
+  input:enabled:hover,
+  textarea:enabled:hover,
+  button:enabled:hover {
+    filter: brightness(1.3);
+  }
+
+  button:enabled:active {
+    filter: opacity(0.9) brightness(0.98);
+  }
+}
