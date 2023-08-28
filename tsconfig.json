@@ -20,16 +20,14 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "types": [
-      "element-plus/global"
-    ]
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "node_modules/element-plus/global.d.ts"
   ],
   "references": [
     {
