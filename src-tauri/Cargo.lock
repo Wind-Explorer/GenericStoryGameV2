@@ -4,7 +4,7 @@ version = 3
 
 [[package]]
 name = "GenericStoryGameV2"
-version = "0.0.0"
+version = "0.0.124"
 dependencies = [
  "serde",
  "serde_json",

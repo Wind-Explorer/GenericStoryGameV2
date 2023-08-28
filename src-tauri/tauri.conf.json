@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "GenericStoryGameV2",
-    "version": "0.0.0"
+    "version": "0.0.124"
   },
   "tauri": {
     "allowlist": {
@@ -21,7 +21,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "cn.Wind-Explorer.GenericStoryGameV2",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -37,7 +37,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "GenericStoryGameV2",
+        "title": "Generic Story Game V2",
         "width": 800,
         "height": 600
       }
