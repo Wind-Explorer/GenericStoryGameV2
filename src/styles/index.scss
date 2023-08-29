@@ -23,3 +23,38 @@ code {
   background-color: var(--ep-color-primary-light-9);
   color: var(--ep-color-primary);
 }
+
+// Navigation Page Stylings
+.navigation-button {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--el-button-bg-color);
+  backdrop-filter: blur(60px) brightness(1.4);
+  -webkit-backdrop-filter: blur(60px) brightness(1.4);
+  padding: 30px;
+}
+
+html.dark {
+  .navigation-button {
+    backdrop-filter: blur(60px) brightness(0.5);
+    -webkit-backdrop-filter: blur(60px) brightness(0.5);
+  }
+}
+
+.main-navigation-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.background-element img {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+}

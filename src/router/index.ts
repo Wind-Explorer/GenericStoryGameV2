@@ -6,6 +6,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'Home',
     component: () => import('../views/HomeView.vue')
+  },
+  {
+    path: '/playoptions',
+    name: 'PlayOptions',
+    component: () => import('../views/PlayOptionsView.vue')
   }
 ]
 
