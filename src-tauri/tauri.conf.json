@@ -22,6 +22,26 @@
         "exit": true,
         "relaunch": false,
         "relaunchDangerousAllowSymlinkMacos": false
+      },
+      "path": {
+        "all": true
+      },
+      "fs": {
+        "all": false,
+        "readFile": false,
+        "writeFile": false,
+        "readDir": true,
+        "copyFile": false,
+        "createDir": true,
+        "removeDir": false,
+        "removeFile": false,
+        "renameFile": false,
+        "exists": true,
+        "scope": [
+          "$APPDATA",
+          "$APPDATA/*",
+          "$APPDATA/**"
+        ]
       }
     },
     "bundle": {

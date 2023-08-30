@@ -1,6 +1,28 @@
 <script setup lang="ts">
 // Scripts for the component
 import { VideoPlay } from '@element-plus/icons-vue';
+import { appDataDir } from '@tauri-apps/api/path';
+import { createDir, exists, readDir } from '@tauri-apps/api/fs';
+
+const appDataDirPath = await appDataDir();
+
+async function readAppDataDir() {
+  console.log(`App data directory location:\n${appDataDirPath}`);
+
+  if (!await exists(appDataDirPath)) {
+    createDir(appDataDirPath);
+  }
+
+  const appDataDirContent = await readDir(appDataDirPath);
+
+  console.log("Content of app data directory:");
+  for (var entry in appDataDirContent) {
+    console.log(appDataDirContent[entry].name);
+  }
+}
+
+readAppDataDir();
+
 </script>
 
 <template>
