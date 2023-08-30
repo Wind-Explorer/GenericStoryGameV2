@@ -45,7 +45,9 @@
         "resizable": true,
         "title": "Generic Story Game V2",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "minHeight": 600,
+        "minWidth": 800
       }
     ]
   }
