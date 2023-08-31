@@ -32,18 +32,6 @@ html.dark {
   }
 }
 
-@keyframes rotation {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-
-
 @-webkit-keyframes GradientRotate {
   0% {
     background-position: 0% 52%
