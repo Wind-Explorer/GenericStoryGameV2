@@ -5,33 +5,29 @@
 <template>
   <div class="container">
     <!-- HTML elements for the component -->
-    <div class="blobs"></div>
-    <!-- <div class="blobs"></div>
-    <div class="blobs"></div>
-    <div class="blobs"></div> -->
+    <div class="gradient-element"></div>
   </div>
 </template>
 
 <style scoped lang="scss">
 /* CSS styles for the component */
-.blobs {
+.gradient-element {
   z-index: -1;
   width: 100vw;
   height: 100vh;
-  -webkit-animation: AnimationName 20s ease infinite;
-  -moz-animation: AnimationName 20s ease infinite;
-  animation: AnimationName 20s ease infinite;
+  -webkit-animation: GradientRotate 20s ease infinite;
+  -moz-animation: GradientRotate 20s ease infinite;
+  animation: GradientRotate 20s ease infinite;
   position: absolute;
   top: 0;
   background: linear-gradient(268deg, #50ffbb, #ff9df3, #97c7ff);
   background-size: 600% 600%;
-  
+
   filter: brightness(120%);
-  // box-shadow: inset 0 0 10px #000000, inset 0 0 50px #000000;
 }
 
 html.dark {
-  .blobs {
+  .gradient-element {
     filter: brightness(30%);
   }
 }
@@ -48,7 +44,7 @@ html.dark {
 
 
 
-@-webkit-keyframes AnimationName {
+@-webkit-keyframes GradientRotate {
   0% {
     background-position: 0% 52%
   }
@@ -62,7 +58,7 @@ html.dark {
   }
 }
 
-@-moz-keyframes AnimationName {
+@-moz-keyframes GradientRotate {
   0% {
     background-position: 0% 52%
   }
@@ -76,7 +72,7 @@ html.dark {
   }
 }
 
-@keyframes AnimationName {
+@keyframes GradientRotate {
   0% {
     background-position: 0% 52%
   }
