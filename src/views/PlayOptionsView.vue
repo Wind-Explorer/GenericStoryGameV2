@@ -5,6 +5,7 @@ import StoriesList from '../components/StoriesList.vue'
 import { ref } from 'vue';
 
 import PageTitle from '../components/PageTitle.vue';
+import AnimatingGradient from '../components/AnimatingGradient.vue';
 
 const storiesListDialogVisible = ref(false);
 </script>
@@ -13,6 +14,7 @@ const storiesListDialogVisible = ref(false);
   <div class="container">
     <!-- HTML elements for the component -->
     <PageTitle title="Play" subtitle="Pick up where you left off or select one from your collection." />
+    <AnimatingGradient />
     <div class="navigation-button">
       <div class="main-navigation-buttons">
         <el-button-group>
