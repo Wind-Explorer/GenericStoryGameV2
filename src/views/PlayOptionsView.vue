@@ -19,8 +19,8 @@ const storiesListDialogVisible = ref(false);
       <div class="main-navigation-buttons">
         <el-button-group>
           <el-button size="large" :icon="VideoPlay" type="primary" plain>Continue</el-button>
-          <el-button @click="storiesListDialogVisible = true" size="large" :icon="Files" type="primary" plain>Stories
-            List</el-button>
+          <el-button @click="storiesListDialogVisible = true" size="large" :icon="Files" type="primary" plain>From
+            Collections</el-button>
         </el-button-group>
       </div>
       <el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
