@@ -4,6 +4,8 @@ import { VideoPlay } from '@element-plus/icons-vue';
 import { StoryInfo, getStoryInfo } from '../scripts/story';
 import { ref } from 'vue';
 
+const showTime = ref<boolean>(false);
+
 const storyInfos = ref<StoryInfo[]>([]);
 storyInfos.value = await getStoryInfo();
 
@@ -22,7 +24,11 @@ storyInfos.value = await getStoryInfo();
             <div class="textual">
               <h2>{{ storyInfo.title }}</h2>
               <h3>{{ storyInfo.author }}</h3>
-              <p>{{ storyInfo.creation_date.toLocaleDateString() }}</p>
+              <p v-if="!showTime" @click="() => { showTime = !showTime }">{{
+                storyInfo.creation_date.toLocaleDateString()
+              }}</p>
+              <p v-if="showTime" @click="() => { showTime = !showTime }">{{ storyInfo.creation_date.toLocaleString() }}
+              </p>
             </div>
           </div>
           <el-button type="success" plain size="large" :icon="VideoPlay" round class="play-button">Play</el-button>
@@ -80,5 +86,9 @@ html.dark {
 .story-info p {
   opacity: 0.5;
   font-size: 13px;
+}
+
+.story-info p:hover {
+  opacity: 1;
 }
 </style>
