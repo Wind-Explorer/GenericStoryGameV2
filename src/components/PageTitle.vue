@@ -27,10 +27,11 @@ const props = defineProps({
 
 .titles h1 {
   font-size: 45px;
+  opacity: 0.65;
 }
 
 .titles p {
   font-size: 18px;
-  opacity: 0.7;
+  opacity: 0.4;
 }
 </style>
