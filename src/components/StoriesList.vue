@@ -1,27 +1,11 @@
 <script setup lang="ts">
 // Scripts for the component
 import { VideoPlay } from '@element-plus/icons-vue';
-import { appDataDir } from '@tauri-apps/api/path';
-import { createDir, exists, readDir } from '@tauri-apps/api/fs';
+import { StoryInfo, getStoryInfo } from '../scripts/story';
+import { ref } from 'vue';
 
-const appDataDirPath = await appDataDir();
-
-async function readAppDataDir() {
-  console.log(`App data directory location:\n${appDataDirPath}`);
-
-  if (!await exists(appDataDirPath)) {
-    createDir(appDataDirPath);
-  }
-
-  const appDataDirContent = await readDir(appDataDirPath);
-
-  console.log("Content of app data directory:");
-  for (var entry in appDataDirContent) {
-    console.log(appDataDirContent[entry].name);
-  }
-}
-
-readAppDataDir();
+const storyInfos = ref<StoryInfo[]>([]);
+storyInfos.value = await getStoryInfo();
 
 </script>
 
@@ -29,13 +13,19 @@ readAppDataDir();
   <div class="container">
     <!-- HTML elements for the component -->
     <el-scrollbar>
-      <el-card v-for="o in 4" shadow="hover" class="story-entry-card">
-        <div class="story-entry" :key="o">
+      <el-card v-for="storyInfo in storyInfos" shadow="hover" class="story-entry-card">
+        <div class="story-entry" :key="storyInfo.entry_point">
           <div class="story-info">
-            <h2>{{ 'Generic Story Title ' + o }}</h2>
-            <h4>{{ 'By generic author ' + o }}</h4>
+            <div class="thumbnail">
+              <!-- <img :src="storyInfo.thumbnail" alt="Story thumbnail" /> -->
+            </div>
+            <div class="textual">
+              <h2>{{ storyInfo.title }}</h2>
+              <h3>{{ storyInfo.author }}</h3>
+              <p>{{ storyInfo.creation_date.toLocaleDateString() }}</p>
+            </div>
           </div>
-          <el-button type="primary" plain :icon="VideoPlay" class="play-button"></el-button>
+          <el-button type="success" plain size="large" :icon="VideoPlay" round class="play-button">Play</el-button>
         </div>
       </el-card>
     </el-scrollbar>
@@ -58,15 +48,22 @@ html.dark {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  height: 60px;
 }
 
 .play-button {
-  font-size: 30px;
-  height: 100%;
+  font-size: 20px;
+  position: relative;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .story-info {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.textual {
   display: flex;
   flex-direction: column;
   text-align: left;
@@ -75,7 +72,13 @@ html.dark {
   gap: 5px;
 }
 
-.story-info h4 {
+.story-info h3 {
   opacity: 0.7;
+  font-weight: 500;
+}
+
+.story-info p {
+  opacity: 0.5;
+  font-size: 13px;
 }
 </style>

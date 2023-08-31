@@ -28,7 +28,7 @@
       },
       "fs": {
         "all": false,
-        "readFile": false,
+        "readFile": true,
         "writeFile": false,
         "readDir": true,
         "copyFile": false,
