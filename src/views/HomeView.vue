@@ -3,6 +3,8 @@
 import { VideoPlay, Edit, Setting, SwitchButton } from '@element-plus/icons-vue'
 import { exit } from '@tauri-apps/api/process';
 
+import PageTitle from '../components/PageTitle.vue';
+
 async function quitApp() {
   await exit(1);
 }
@@ -11,9 +13,7 @@ async function quitApp() {
 <template>
   <div class="container">
     <!-- HTML elements for the component -->
-    <div class="background-element">
-      <img src="../assets/home-bg.png" alt="background" />
-    </div>
+    <PageTitle title="Generic Story Game" subtitle="Version 0.5.0" />
     <div class="navigation-button">
       <div class="main-navigation-buttons">
         <el-button-group>
@@ -28,6 +28,6 @@ async function quitApp() {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 /* CSS styles for the component */
 </style>

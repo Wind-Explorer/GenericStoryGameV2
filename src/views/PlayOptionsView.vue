@@ -1,8 +1,10 @@
 <script setup lang="ts">
 // Scripts for the component
 import { VideoPlay, Files, House } from '@element-plus/icons-vue'
-import StoriesListView from '../components/StoriesListView.vue'
+import StoriesList from '../components/StoriesList.vue'
 import { ref } from 'vue';
+
+import PageTitle from '../components/PageTitle.vue';
 
 const storiesListDialogVisible = ref(false);
 </script>
@@ -10,9 +12,7 @@ const storiesListDialogVisible = ref(false);
 <template>
   <div class="container">
     <!-- HTML elements for the component -->
-    <div class="background-element">
-      <img src="../assets/list-bg.png" alt="background" />
-    </div>
+    <PageTitle title="Play" subtitle="Pick up where you left off or select one from your collection." />
     <div class="navigation-button">
       <div class="main-navigation-buttons">
         <el-button-group>
@@ -28,7 +28,7 @@ const storiesListDialogVisible = ref(false);
         <template #fallback>
           <h1>Loading...</h1>
         </template>
-        <StoriesListView class="stories-list" />
+        <StoriesList class="stories-list" />
       </Suspense>
     </el-dialog>
   </div>
