@@ -1,13 +1,13 @@
 <script setup lang="ts">
 // Scripts for the component
 import { VideoPlay } from '@element-plus/icons-vue';
-import { StoryInfo, getStoryInfo } from '../scripts/story';
+import { StoryInfo, getStoryInfoFromDisk } from '../scripts/story';
 import { ref } from 'vue';
 
 const showTime = ref<boolean>(false);
 
 const storyInfos = ref<StoryInfo[]>([]);
-storyInfos.value = await getStoryInfo();
+storyInfos.value = await getStoryInfoFromDisk();
 
 </script>
 
@@ -31,7 +31,8 @@ storyInfos.value = await getStoryInfo();
               </p>
             </div>
           </div>
-          <el-button type="success" plain size="large" :icon="VideoPlay" round class="play-button">Play</el-button>
+          <el-button @click="$router.push(`/storyplayback/${(encodeURIComponent(storyInfo.base_dir))}`)" type="success"
+            plain size="large" :icon="VideoPlay" round class="play-button">Play</el-button>
         </div>
       </el-card>
     </el-scrollbar>

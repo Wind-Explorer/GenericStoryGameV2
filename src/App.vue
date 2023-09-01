@@ -7,11 +7,16 @@ import { toggleDark } from "./composables";
   <div class="container">
     <!-- HTML elements for the component -->
     <button style="display: none;" @click="toggleDark()" />
-    <RouterView v-slot="{ Component }">
-      <Transition name="transition" mode="out-in">
-        <component :is="Component"></component>
-      </Transition>
-    </RouterView>
+    <Suspense>
+      <template #fallback>
+        <h1>Loading...</h1>
+      </template>
+      <RouterView v-slot="{ Component }">
+        <Transition name="transition" mode="out-in">
+          <component :is="Component"></component>
+        </Transition>
+      </RouterView>
+    </Suspense>
   </div>
 </template>
 

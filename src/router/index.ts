@@ -11,6 +11,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/playoptions',
     name: 'PlayOptions',
     component: () => import('../views/PlayOptionsView.vue')
+  },
+  {
+    path: '/storyplayback/:storyInfoDir',
+    name: 'StoryPlayBack',
+    component: () => import('../views/StoryPlaybackView.vue'),
+    props: true
   }
 ]
 

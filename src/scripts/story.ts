@@ -10,31 +10,39 @@ export interface StoryInfo {
   creation_date: Date;
   thumbnail: string;
   entry_point: string;
+  base_dir: string;
 }
 
-export async function getStoryInfo(): Promise<StoryInfo[]> {
+export async function getStoryInfoFromDisk(): Promise<StoryInfo[]> {
   if (!await exists(appDataDirPath)) {
     createDir(appDataDirPath);
   }
   const appDataDirContent = await readDir(appDataDirPath);
+  if (appDataDirContent.length <= 0) { return []; }
   let storyInfos: StoryInfo[] = [];
   for (var entry in appDataDirContent) {
     try {
       let baseDir = appDataDirContent[entry].path;
-      let storyInfoAsJSON = await readTextFile(`${baseDir}/gsg.json`);
-      const storyInfo = JSON.parse(storyInfoAsJSON, (key, value) => {
-        if (key === 'creation_date') {
-          return new Date(value);
-        } else if (key === 'thumbnail' || key === 'entry_point') {
-          return `${baseDir}/${value}`;
-        }
-        return value;
-      }) as StoryInfo;
-      console.log(storyInfo.thumbnail);
+      let storyInfo = await getStoryInfo(baseDir);
       storyInfos.push(storyInfo);
     } catch {
       continue;
     }
   }
   return storyInfos;
+}
+
+export async function getStoryInfo(baseDir: string): Promise<StoryInfo> {
+  let storyInfoAsJSON = await readTextFile(`${baseDir}/gsg.json`);
+  const storyInfo = JSON.parse(storyInfoAsJSON, (key, value) => {
+    if (key === 'creation_date') {
+      return new Date(value);
+    } else if (key === 'thumbnail' || key === 'entry_point') {
+      return `${baseDir}/${value}`;
+    } else if (key === 'base_dir') {
+      return baseDir;
+    }
+    return value;
+  }) as StoryInfo;
+  return storyInfo;
 }
