@@ -3,6 +3,7 @@
 import { VideoPlay } from '@element-plus/icons-vue';
 import { StoryInfo, getStoryInfoFromDisk } from '../scripts/story';
 import { ref } from 'vue';
+import { convertFileSrc } from '@tauri-apps/api/tauri';
 
 const showTime = ref<boolean>(false);
 
@@ -19,7 +20,7 @@ storyInfos.value = await getStoryInfoFromDisk();
         <div class="story-entry" :key="storyInfo.entry_point">
           <div class="story-info">
             <div class="thumbnail">
-              <!-- <img :src="storyInfo.thumbnail" alt="Story thumbnail" /> -->
+              <img :src="convertFileSrc(storyInfo.thumbnail)" alt="Story thumbnail" />
             </div>
             <div class="textual">
               <h2>{{ storyInfo.title }}</h2>
@@ -67,7 +68,7 @@ html.dark {
 .story-info {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 20px;
 }
 
 .textual {
@@ -91,5 +92,12 @@ html.dark {
 
 .story-info p:hover {
   opacity: 1;
+}
+
+.thumbnail img {
+  height: 90px;
+  width: 90px;
+  object-fit: cover;
+  border-radius: 4px;
 }
 </style>
