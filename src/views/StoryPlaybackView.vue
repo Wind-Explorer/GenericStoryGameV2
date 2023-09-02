@@ -1,14 +1,14 @@
 <script setup lang="ts">
 // Scripts for the component
 import { onMounted, ref } from 'vue';
-import { StoryInfo, getStoryInfo } from '../scripts/story';
+import { StoryInfo, resolveStoryInfo, SceneInfo, resolveSceneInfo } from '../scripts/story';
 
 const props = defineProps({
   storyInfoDir: String
 })
 
 const storyInfo = ref<StoryInfo>(
-  await getStoryInfo(
+  await resolveStoryInfo(
     decodeURIComponent(props.storyInfoDir as string)
   )
 );
@@ -48,6 +48,13 @@ function playbackIntroAnimation() {
 onMounted(() => {
   playbackIntroAnimation();
 })
+
+const current_scene = ref<SceneInfo>(
+  await resolveSceneInfo(
+    storyInfo.value.entry_point,
+    storyInfo.value.base_dir
+  )
+);
 </script>
 
 <template>

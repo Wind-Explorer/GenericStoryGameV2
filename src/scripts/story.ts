@@ -13,7 +13,25 @@ export interface StoryInfo {
   base_dir: string;
 }
 
-export async function getStoryInfoFromDisk(): Promise<StoryInfo[]> {
+export interface SceneActions {
+  multiple_choice: MultipleChoice[] | null;
+  single_choice: string | null;
+}
+
+export interface MultipleChoice {
+  action: string;
+  destination: string;
+}
+
+export interface SceneInfo {
+  center_text: string | null;
+  narration_text: string | null;
+  background_color: string | null;
+  media: string | null;
+  scene_actions: SceneActions;
+}
+
+export async function resolveStoryCollection(): Promise<StoryInfo[]> {
   if (!await exists(appDataDirPath)) {
     createDir(appDataDirPath);
   }
@@ -23,7 +41,7 @@ export async function getStoryInfoFromDisk(): Promise<StoryInfo[]> {
   for (var entry in appDataDirContent) {
     try {
       let baseDir = appDataDirContent[entry].path;
-      let storyInfo = await getStoryInfo(baseDir);
+      let storyInfo = await resolveStoryInfo(baseDir);
       storyInfos.push(storyInfo);
     } catch {
       continue;
@@ -32,7 +50,7 @@ export async function getStoryInfoFromDisk(): Promise<StoryInfo[]> {
   return storyInfos;
 }
 
-export async function getStoryInfo(baseDir: string): Promise<StoryInfo> {
+export async function resolveStoryInfo(baseDir: string): Promise<StoryInfo> {
   let storyInfoAsJSON = await readTextFile(`${baseDir}/gsg.json`);
   const storyInfo = JSON.parse(storyInfoAsJSON, (key, value) => {
     if (key === 'creation_date') {
@@ -45,4 +63,32 @@ export async function getStoryInfo(baseDir: string): Promise<StoryInfo> {
     return value;
   }) as StoryInfo;
   return storyInfo;
+}
+
+function resolveSceneActions(sceneAction: SceneActions, baseDir: string): SceneActions {
+  if (sceneAction.multiple_choice) {
+    sceneAction.multiple_choice = sceneAction.multiple_choice.map((multipleChoice: MultipleChoice) => {
+      return {
+        action: multipleChoice.action,
+        destination: `${baseDir}/${multipleChoice.destination}`
+      };
+    });
+  }
+  if (sceneAction.single_choice && sceneAction.single_choice != "#END") {
+    sceneAction.single_choice = `${baseDir}/${sceneAction.single_choice}`;
+  }
+  return sceneAction;
+}
+
+export async function resolveSceneInfo(scenePath: string, baseDir: string) {
+  let sceneInfoAsJSON = await readTextFile(scenePath);
+  const sceneInfo = JSON.parse(sceneInfoAsJSON, (key, value) => {
+    if (key === 'media') {
+      return `${baseDir}/${value}`;
+    } else if (key === 'scene_actions') {
+      return resolveSceneActions(value, baseDir);
+    }
+    return value;
+  }) as SceneInfo;
+  return sceneInfo;
 }

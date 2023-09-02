@@ -1,14 +1,14 @@
 <script setup lang="ts">
 // Scripts for the component
 import { VideoPlay } from '@element-plus/icons-vue';
-import { StoryInfo, getStoryInfoFromDisk } from '../scripts/story';
+import { StoryInfo, resolveStoryCollection } from '../scripts/story';
 import { ref } from 'vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 
 const showTime = ref<boolean>(false);
 
 const storyInfos = ref<StoryInfo[]>([]);
-storyInfos.value = await getStoryInfoFromDisk();
+storyInfos.value = await resolveStoryCollection();
 
 </script>
 
