@@ -14,7 +14,7 @@ import { Plus, Files, House } from '@element-plus/icons-vue'
       <div class="main-navigation-buttons">
         <el-button-group>
           <el-button size="large" :icon="Plus" type="primary" plain>New</el-button>
-          <el-button size="large" :icon="Files" type="primary" plain>From workspace</el-button>
+          <el-button size="large" :icon="Files" type="primary" plain>From Workspace</el-button>
         </el-button-group>
       </div>
       <el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>

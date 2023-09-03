@@ -177,7 +177,7 @@ button {
 .mcq-button:hover {
   box-shadow: inset -0.3vw 0 0 #fff, 0.2vw 0 #000;
   font-weight: 600;
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(0.08vw);
+  -webkit-backdrop-filter: blur(0.08vw);
 }
 </style>
