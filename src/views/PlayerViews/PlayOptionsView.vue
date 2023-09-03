@@ -1,11 +1,11 @@
 <script setup lang="ts">
 // Scripts for the component
 import { VideoPlay, Files, House } from '@element-plus/icons-vue'
-import StoriesList from '../components/StoriesList.vue'
+import StoriesList from '../../components/StoriesList.vue'
 import { ref } from 'vue';
 
-import PageTitle from '../components/PageTitle.vue';
-import AnimatingGradient from '../components/AnimatingGradient.vue';
+import PageTitle from '../../components/PageTitle.vue';
+import AnimatingGradient from '../../components/AnimatingGradient.vue';
 
 const storiesListDialogVisible = ref(false);
 </script>

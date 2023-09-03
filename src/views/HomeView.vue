@@ -21,7 +21,8 @@ async function quitApp() {
         <el-button-group>
           <el-button @click="$router.push('/playoptions')" size="large" :icon="VideoPlay" type="primary"
             plain>Play</el-button>
-          <el-button size="large" :icon="Edit" type="primary" plain>Create</el-button>
+          <el-button @click="$router.push('/createoptions')" size="large" :icon="Edit" type="primary"
+            plain>Create</el-button>
         </el-button-group>
         <el-button size="large" :icon="Setting" type="info" plain>Options</el-button>
       </div>

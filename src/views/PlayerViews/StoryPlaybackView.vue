@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Scripts for the component
 import { onMounted, ref } from 'vue';
-import { StoryInfo, resolveStoryInfo, SceneInfo, resolveSceneInfo } from '../scripts/story';
+import { StoryInfo, resolveStoryInfo, SceneInfo, resolveSceneInfo } from '../../scripts/story';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 
 const props = defineProps({
