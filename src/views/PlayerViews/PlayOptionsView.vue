@@ -25,7 +25,7 @@ const storiesListDialogVisible = ref(false);
       </div>
       <el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
     </div>
-    <el-dialog v-model="storiesListDialogVisible" :show-close="false" width="80%" align-center>
+    <el-dialog style="max-width: 800px;" v-model="storiesListDialogVisible" :show-close="false" width="80%" align-center>
       <Suspense>
         <template #fallback>
           <h1>Loading...</h1>

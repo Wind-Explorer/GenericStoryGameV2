@@ -42,12 +42,6 @@ storyInfos.value = await resolveStoryCollection();
 
 <style scoped lang="scss">
 /* CSS styles for the component */
-html.dark {
-  .stories-list {
-    background-color: #181818;
-  }
-}
-
 .story-entry-card {
   margin: 15px;
 }
