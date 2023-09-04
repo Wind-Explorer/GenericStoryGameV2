@@ -56,6 +56,31 @@ const current_scene = ref<SceneInfo>(
     storyInfo.value.base_dir
   )
 );
+
+function initiateNavigation(scenePath: string) {
+  const mcq = document.getElementsByClassName('mcq') as HTMLCollectionOf<HTMLElement>;
+  for (var i = 0; i < mcq.length; i++) {
+    const btnDiv = mcq[i];
+    if (btnDiv.id != encodeURIComponent(scenePath)) {
+      const btn = btnDiv.querySelector('button') as HTMLButtonElement;
+      btn.disabled = true;
+      btnDiv.style.filter = 'blur(10px)';
+      btnDiv.style.opacity = '0';
+      setTimeout(() => {
+        btnDiv.style.opacity = '1';
+        btnDiv.style.filter = '';
+        btn.disabled = false;
+      }, 5000)
+    }
+  }
+}
+
+async function navigateToScene(scenePath: string) {
+  current_scene.value = await resolveSceneInfo(
+    scenePath,
+    storyInfo.value.base_dir
+  );
+}
 </script>
 
 <template>
@@ -74,8 +99,11 @@ const current_scene = ref<SceneInfo>(
       </div>
       <div class="mcq-div">
         <div class="mcq" :hidden="current_scene.scene_actions.multiple_choice == null"
-          v-for="navigation_option in current_scene.scene_actions.multiple_choice">
-          <button class="mcq-button">{{ navigation_option.action }}</button>
+          v-for="navigation_option in current_scene.scene_actions.multiple_choice"
+          :id="encodeURIComponent(navigation_option.destination)">
+          <button class="mcq-button" :key="navigation_option.destination"
+            @click="initiateNavigation(navigation_option.destination)">{{
+              navigation_option.action }}</button>
         </div>
       </div>
       <div class="media">
@@ -154,6 +182,10 @@ button {
   font-size: 2.3vw;
   text-shadow: 0px 0px 0.3vw rgba(0, 0, 0, 1), 0px 0px 1vw rgba(0, 0, 0, 1);
   font-weight: 400;
+}
+
+.mcq {
+  transition: 2s;
 }
 
 .mcq-div {
