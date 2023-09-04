@@ -74,13 +74,14 @@ function initiateNavigation(scenePath: string) {
     }
   }
 }
-
+/*
 async function navigateToScene(scenePath: string) {
   current_scene.value = await resolveSceneInfo(
     scenePath,
     storyInfo.value.base_dir
   );
 }
+*/
 </script>
 
 <template>
@@ -206,10 +207,14 @@ button {
   transition: 0.1s;
 }
 
-.mcq-button:hover {
-  box-shadow: inset -0.3vw 0 0 #fff, 0.2vw 0 #000;
+.mcq-button:hover,
+.mcq-button:focus {
   font-weight: 600;
   backdrop-filter: blur(0.08vw);
   -webkit-backdrop-filter: blur(0.08vw);
+}
+
+.mcq-button:hover {
+  box-shadow: inset -0.3vw 0 0 #fff, 0.2vw 0 #000;
 }
 </style>

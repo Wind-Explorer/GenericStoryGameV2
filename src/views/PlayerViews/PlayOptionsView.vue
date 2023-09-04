@@ -2,6 +2,7 @@
 // Scripts for the component
 import { VideoPlay, Files, House } from '@element-plus/icons-vue'
 import StoriesList from '../../components/StoriesList.vue'
+import { dialogStyling } from '../../scripts/dialog.css'
 import { ref } from 'vue';
 
 import PageTitle from '../../components/PageTitle.vue';
@@ -25,7 +26,7 @@ const storiesListDialogVisible = ref(false);
       </div>
       <el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
     </div>
-    <el-dialog style="max-width: 800px;" v-model="storiesListDialogVisible" :show-close="false" width="80%" align-center>
+    <el-dialog :style="dialogStyling" v-model="storiesListDialogVisible" :show-close="false" width="80%" align-center>
       <Suspense>
         <template #fallback>
           <h1>Loading...</h1>
@@ -36,7 +37,7 @@ const storiesListDialogVisible = ref(false);
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 /* CSS styles for the component */
 .stories-list {
   height: calc(100vh - 40vh);
