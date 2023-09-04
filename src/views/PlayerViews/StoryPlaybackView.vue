@@ -64,7 +64,7 @@ function initiateNavigation(scenePath: string) {
     if (btnDiv.id != encodeURIComponent(scenePath)) {
       const btn = btnDiv.querySelector('button') as HTMLButtonElement;
       btn.disabled = true;
-      btnDiv.style.filter = 'blur(10px)';
+      btnDiv.style.filter = `blur(2vw)`;
       btnDiv.style.opacity = '0';
       setTimeout(() => {
         btnDiv.style.opacity = '1';
