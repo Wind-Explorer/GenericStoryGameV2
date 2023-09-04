@@ -1,8 +1,34 @@
 import { appDataDir } from '@tauri-apps/api/path';
 import { createDir, exists, readDir, readTextFile } from '@tauri-apps/api/fs';
 
-// Path to application data directory.
-const appDataDirPath = await appDataDir();
+/**
+ * Function that ensures path passed in exists.
+ */
+async function ensureDirExists(path: string) {
+  if (!await exists(path)) {
+    createDir(path, { recursive: true });
+  }
+  return path;
+}
+
+/**
+ * Path to application data directory.
+ */
+const appDataDirPath = await ensureDirExists(await appDataDir());
+
+/**
+ * Path to stories collection directory.
+ * 
+ * Resolves to `$APPDATA/collections`.
+ */
+const collectionsPath = await ensureDirExists(appDataDirPath + "/collections");
+
+/**
+ * Path to story creator workspace directory.
+ * 
+ * Resolves to `$APPDATA/workspace`.
+ */
+const workspacePath = await ensureDirExists(appDataDirPath + "/workspace");
 
 /**
  * Interface which defines structure of story info.
@@ -48,24 +74,19 @@ export interface SceneInfo {
  * Function that resolves story collection located on file system.
  */
 export async function resolveStoryCollection(): Promise<StoryInfo[]> {
-  // If application data directory does not exist, create it.
-  if (!await exists(appDataDirPath)) {
-    createDir(appDataDirPath);
-  }
-
   // Read contents of application data directory.
-  const appDataDirContent = await readDir(appDataDirPath);
+  const collectionsDirContent = await readDir(collectionsPath);
 
   // If application data directory is empty, return empty array.
-  if (appDataDirContent.length <= 0) { return []; }
+  if (collectionsDirContent.length <= 0) { return []; }
 
   // Array to store story info.
   let storyInfos: StoryInfo[] = [];
 
   // Iterate over contents of application data directory.
-  for (var entry in appDataDirContent) {
+  for (var entry in collectionsDirContent) {
     try {
-      let baseDir = appDataDirContent[entry].path;
+      let baseDir = collectionsDirContent[entry].path;
       let storyInfo = await resolveStoryInfo(baseDir);
       storyInfos.push(storyInfo);
     } catch {
