@@ -24,14 +24,14 @@ const appDataDirPath = await ensureDirExists(await appDataDir());
  * 
  * Resolves to `$APPDATA/collections`.
  */
-const collectionsPath = await ensureDirExists(appDataDirPath + "/collections");
+const collectionsPath = await ensureDirExists(`${appDataDirPath}/collections`);
 
 /**
  * Path to story creator workspace directory.
  * 
  * Resolves to `$APPDATA/workspace`.
  */
-const workspacePath = await ensureDirExists(appDataDirPath + "/workspace");
+const workspacePath = await ensureDirExists(`${appDataDirPath}/workspace`);
 
 /**
  * Interface which defines structure of story info.
@@ -189,9 +189,9 @@ export async function createNewStory(story_title: string, story_description: str
       : uuidv4();
 
   // Declare the paths for story directory
-  const baseDir = workspacePath + '/' + uuidDirName;
-  const scenesDir = baseDir + '/' + 'scenes';
-  const resourcesDir = baseDir + '/' + 'resources';
+  const baseDir = `${workspacePath}/${uuidDirName}`;
+  const scenesDir = `${baseDir}/scenes`;
+  const resourcesDir = `${baseDir}/resources`;
 
   // Create the directories
   /*
