@@ -1,5 +1,8 @@
 import { appDataDir } from '@tauri-apps/api/path';
-import { createDir, exists, readDir, readTextFile } from '@tauri-apps/api/fs';
+import { createDir, exists, readDir, readTextFile, writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
+import { v4 as uuidv4 } from 'uuid';
+import { bookUint8Array } from './book.heic';
+import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
 
 /**
  * Function that ensures path passed in exists.
@@ -172,4 +175,45 @@ export async function resolveSceneInfo(scenePath: string, baseDir: string) {
     return value;
   }) as SceneInfo;
   return sceneInfo;
+}
+
+/**
+ * Function that initializes a new story with template content.
+ */
+export async function createNewStory(story_title: string, story_description: string, story_author: string) {
+
+  // Generates a new UUID for use as new story directory name
+  let uuidDirName =
+    window.isSecureContext ?
+      self.crypto.randomUUID()
+      : uuidv4();
+
+  // Declare the paths for story directory
+  const baseDir = workspacePath + '/' + uuidDirName;
+  const scenesDir = baseDir + '/' + 'scenes';
+  const resourcesDir = baseDir + '/' + 'resources';
+
+  // Create the directories
+  /*
+  `recursive` is set to true, so `baseDir` will
+  also be created without explicitly instructing.
+  */
+  createDir(scenesDir, { recursive: true });
+  createDir(resourcesDir, { recursive: true });
+
+  // Create a new story info object with user's inputs
+  let newStoryInfo: StoryInfo = templateStoryInfo(story_title, story_description, story_author);
+
+  // Converts the story info object into JSON data
+  let newStoryInfoAsJSON = JSON.stringify(newStoryInfo, null);
+
+  // Write the story info JSON data to the story directory
+  await writeTextFile(`${baseDir}/gsg.json`, newStoryInfoAsJSON);
+
+  // Generate template story thumbnail
+  await writeBinaryFile(`${resourcesDir}/thumb.heic`, bookUint8Array());
+
+  // Populate the story with two example scenes
+  await writeTextFile(`${scenesDir}/First Scene.json`, JSON.stringify(templateSceneInfo1, null));
+  await writeTextFile(`${scenesDir}/Second Scene.json`, JSON.stringify(templateSceneInfo2, null));
 }

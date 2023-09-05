@@ -5,18 +5,30 @@ import AnimatingGradient from '../../components/AnimatingGradient.vue';
 import { dialogStyling } from '../../scripts/dialog.css'
 import { Plus, Files, House } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue';
-import { StoryInfo } from '../../scripts/story';
+import { createNewStory } from '../../scripts/story';
 
 const newStoryDialogVisible = ref(false);
-const newStoryInfo = reactive<StoryInfo>({
+
+interface NewStoryInfo {
+  title: string,
+  description: string,
+  author: string
+}
+
+const newStoryInfo = reactive<NewStoryInfo>({
   title: '',
   description: '',
-  author: '',
-  creation_date: new Date(),
-  thumbnail: '',
-  entry_point: '',
-  base_dir: ''
+  author: ''
 });
+
+async function prepareNewStoryCreation() {
+  await createNewStory(
+    newStoryInfo.title.trim(),
+    newStoryInfo.description.trim(),
+    newStoryInfo.author.trim()
+  );
+  newStoryDialogVisible.value = false;
+}
 </script>
 
 <template>
@@ -51,7 +63,7 @@ const newStoryInfo = reactive<StoryInfo>({
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button type="primary" @click="newStoryDialogVisible = false">
+        <el-button type="primary" @click="prepareNewStoryCreation">
           Create
         </el-button>
       </template>
