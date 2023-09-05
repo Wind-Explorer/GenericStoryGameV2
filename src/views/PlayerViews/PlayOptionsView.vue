@@ -29,7 +29,7 @@ const storiesListDialogVisible = ref(false);
     <el-dialog :style="dialogStyling" v-model="storiesListDialogVisible" :show-close="false" width="80%" align-center>
       <Suspense>
         <template #fallback>
-          <h1>Loading...</h1>
+          <h1 style="text-align: center; padding: 30px;">Loading...? why is it taking so long</h1>
         </template>
         <StoriesList class="stories-list" />
       </Suspense>

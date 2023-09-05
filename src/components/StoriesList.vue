@@ -1,21 +1,36 @@
 <script setup lang="ts">
 // Scripts for the component
-import { VideoPlay } from '@element-plus/icons-vue';
+import { VideoPlay, Refresh, FolderOpened } from '@element-plus/icons-vue';
+import { ElMessage, ElScrollbar } from 'element-plus'
 import { StoryInfo, resolveStoryCollection } from '../scripts/story';
 import { ref } from 'vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 
 const showTime = ref<boolean>(false);
+const story_entry_scroll = ref<InstanceType<typeof ElScrollbar>>()
 
 const storyInfos = ref<StoryInfo[]>([]);
 storyInfos.value = await resolveStoryCollection();
+
+async function refreshStoriesList() {
+  storyInfos.value = await resolveStoryCollection();
+  if (story_entry_scroll.value != null) {
+    story_entry_scroll.value.setScrollTop(0);
+  }
+  ElMessage({ message: 'Refreshed', grouping: true, type: 'success' })
+}
 
 </script>
 
 <template>
   <div class="container">
     <!-- HTML elements for the component -->
-    <el-scrollbar>
+    <el-empty id="empty-story-list" v-if="storyInfos.length == 0"
+      description="Looks like you've got no stories in your collection!">
+      <el-button type="default" :icon="Refresh" @click="refreshStoriesList">Refresh</el-button>
+      <el-button type="default" :icon="FolderOpened" disabled>Import...</el-button>
+    </el-empty>
+    <el-scrollbar id="story-entry-scroll" ref="story_entry_scroll" v-if="storyInfos.length > 0">
       <el-card v-for="storyInfo in storyInfos" shadow="hover" class="story-entry-card">
         <div class="story-entry" :key="storyInfo.entry_point">
           <div class="story-info">
@@ -36,20 +51,37 @@ storyInfos.value = await resolveStoryCollection();
             plain size="large" :icon="VideoPlay" round class="play-button">Play</el-button>
         </div>
       </el-card>
+      <el-button id="refresh-button" type="default" :icon="Refresh" @click="refreshStoriesList">Refresh</el-button>
     </el-scrollbar>
   </div>
 </template>
 
 <style scoped lang="scss">
 /* CSS styles for the component */
+#empty-story-list {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+#story-entry-scroll {
+  padding: 15px;
+}
+
 .story-entry-card {
-  margin: 15px;
+  margin-bottom: 15px;
 }
 
 .story-entry {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+#refresh-button {
+  width: 100%;
 }
 
 .play-button {
