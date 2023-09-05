@@ -107,8 +107,9 @@ async function navigateToScene(scenePath: string) {
     <div id="scene" :hidden="!isPlaying">
       <div class="center-text-div" :hidden="current_scene.center_text == null">
         <p class="center-text">{{ current_scene.center_text }}</p>
-        <div class="click-anywhere-to-continue-div" :hidden="current_scene.scene_actions.single_choice == null">
-          <p @click="initiateNavigation(current_scene.scene_actions.single_choice as string, true)">
+        <div class="click-anywhere-to-continue-div" :hidden="current_scene.scene_actions.single_choice == null"
+          @click="initiateNavigation(current_scene.scene_actions.single_choice as string, true)">
+          <p>
             Click
             anywhere to continue</p>
         </div>
