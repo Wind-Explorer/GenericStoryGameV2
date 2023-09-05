@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue';
 import { StoryInfo, resolveStoryInfo, SceneInfo, resolveSceneInfo } from '../../scripts/story';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import router from '../../router';
+import { sleep } from '../../scripts/sleep';
 
 const props = defineProps({
   storyInfoDir: String
@@ -15,39 +16,46 @@ const storyInfo = ref<StoryInfo>(
   )
 );
 
+let sceneElement: HTMLElement;
+let splashElement: HTMLElement;
+
 const isPlaying = ref(false);
 
-function playbackIntroAnimation() {
-  const splash = document.getElementById('splash') as HTMLElement;
-  const scene = document.getElementById('scene') as HTMLElement;
+/**
+ * Playback scene changing animation.
+ */
+function toggleSceneAnimation() {
+  sceneElement.style.opacity = sceneElement.style.opacity == '0' ? '1' : '0';
+}
+
+/**
+ * Playback intro animation.
+ */
+async function playbackIntroAnimation() {
 
   // Set transition timings for both elements.
-  splash.style.transition = 'opacity 1s ease-in-out';
-  scene.style.transition = 'opacity 0.5s ease-in-out';
+  splashElement.style.transition = 'opacity 1s ease-in-out';
+  sceneElement.style.transition = 'opacity 0.5s ease-in-out';
 
   // Set opacity to 1 for splash screen.
-  splash.style.opacity = '1';
+  splashElement.style.opacity = '1';
 
   // Wait for three seconds before setting splash screen's opacity to zero again.
-  const timeout1 = 3000;
-  setTimeout(() => {
-    splash.style.opacity = '0';
-  }, timeout1);
+  await sleep(3000);
+  splashElement.style.opacity = '0';
 
   // While no elements are visible, toggle visibility boolean.
-  const timeout2 = 1000;
-  setTimeout(() => {
-    isPlaying.value = true;
-  }, timeout1 + timeout2);
+  await sleep(1000);
+  isPlaying.value = true;
 
   // Wait for half a second before setting scene's opacity to one.
-  const timeout3 = 500;
-  setTimeout(() => {
-    scene.style.opacity = '1';
-  }, timeout1 + timeout2 + timeout3);
+  await sleep(500);
+  sceneElement.style.opacity = '1';
 }
 
 onMounted(() => {
+  sceneElement = document.getElementById('scene') as HTMLElement;
+  splashElement = document.getElementById('splash') as HTMLElement;
   playbackIntroAnimation();
 })
 
@@ -58,31 +66,30 @@ const current_scene = ref<SceneInfo>(
   )
 );
 
-function initiateNavigation(scenePath: string, single_choice: boolean = false) {
-  if (single_choice) {
-    navigateToScene(scenePath);
-  }
-  const mcq = document.getElementsByClassName('mcq') as HTMLCollectionOf<HTMLElement>;
-  for (var i = 0; i < mcq.length; i++) {
-    const btnDiv = mcq[i];
-    if (btnDiv.id != encodeURIComponent(scenePath)) {
-      const btn = btnDiv.querySelector('button') as HTMLButtonElement;
-      btn.disabled = true;
-      btnDiv.style.filter = `blur(2vw)`;
-      btnDiv.style.opacity = '0';
-      setTimeout(() => {
-        navigateToScene(scenePath);
-      }, 3000)
-      setTimeout(() => {
-        btnDiv.style.opacity = '1';
-        btnDiv.style.filter = '';
-        btn.disabled = false;
-      }, 4000)
-    }
+/**
+ * Set the state of the navigation buttons with animations.
+ * @param enabled 
+ * @param element 
+ */
+function setNavButtonsState(enabled: boolean, element: HTMLElement) {
+  const elementBtn = element.querySelector('button') as HTMLButtonElement;
+  if (!enabled) {
+    elementBtn.disabled = true;
+    element.style.filter = `blur(2vw)`;
+    element.style.opacity = '0';
+  } else {
+    elementBtn.disabled = false;
+    element.style.filter = '';
+    element.style.opacity = '1';
   }
 }
 
-async function navigateToScene(scenePath: string) {
+/**
+ * Prepare scene navigation with animation playback.
+ * @param scenePath 
+ * @param single_choice 
+ */
+async function initiateNavigation(scenePath: string, single_choice: boolean = false) {
   // Check if destination is the end.
   if (scenePath == "#END") {
     // Router back to where user came from (PlayOptionsPage).
@@ -90,7 +97,36 @@ async function navigateToScene(scenePath: string) {
     return;
   }
 
-  // Destination is not the end. Update page content.
+  // If the navigation is triggered by single choice, skip button animations.
+  if (single_choice) {
+    toggleSceneAnimation();
+    await sleep(1000);
+    navigateToScene(scenePath);
+    toggleSceneAnimation();
+  }
+
+  // Navigation is triggered by one of the navigation buttons.
+  // Playback button animations.
+  const mcq = document.getElementsByClassName('mcq') as HTMLCollectionOf<HTMLElement>;
+  for (var i = 0; i < mcq.length; i++) {
+    const btnDiv = mcq[i];
+    if (btnDiv.id != encodeURIComponent(scenePath)) {
+      setNavButtonsState(false, btnDiv);
+      await sleep(2000);
+      toggleSceneAnimation();
+      await sleep(1000);
+      navigateToScene(scenePath);
+      setNavButtonsState(true, btnDiv);
+      toggleSceneAnimation();
+    }
+  }
+}
+
+/**
+ * Executes changing of scene data.
+ * @param scenePath 
+ */
+async function navigateToScene(scenePath: string) {
   current_scene.value = await resolveSceneInfo(
     scenePath,
     storyInfo.value.base_dir
