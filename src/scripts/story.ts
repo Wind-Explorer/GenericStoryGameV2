@@ -140,15 +140,31 @@ function resolveSceneActions(sceneAction: SceneActions, baseDir: string): SceneA
     sceneAction.multiple_choice = sceneAction.multiple_choice.map((multipleChoice: MultipleChoice) => {
       return {
         action: multipleChoice.action,
-        destination: `${baseDir}/${multipleChoice.destination}`
+        destination: (() => {
+          const value = multipleChoice.destination;
+
+          // Before concatenating, check if it's null or is ending tag.
+          if (value == null || value == "#END") {
+            return value;
+          } else {
+            return `${baseDir}/${value}`;
+          }
+        })()
       };
     });
   }
 
   // Resolve single choice destination by appending base dir to relative path.
-  if (sceneAction.single_choice && sceneAction.single_choice != "#END") {
-    sceneAction.single_choice = `${baseDir}/${sceneAction.single_choice}`;
-  }
+  sceneAction.single_choice = (() => {
+    const value = sceneAction.single_choice;
+
+    // Before concatenating, check if it's null or is ending tag.
+    if (value == null || value == "#END") {
+      return value;
+    } else {
+      return `${baseDir}/${value}`;
+    }
+  })();
   return sceneAction;
 }
 
@@ -165,7 +181,7 @@ export async function resolveSceneInfo(scenePath: string, baseDir: string) {
 
     // If key is media, prepend base directory to value.
     if (key === 'media') {
-      return `${baseDir}/${value}`;
+      return value != null ? `${baseDir}/${value}` : null;
     }
 
     // If key is scene_actions, resolve scene actions.

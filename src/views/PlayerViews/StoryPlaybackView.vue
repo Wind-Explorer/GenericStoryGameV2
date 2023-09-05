@@ -3,6 +3,7 @@
 import { onMounted, ref } from 'vue';
 import { StoryInfo, resolveStoryInfo, SceneInfo, resolveSceneInfo } from '../../scripts/story';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
+import router from '../../router';
 
 const props = defineProps({
   storyInfoDir: String
@@ -57,7 +58,10 @@ const current_scene = ref<SceneInfo>(
   )
 );
 
-function initiateNavigation(scenePath: string) {
+function initiateNavigation(scenePath: string, single_choice: boolean = false) {
+  if (single_choice) {
+    navigateToScene(scenePath);
+  }
   const mcq = document.getElementsByClassName('mcq') as HTMLCollectionOf<HTMLElement>;
   for (var i = 0; i < mcq.length; i++) {
     const btnDiv = mcq[i];
@@ -67,21 +71,31 @@ function initiateNavigation(scenePath: string) {
       btnDiv.style.filter = `blur(2vw)`;
       btnDiv.style.opacity = '0';
       setTimeout(() => {
+        navigateToScene(scenePath);
+      }, 3000)
+      setTimeout(() => {
         btnDiv.style.opacity = '1';
         btnDiv.style.filter = '';
         btn.disabled = false;
-      }, 5000)
+      }, 4000)
     }
   }
 }
-/*
+
 async function navigateToScene(scenePath: string) {
+  // Check if destination is the end.
+  if (scenePath == "#END") {
+    // Router back to where user came from (PlayOptionsPage).
+    router.go(-1);
+    return;
+  }
+
+  // Destination is not the end. Update page content.
   current_scene.value = await resolveSceneInfo(
     scenePath,
     storyInfo.value.base_dir
   );
 }
-*/
 </script>
 
 <template>
@@ -93,10 +107,14 @@ async function navigateToScene(scenePath: string) {
     <div id="scene" :hidden="!isPlaying">
       <div class="center-text-div" :hidden="current_scene.center_text == null">
         <p class="center-text">{{ current_scene.center_text }}</p>
-        <p class="center-text-hint" @click="$router.go(-1)">Click anywhere to continue</p>
+        <div class="click-anywhere-to-continue-div" :hidden="current_scene.scene_actions.single_choice == null">
+          <p @click="initiateNavigation(current_scene.scene_actions.single_choice as string, true)">
+            Click
+            anywhere to continue</p>
+        </div>
       </div>
       <div class="narration-text-div">
-        <p :hidden="current_scene.narration_text == null">{{ current_scene.narration_text }}</p>
+        <p>{{ current_scene.narration_text }}</p>
       </div>
       <div class="mcq-div">
         <div class="mcq" :hidden="current_scene.scene_actions.multiple_choice == null"
@@ -108,6 +126,8 @@ async function navigateToScene(scenePath: string) {
         </div>
       </div>
       <div class="media">
+        <div :hidden="current_scene.background_color == null" class="plain-color-media"
+          :style="`background-color: ${current_scene.background_color};`"></div>
         <img :hidden="current_scene.media == null" :src="convertFileSrc(current_scene.media as string)" />
       </div>
     </div>
@@ -141,7 +161,8 @@ button {
   opacity: 0;
 }
 
-.media img {
+.media img,
+.plain-color-media {
   position: absolute;
   top: 0;
   left: 0;
@@ -167,19 +188,38 @@ button {
   text-align: center;
 }
 
-.center-text-hint {
+.click-anywhere-to-continue-div {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.click-anywhere-to-continue-div p {
   position: absolute;
   bottom: 3vw;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 1.8vw;
+  text-shadow: 0px 0px 0.1vw rgba(0, 0, 0, 1), 0px 0px 0.3vw rgba(0, 0, 0, 0.5), 0px 0px 0.8vw rgba(0, 0, 0, 0.5);
+  opacity: 0.8;
+  font-weight: 300;
+}
+
+/* 
   font-size: 1.8vw;
   text-shadow: 0px 0px 0.3vw rgba(0, 0, 0, 1), 0px 0px 1.4vw rgba(0, 0, 0, 1);
   opacity: 0.7;
   font-weight: 400;
-}
+*/
 
 .narration-text-div p {
   position: absolute;
-  top: 3vw;
-  left: 3vw;
+  top: 0;
+  margin: 3vw;
+  margin-right: 60vw;
   font-size: 2.3vw;
   text-shadow: 0px 0px 0.3vw rgba(0, 0, 0, 1), 0px 0px 1vw rgba(0, 0, 0, 1);
   font-weight: 400;
