@@ -29,22 +29,13 @@ export function templateStoryInfo(story_title: string, story_description: string
  * First template scene info.
  */
 export const templateSceneInfo1: SceneInfo = {
-  center_text: null,
-  narration_text: "This is the first scene of the story. It's a very exciting scene.",
+  center_text: "This is the first scene of the story. It's a very exciting scene.",
+  narration_text: null,
   background_color: getRandomColor(),
   media: null,
   scene_actions: {
-    multiple_choice: [
-      {
-        action: "Go to the next scene",
-        destination: "scenes/Second Scene.json"
-      },
-      {
-        action: "End the story now",
-        destination: "#END"
-      }
-    ],
-    single_choice: null,
+    multiple_choice: null,
+    single_choice: "scenes/Second Scene.json",
   }
 }
 
@@ -57,7 +48,16 @@ export const templateSceneInfo2: SceneInfo = {
   background_color: getRandomColor(),
   media: null,
   scene_actions: {
-    multiple_choice: null,
-    single_choice: "#END",
+    multiple_choice: [
+      {
+        action: "Go to the first scene",
+        destination: "scenes/First Scene.json"
+      },
+      {
+        action: "End the story now",
+        destination: "#END"
+      }
+    ],
+    single_choice: null,
   }
 }
