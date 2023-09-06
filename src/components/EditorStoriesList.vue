@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // Scripts for the component
-import { VideoPlay, Refresh, FolderOpened } from '@element-plus/icons-vue';
+import { Edit, More, Refresh, FolderOpened } from '@element-plus/icons-vue';
 import { ElMessage, ElScrollbar } from 'element-plus'
-import { StoryInfo, resolveStoriesFromFS } from '../scripts/story';
+import { StoryInfo, StoryLocation, resolveStoriesFromFS } from '../scripts/story';
 import { ref } from 'vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 
@@ -10,10 +10,10 @@ const showTime = ref<boolean>(false);
 const story_entry_scroll = ref<InstanceType<typeof ElScrollbar>>()
 
 const storyInfos = ref<StoryInfo[]>([]);
-storyInfos.value = await resolveStoriesFromFS();
+storyInfos.value = await resolveStoriesFromFS(StoryLocation.Workspace);
 
 async function refreshStoriesList() {
-  storyInfos.value = await resolveStoriesFromFS();
+  storyInfos.value = await resolveStoriesFromFS(StoryLocation.Workspace);
   if (story_entry_scroll.value != null) {
     story_entry_scroll.value.setScrollTop(0);
   }
@@ -47,8 +47,22 @@ async function refreshStoriesList() {
               </p>
             </div>
           </div>
-          <el-button @click="$router.push(`/storyplayback/${(encodeURIComponent(storyInfo.base_dir))}`)" type="success"
-            plain size="large" :icon="VideoPlay" round class="play-button">Play</el-button>
+          <div class="play-button">
+            <el-dropdown class="story-entry-dropdown">
+              <el-icon>
+                <More />
+              </el-icon>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item>Details</el-dropdown-item>
+                  <el-dropdown-item>Move into collection</el-dropdown-item>
+                  <el-dropdown-item>Export...</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+            <el-button @click="$router.push(`/storyplayback/${(encodeURIComponent(storyInfo.base_dir))}`)" type="primary"
+              plain size="large" :icon="Edit" round>Edit</el-button>
+          </div>
         </div>
       </el-card>
       <el-button id="refresh-button" type="default" :icon="Refresh" @click="refreshStoriesList">Refresh</el-button>
@@ -85,16 +99,26 @@ async function refreshStoriesList() {
 }
 
 .play-button {
-  font-size: 20px;
   position: relative;
   margin-top: auto;
   margin-bottom: auto;
+  display: flex;
+  gap: 20px;
+}
+
+.play-button * {
+  font-size: 20px;
 }
 
 .story-info {
   display: flex;
   flex-direction: row;
   gap: 20px;
+}
+
+.story-entry-dropdown {
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .textual {

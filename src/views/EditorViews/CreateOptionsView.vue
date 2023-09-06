@@ -2,12 +2,14 @@
 // Scripts for the component
 import PageTitle from '../../components/PageTitle.vue';
 import AnimatingGradient from '../../components/AnimatingGradient.vue';
+import EditorStoriesList from '../../components/EditorStoriesList.vue';
 import { dialogStyling } from '../../scripts/dialog.css'
 import { Plus, Files, House } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue';
 import { createNewStory } from '../../scripts/story';
 
 const newStoryDialogVisible = ref(false);
+const storiesListDialogVisible = ref(false);
 
 interface NewStoryInfo {
   title: string,
@@ -40,7 +42,8 @@ async function prepareNewStoryCreation() {
       <div class="main-navigation-buttons">
         <el-button-group>
           <el-button @click="newStoryDialogVisible = true" size="large" :icon="Plus" type="primary" plain>New</el-button>
-          <el-button size="large" :icon="Files" type="primary" plain>From Workspace</el-button>
+          <el-button @click="storiesListDialogVisible = true" size="large" :icon="Files" type="primary" plain>From
+            Workspace</el-button>
         </el-button-group>
       </div>
       <el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
@@ -68,12 +71,15 @@ async function prepareNewStoryCreation() {
         </el-button>
       </template>
     </el-dialog>
+    <el-dialog :style="dialogStyling" v-model="storiesListDialogVisible" :show-close="false" width="80%" align-center>
+      <template #title>
+        <h2 class="stories-list-dialog-title">Your Workspace</h2>
+      </template>
+      <EditorStoriesList class="stories-list" />
+    </el-dialog>
   </div>
 </template>
 
 <style scoped>
 /* CSS styles for the component */
-.new-story-title {
-  text-align: center;
-}
 </style>

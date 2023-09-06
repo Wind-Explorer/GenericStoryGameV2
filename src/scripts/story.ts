@@ -73,12 +73,22 @@ export interface SceneInfo {
   scene_actions: SceneActions;
 }
 
+export enum StoryLocation {
+  Collections,
+  Workspace,
+}
+
 /**
  * Function that resolves story collection located on file system.
+ * @param location Location of story collection.
  */
-export async function resolveStoryCollection(): Promise<StoryInfo[]> {
+export async function resolveStoriesFromFS(location: StoryLocation = StoryLocation.Collections): Promise<StoryInfo[]> {
   // Read contents of application data directory.
-  const collectionsDirContent = await readDir(collectionsPath);
+  const collectionsDirContent =
+    // Determine if reading from collections or workspace.
+    location == StoryLocation.Collections ?
+      await readDir(collectionsPath) :
+      await readDir(workspacePath);
 
   // If application data directory is empty, return empty array.
   if (collectionsDirContent.length <= 0) { return []; }

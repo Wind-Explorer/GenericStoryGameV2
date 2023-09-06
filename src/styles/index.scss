@@ -70,3 +70,12 @@ html.dark {
   height: 100vh;
   object-fit: cover;
 }
+
+.stories-list {
+  height: calc(100vh - 40vh);
+}
+
+.stories-list-dialog-title {
+  text-align: center;
+  margin-bottom: -30px;
+}

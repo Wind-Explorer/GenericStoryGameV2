@@ -21,12 +21,15 @@ const storiesListDialogVisible = ref(false);
         <el-button-group>
           <el-button size="large" :icon="VideoPlay" type="primary" plain>Continue</el-button>
           <el-button @click="storiesListDialogVisible = true" size="large" :icon="Files" type="primary" plain>From
-            Collections</el-button>
+            Collection</el-button>
         </el-button-group>
       </div>
       <el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
     </div>
     <el-dialog :style="dialogStyling" v-model="storiesListDialogVisible" :show-close="false" width="80%" align-center>
+      <template #title>
+        <h2 class="stories-list-dialog-title">Your Collection</h2>
+      </template>
       <Suspense>
         <template #fallback>
           <h1 style="text-align: center; padding: 30px;">Loading...? why is it taking so long</h1>
@@ -39,9 +42,4 @@ const storiesListDialogVisible = ref(false);
 
 <style scoped lang="scss">
 /* CSS styles for the component */
-.stories-list {
-  height: calc(100vh - 40vh);
-  min-height: 350px;
-  margin-top: -30px;
-}
 </style>
