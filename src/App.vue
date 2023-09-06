@@ -7,6 +7,7 @@ import { toggleDark } from "./composables";
   <div class="container">
     <!-- HTML elements for the component -->
     <button style="display: none;" @click="toggleDark()" />
+    <div class="background-div"></div>
     <Suspense>
       <template #fallback>
         <h1>Loading...</h1>
@@ -20,8 +21,24 @@ import { toggleDark } from "./composables";
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 /* CSS styles for the component */
+.background-div {
+  background-color: #f7f7f7;
+  z-index: -100;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+html.dark {
+  .background-div {
+    background-color: #171717;
+  }
+}
+
 .transition-enter-active,
 .transition-leave-active {
   transition: 0.4s;
