@@ -19,7 +19,7 @@ export function templateStoryInfo(story_title: string, story_description: string
     description: story_description.length <= 0 ? 'An exciting generic story.' : story_description,
     author: story_author.length <= 0 ? 'A mysterious someone' : story_author,
     creation_date: new Date(),
-    thumbnail: 'resources/thumb.heic',
+    thumbnail: 'resources/thumb.jpg',
     entry_point: 'scenes/First Scene.json',
     base_dir: ''
   }

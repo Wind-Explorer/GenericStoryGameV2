@@ -1,7 +1,7 @@
 import { appDataDir } from '@tauri-apps/api/path';
 import { createDir, exists, readDir, readTextFile, writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
 import { v4 as uuidv4 } from 'uuid';
-import { bookUint8Array } from './book.heic';
+import { bookUint8Array } from './book.png';
 import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
 
 /**
@@ -227,7 +227,7 @@ export async function createNewStory(story_title: string, story_description: str
   await writeTextFile(`${baseDir}/gsg.json`, newStoryInfoAsJSON);
 
   // Generate template story thumbnail
-  await writeBinaryFile(`${resourcesDir}/thumb.heic`, bookUint8Array());
+  await writeBinaryFile(`${resourcesDir}/thumb.jpg`, bookUint8Array());
 
   // Populate the story with two example scenes
   await writeTextFile(`${scenesDir}/First Scene.json`, JSON.stringify(templateSceneInfo1, null));
