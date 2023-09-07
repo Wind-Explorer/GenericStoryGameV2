@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import LabelWithTooltip from '../../components/LabelWithTooltip.vue';
 import { reactive } from 'vue';
 import { ExtraStoryInfo, resolveExtraStoryInfo } from '../../scripts/story';
 import { getObjFromPath } from '../../scripts/pathManipulation';
-import { House, InfoFilled } from '@element-plus/icons-vue';
+import { House } from '@element-plus/icons-vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 
 // Scripts for the component
@@ -30,54 +31,26 @@ const storyInfo = reactive<ExtraStoryInfo>(
       </template>
       <el-descriptions-item label-align="left" align="left">
         <template #label>
-          <div class="story-info-label-entry">
-            Title
-            <el-tooltip content="Name of the story" placement="top">
-              <el-icon>
-                <InfoFilled />
-              </el-icon>
-            </el-tooltip>
-          </div>
+          <LabelWithTooltip label="Title" tooltip="Name of the story" />
         </template>
         <el-input placeholder="Title" maxlength="69" v-model="storyInfo.base_story_info.title"></el-input>
       </el-descriptions-item>
       <el-descriptions-item label-align="left" align="left">
         <template #label>
-          <div class="story-info-label-entry">
-            Description
-            <el-tooltip content="Overview of what the story is about" placement="top">
-              <el-icon>
-                <InfoFilled />
-              </el-icon>
-            </el-tooltip>
-          </div>
+          <LabelWithTooltip label="Description" tooltip="Overview of what the story is about" />
         </template>
         <el-input placeholder="Description" type="textarea" resize="none" maxlength="420"
           :autosize="{ minRows: 4, maxRows: 4 }" v-model="storyInfo.base_story_info.description"></el-input>
       </el-descriptions-item>
       <el-descriptions-item label-align="left" align="left">
         <template #label>
-          <div class="story-info-label-entry">
-            Author
-            <el-tooltip content="Name of the person that made the story" placement="top">
-              <el-icon>
-                <InfoFilled />
-              </el-icon>
-            </el-tooltip>
-          </div>
+          <LabelWithTooltip label="Author" tooltip="Name of the person that made the story" />
         </template>
         <el-input placeholder="Title" maxlength="69" v-model="storyInfo.base_story_info.author"></el-input>
       </el-descriptions-item>
       <el-descriptions-item label-align="left" align="left">
         <template #label>
-          <div class="story-info-label-entry">
-            Thumbnail
-            <el-tooltip content="A small image icon symbolizing the story visually" placement="top">
-              <el-icon>
-                <InfoFilled />
-              </el-icon>
-            </el-tooltip>
-          </div>
+          <LabelWithTooltip label="Thumbnail" tooltip="A small image icon symbolizing the story visually" />
         </template>
         <div class="thumbnail-entry">
           <div>
@@ -92,14 +65,7 @@ const storyInfo = reactive<ExtraStoryInfo>(
       </el-descriptions-item>
       <el-descriptions-item label-align="left" align="left">
         <template #label>
-          <div class="story-info-label-entry">
-            Resources
-            <el-tooltip content="Visual assets / graphics media for the story" placement="top">
-              <el-icon>
-                <InfoFilled />
-              </el-icon>
-            </el-tooltip>
-          </div>
+          <LabelWithTooltip label="Resources" tooltip="Visual assets / graphics for the story" />
         </template>
         <div class="resources-entry">
           <el-text size="large">{{ storyInfo.resources_count }} file{{ storyInfo.resources_count > 1 ? 's' : '' }} in the
@@ -109,14 +75,7 @@ const storyInfo = reactive<ExtraStoryInfo>(
       </el-descriptions-item>
       <el-descriptions-item label-align="left" align="left">
         <template #label>
-          <div class="story-info-label-entry">
-            Scenes
-            <el-tooltip content="A collection of moments that tells the story" placement="top">
-              <el-icon>
-                <InfoFilled />
-              </el-icon>
-            </el-tooltip>
-          </div>
+          <LabelWithTooltip label="Scenes" tooltip="A collection of moments that tells the story" />
         </template>
         <div class="resources-entry">
           <el-text size="large">{{ storyInfo.scenes_count }} scene{{ storyInfo.scenes_count > 1 ? 's' : '' }} for the
@@ -134,17 +93,6 @@ const storyInfo = reactive<ExtraStoryInfo>(
   max-width: 800px;
   margin: 30px auto;
   padding: 0 30px;
-}
-
-.story-info-label-entry {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-}
-
-.story-info-label-entry * {
-  margin-top: auto;
-  margin-bottom: auto;
 }
 
 .story-thumbnail {
