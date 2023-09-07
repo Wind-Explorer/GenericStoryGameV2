@@ -58,8 +58,8 @@ async function prepareNewStoryCreation() {
             placeholder="my ridiculous experience today" />
         </el-form-item>
         <el-form-item label="A bit more details about it?">
-          <el-input v-model="newStoryInfo.description" type="textarea" maxlength="420"
-            placeholder="find out how I did that one crazy thing at that place" />
+          <el-input v-model="newStoryInfo.description" type="textarea" :autosize="{ minRows: 4, maxRows: 4 }"
+            resize="none" maxlength="420" placeholder="find out how I did that one crazy thing at that place" />
         </el-form-item>
         <el-form-item label="Name of the one authoring it">
           <el-input v-model="newStoryInfo.author" maxlength="100" placeholder="A mysterious someone" />

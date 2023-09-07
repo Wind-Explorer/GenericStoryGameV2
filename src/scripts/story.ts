@@ -78,6 +78,12 @@ export enum StoryLocation {
   Workspace,
 }
 
+export interface ExtraStoryInfo {
+  base_story_info: StoryInfo;
+  resources_count: number;
+  scenes_count: number;
+}
+
 /**
  * Function that resolves story collection located on file system.
  * @param location Location of story collection.
@@ -138,6 +144,22 @@ export async function resolveStoryInfo(baseDir: string): Promise<StoryInfo> {
     return value;
   }) as StoryInfo;
   return storyInfo;
+}
+
+/**
+ * Function that resolves more story info from a story save directory for editing purposes.
+ * @param baseDir Path to story save directory.
+ * @returns `ExtraStoryInfo` object.
+ */
+export async function resolveExtraStoryInfo(baseDir: string): Promise<ExtraStoryInfo> {
+  const baseStoryInfo = await resolveStoryInfo(baseDir);
+  const resourcesCount = await readDir(`${baseDir}/resources`).then((resources) => resources.length);
+  const scenesCount = await readDir(`${baseDir}/scenes`).then((scenes) => scenes.length);
+  return {
+    base_story_info: baseStoryInfo,
+    resources_count: resourcesCount,
+    scenes_count: scenesCount,
+  } as ExtraStoryInfo;
 }
 
 /**
