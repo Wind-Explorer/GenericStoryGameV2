@@ -1,10 +1,6 @@
 // import dark theme
 @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
 
-// :root {
-//   --ep-color-primary: red;
-// }
-
 * {
   margin: 0;
   -webkit-user-select: none;
@@ -21,6 +17,7 @@ body {
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
 a {
