@@ -72,7 +72,7 @@ async function prepareNewStoryCreation() {
       </template>
     </el-dialog>
     <el-dialog :style="dialogStyling" v-model="storiesListDialogVisible" :show-close="false" width="80%" align-center>
-      <template #title>
+      <template #header>
         <h2 class="dialog-center-title">Your Workspace</h2>
       </template>
       <EditorStoriesList class="stories-list" />

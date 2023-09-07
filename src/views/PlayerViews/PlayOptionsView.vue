@@ -27,7 +27,7 @@ const storiesListDialogVisible = ref(false);
       <el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
     </div>
     <el-dialog :style="dialogStyling" v-model="storiesListDialogVisible" :show-close="false" width="80%" align-center>
-      <template #title>
+      <template #header>
         <h2 class="dialog-center-title">Your Collection</h2>
       </template>
       <Suspense>
