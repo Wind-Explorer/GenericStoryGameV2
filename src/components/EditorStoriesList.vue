@@ -60,7 +60,7 @@ async function refreshStoriesList() {
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
-            <el-button @click="$router.push(`/storyplayback/${(encodeURIComponent(storyInfo.base_dir))}`)" type="primary"
+            <el-button @click="$router.push(`/editoroverview/${(encodeURIComponent(storyInfo.base_dir))}`)" type="primary"
               plain size="large" :icon="Edit" round>Edit</el-button>
           </div>
         </div>

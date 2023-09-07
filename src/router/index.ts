@@ -22,6 +22,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'StoryPlayBack',
     component: () => import('../views/PlayerViews/StoryPlaybackView.vue'),
     props: true
+  },
+  {
+    path: '/editoroverview/:storyInfoDir',
+    name: 'EditorOverview',
+    component: () => import('../views/EditorViews/EditorOverviewView.vue'),
+    props: true
   }
 ]
 
