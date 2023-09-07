@@ -50,7 +50,7 @@ async function prepareNewStoryCreation() {
     </div>
     <el-dialog :style="dialogStyling" v-model="newStoryDialogVisible" :show-close="false" width="80%" align-center>
       <template #header>
-        <h2 class="new-story-title">New story</h2>
+        <h2 class="dialog-center-title">New story</h2>
       </template>
       <el-form :model="newStoryInfo" label-width="200px" label-position="top">
         <el-form-item :required="true" label="Title for your new story">
@@ -73,7 +73,7 @@ async function prepareNewStoryCreation() {
     </el-dialog>
     <el-dialog :style="dialogStyling" v-model="storiesListDialogVisible" :show-close="false" width="80%" align-center>
       <template #title>
-        <h2 class="stories-list-dialog-title">Your Workspace</h2>
+        <h2 class="dialog-center-title">Your Workspace</h2>
       </template>
       <EditorStoriesList class="stories-list" />
     </el-dialog>

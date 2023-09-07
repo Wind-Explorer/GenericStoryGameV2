@@ -28,7 +28,7 @@ const storiesListDialogVisible = ref(false);
     </div>
     <el-dialog :style="dialogStyling" v-model="storiesListDialogVisible" :show-close="false" width="80%" align-center>
       <template #title>
-        <h2 class="stories-list-dialog-title">Your Collection</h2>
+        <h2 class="dialog-center-title">Your Collection</h2>
       </template>
       <Suspense>
         <template #fallback>
