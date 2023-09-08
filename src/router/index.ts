@@ -28,6 +28,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'EditorOverview',
     component: () => import('../views/EditorViews/EditorOverviewView.vue'),
     props: true
+  },
+  {
+    path: '/sceneseditor/:baseDir',
+    name: 'ScenesEditor',
+    component: () => import('../views/EditorViews/ScenesEditorView.vue'),
+    props: true
   }
 ]
 

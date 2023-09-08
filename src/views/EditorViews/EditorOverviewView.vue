@@ -88,7 +88,8 @@ async function saveData() {
         <div class="resources-entry">
           <el-text size="large">{{ storyInfo.scenes_count }} scene{{ storyInfo.scenes_count > 1 ? 's' : '' }} for the
             story</el-text>
-          <el-button type="primary">Edit</el-button>
+          <el-button @click='$router.push(`/sceneseditor/${encodeURIComponent(storyInfo.base_story_info.base_dir)}`)'
+            type="primary">Edit</el-button>
         </div>
       </el-descriptions-item>
     </el-descriptions>

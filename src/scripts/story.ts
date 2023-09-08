@@ -3,6 +3,7 @@ import { createDir, exists, readDir, readTextFile, writeBinaryFile, writeTextFil
 import { v4 as uuidv4 } from 'uuid';
 import { bookUint8Array } from './book.png';
 import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
+import { getObjFromPath } from './pathManipulation';
 
 /**
  * Function that ensures path passed in exists.
@@ -84,6 +85,11 @@ export interface ExtraStoryInfo {
   scenes_count: number;
 }
 
+export interface ExtraSceneInfo {
+  base_scene_info: SceneInfo;
+  scene_name: string;
+}
+
 /**
  * Function that resolves story collection located on file system.
  * @param location Location of story collection.
@@ -114,6 +120,41 @@ export async function resolveStoriesFromFS(location: StoryLocation = StoryLocati
     }
   }
   return storyInfos;
+}
+
+/**
+ * Function that resolves scenes from a story save directory.
+ * @param baseDir Path to story save directory.
+ * @returns Array of `ExtraSceneInfo` objects.
+ */
+export async function resolveScenesFromFS(baseDir: string): Promise<ExtraSceneInfo[]> {
+  console.log(baseDir);
+  return readDir(`${baseDir}/scenes`).then(async (scenes) => {
+
+    // TODO: If story save directory is empty, return empty array.
+
+    // Array to store scene info.
+    let sceneInfos: ExtraSceneInfo[] = [];
+    for (var entry in scenes) {
+      try {
+        let scenePath = scenes[entry].path;
+        let sceneInfo = await resolveSceneInfo(scenePath, baseDir);
+
+        // Create extra scene info object.
+        let extraSceneInfo: ExtraSceneInfo = {
+          base_scene_info: sceneInfo,
+
+          // Get scene name from path, removing .json suffix.
+          scene_name: getObjFromPath(scenePath).replace('.json', ''),
+        }
+        sceneInfos.push(extraSceneInfo);
+      } catch {
+        // Something silly happened. Skip this entry.
+        continue;
+      }
+    }
+    return sceneInfos;
+  });
 }
 
 /**
