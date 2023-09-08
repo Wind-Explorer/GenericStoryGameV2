@@ -3,7 +3,7 @@ import LabelWithTooltip from '../../components/LabelWithTooltip.vue';
 import { reactive } from 'vue';
 import { ExtraStoryInfo, resolveExtraStoryInfo, writeStoryInfoToDisk } from '../../scripts/story';
 import { getObjFromPath } from '../../scripts/pathManipulation';
-import { House, RefreshLeft, Select } from '@element-plus/icons-vue';
+import { House, Select } from '@element-plus/icons-vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { ElMessage } from 'element-plus';
 
