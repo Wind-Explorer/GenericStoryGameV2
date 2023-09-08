@@ -265,3 +265,28 @@ export async function createNewStory(story_title: string, story_description: str
   await writeTextFile(`${scenesDir}/First Scene.json`, JSON.stringify(templateSceneInfo1, null));
   await writeTextFile(`${scenesDir}/Second Scene.json`, JSON.stringify(templateSceneInfo2, null));
 }
+
+/**
+ * 
+ * @param data StoryInfo object containing data to be written to disk.
+ * @param base_dir Base directory pointing to the path of the story.
+ */
+export async function writeStoryInfoToDisk(data: StoryInfo, base_dir: string) {
+  const JSONData = JSON.stringify(data, (key, value) => {
+
+    // For thumbnail and entry_point paths, return path
+    // relative to story directory (strip away absolute path).
+    if (key === 'thumbnail' || key === 'entry_point') {
+      return value.replace(`${base_dir}/`, '');
+    }
+
+    // base_dir should be left empty.
+    else if (key === 'base_dir') {
+      return '';
+    }
+    else { return value };
+  });
+
+  // Write data to gsg.json.
+  await writeTextFile(`${base_dir}/gsg.json`, JSONData);
+}

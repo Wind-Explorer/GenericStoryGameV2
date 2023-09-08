@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import LabelWithTooltip from '../../components/LabelWithTooltip.vue';
 import { reactive } from 'vue';
-import { ExtraStoryInfo, resolveExtraStoryInfo } from '../../scripts/story';
+import { ExtraStoryInfo, resolveExtraStoryInfo, writeStoryInfoToDisk } from '../../scripts/story';
 import { getObjFromPath } from '../../scripts/pathManipulation';
-import { House } from '@element-plus/icons-vue';
+import { House, RefreshLeft, Select } from '@element-plus/icons-vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
+import { ElMessage } from 'element-plus';
 
 // Scripts for the component
 
@@ -17,6 +18,12 @@ const storyInfo = reactive<ExtraStoryInfo>(
     decodeURIComponent(props.storyInfoDir as string)
   )
 );
+
+async function saveData() {
+  await writeStoryInfoToDisk(storyInfo.base_story_info, props.storyInfoDir as string);
+  ElMessage({ message: 'Saved', grouping: true, type: 'success' })
+}
+
 </script>
 
 <template>
@@ -27,6 +34,7 @@ const storyInfo = reactive<ExtraStoryInfo>(
         <h1>{{ storyInfo.base_story_info.title }}</h1>
       </template>
       <template #extra>
+        <el-button @click="saveData" size="large" type="success" :icon="Select" plain>Save</el-button>
         <el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
       </template>
       <el-descriptions-item label-align="left" align="left">
