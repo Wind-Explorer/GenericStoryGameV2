@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue';
 import { StoryInfo, resolveStoryInfo, SceneInfo, resolveSceneInfo } from '../../scripts/story';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import router from '../../router';
-import { sleep } from '../../scripts/sleep';
+import { sleep } from '../../scripts/utils';
 
 const props = defineProps({
   baseDir: String
