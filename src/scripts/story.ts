@@ -1,20 +1,9 @@
 import { appDataDir } from '@tauri-apps/api/path';
-import { createDir, exists, readDir, readTextFile, writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
+import { createDir, readDir, readTextFile, writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
 import { v4 as uuidv4 } from 'uuid';
 import { bookUint8Array } from './book.png';
 import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
-import { getObjFromPath } from './pathManipulation';
-
-/**
- * Function that ensures path passed in exists.
- * @param path Path to ensure exists.
- */
-async function ensureDirExists(path: string) {
-  if (!await exists(path)) {
-    createDir(path, { recursive: true });
-  }
-  return path;
-}
+import { getObjFromPath, ensureDirExists } from './utils';
 
 /**
  * Path to application data directory.

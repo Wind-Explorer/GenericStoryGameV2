@@ -40,12 +40,6 @@ const routes: Array<RouteRecordRaw> = [
     name: 'SceneEditor',
     component: () => import('../views/EditorViews/ScenesEditorViews/SceneEditorView.vue'),
     props: true
-  },
-  {
-    path: '/resourcemanager/:baseDir',
-    name: 'ResourceManager',
-    component: () => import('../views/EditorViews/ResourceManagerView.vue'),
-    props: true
   }
 ]
 

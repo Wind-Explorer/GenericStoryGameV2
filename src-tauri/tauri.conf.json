@@ -15,7 +15,37 @@
       "all": false,
       "shell": {
         "all": false,
-        "open": true
+        "open": true,
+        "execute": true,
+        "scope": [
+          {
+            "name": "file-manager-mac",
+            "cmd": "open",
+            "args": [
+              {
+                "validator": "\\S+"
+              }
+            ]
+          },
+          {
+            "name": "file-manager-windows",
+            "cmd": "explorer",
+            "args": [
+              {
+                "validator": "\\S+"
+              }
+            ]
+          },
+          {
+            "name": "file-manager-xdg",
+            "cmd": "xdg-open",
+            "args": [
+              {
+                "validator": "\\S+"
+              }
+            ]
+          }
+        ]
       },
       "process": {
         "all": false,
