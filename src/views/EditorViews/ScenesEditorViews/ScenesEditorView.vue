@@ -20,7 +20,7 @@ const scenesList = await resolveScenesFromFS(decodeURIComponent(props.baseDir as
     </div>
     <el-scrollbar class="scenes-scrollarea">
       <div class="scenes-div">
-        <div class="scene-entry add-scene-button">
+        <button class="scene-entry add-scene-button">
           <div class="add-scene-button content">
             <div class="add-scene-button content text">
               <el-icon class="add-scene-button content icon">
@@ -29,8 +29,9 @@ const scenesList = await resolveScenesFromFS(decodeURIComponent(props.baseDir as
               <p>Add a new scene</p>
             </div>
           </div>
-        </div>
-        <div v-for="scene in scenesList" style="position: relative;" class="scene-entry">
+        </button>
+        <button v-for="scene in scenesList" style="position: relative;" class="scene-entry"
+          @click="$router.push(`/sceneeditor/${encodeURIComponent(scene.scene_dir)}`)">
           <img class="scene-background img" v-if="scene.base_scene_info.media != null"
             :src="convertFileSrc(scene.base_scene_info.media)" />
           <div class="scene-background div" v-if="scene.base_scene_info.background_color != null"
@@ -42,7 +43,7 @@ const scenesList = await resolveScenesFromFS(decodeURIComponent(props.baseDir as
               <p class="background-neutral-text">{{ scene.base_scene_info.narration_text }}</p>
             </div>
           </div>
-        </div>
+        </button>
       </div>
     </el-scrollbar>
     <div class="bottom-text">
@@ -132,6 +133,7 @@ const scenesList = await resolveScenesFromFS(decodeURIComponent(props.baseDir as
   background-color: #77777733;
   border-radius: 20px;
   overflow: hidden;
+  text-align: left;
   border: 2px solid #77777777;
   transition: 0.2s;
   transform-origin: bottom;
@@ -152,6 +154,14 @@ const scenesList = await resolveScenesFromFS(decodeURIComponent(props.baseDir as
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+}
+
+.scene-entry-preview-text h3 {
+  font-size: 22px;
+}
+
+.scene-entry-preview-text p {
+  font-size: 16px;
 }
 
 .bottom-text {

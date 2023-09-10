@@ -88,6 +88,7 @@ export interface ExtraStoryInfo {
 export interface ExtraSceneInfo {
   base_scene_info: SceneInfo;
   scene_name: string;
+  scene_dir: string;
 }
 
 /**
@@ -138,7 +139,7 @@ export async function resolveScenesFromFS(baseDir: string): Promise<ExtraSceneIn
     for (var entry in scenes) {
       try {
         let scenePath = scenes[entry].path;
-        let sceneInfo = await resolveSceneInfo(scenePath, baseDir);
+        let sceneInfo = await resolveSceneInfo(scenePath);
 
         // Create extra scene info object.
         let extraSceneInfo: ExtraSceneInfo = {
@@ -146,6 +147,7 @@ export async function resolveScenesFromFS(baseDir: string): Promise<ExtraSceneIn
 
           // Get scene name from path, removing .json suffix.
           scene_name: getObjFromPath(scenePath).replace('.json', ''),
+          scene_dir: scenePath,
         }
         sceneInfos.push(extraSceneInfo);
       } catch {
@@ -242,12 +244,23 @@ function resolveSceneActions(sceneAction: SceneActions, baseDir: string): SceneA
 }
 
 /**
+ * Helper function to get story base directory path from scene JSON path.
+ */
+function resolveBaseDirFromScenePath(scenePath: string) {
+  let splittedScenePath = scenePath.split('/');
+  splittedScenePath.pop();
+  splittedScenePath.pop();
+  return splittedScenePath.join('/');
+}
+
+/**
  * Function that resolves scene info from path to scene JSON data.
  */
-export async function resolveSceneInfo(scenePath: string, baseDir: string) {
+export async function resolveSceneInfo(scenePath: string) {
 
   // Read scene info as JSON data from scene info JSON file.
   let sceneInfoAsJSON = await readTextFile(scenePath);
+  let baseDir = resolveBaseDirFromScenePath(scenePath);
 
   // Parse scene info from JSON data.
   const sceneInfo = JSON.parse(sceneInfoAsJSON, (key, value) => {

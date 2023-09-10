@@ -60,10 +60,7 @@ onMounted(() => {
 })
 
 const current_scene = ref<SceneInfo>(
-  await resolveSceneInfo(
-    storyInfo.value.entry_point,
-    storyInfo.value.base_dir
-  )
+  await resolveSceneInfo(storyInfo.value.entry_point)
 );
 
 /**
@@ -127,10 +124,7 @@ async function initiateNavigation(scenePath: string, single_choice: boolean = fa
  * @param scenePath 
  */
 async function navigateToScene(scenePath: string) {
-  current_scene.value = await resolveSceneInfo(
-    scenePath,
-    storyInfo.value.base_dir
-  );
+  current_scene.value = await resolveSceneInfo(scenePath);
 }
 </script>
 

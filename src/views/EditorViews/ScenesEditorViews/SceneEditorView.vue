@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { resolveSceneInfo } from '../../../scripts/story';
+
 // Scripts for the component
 
 const props = defineProps({
   sceneDir: String,
 })
+
+const sceneInfo = await resolveSceneInfo(props.sceneDir as string);
 </script>
 
 <template>
@@ -11,7 +15,8 @@ const props = defineProps({
     <!-- HTML elements for the component -->
     <h1>Scene Editor</h1>
     <p>Edit a scene</p>
-    <p>{{ props.sceneDir }}</p>
+    <p>{{ sceneInfo.center_text }}{{ sceneInfo.narration_text }}</p>
+    <el-button @click="$router.go(-1)">back</el-button>
   </div>
 </template>
 
