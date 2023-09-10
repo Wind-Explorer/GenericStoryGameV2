@@ -18,13 +18,13 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/EditorViews/CreateOptionsView.vue')
   },
   {
-    path: '/storyplayback/:storyInfoDir',
+    path: '/storyplayback/:baseDir',
     name: 'StoryPlayBack',
     component: () => import('../views/PlayerViews/StoryPlaybackView.vue'),
     props: true
   },
   {
-    path: '/editoroverview/:storyInfoDir',
+    path: '/editoroverview/:baseDir',
     name: 'EditorOverview',
     component: () => import('../views/EditorViews/EditorOverviewView.vue'),
     props: true
@@ -39,6 +39,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/sceneeditor/:sceneDir',
     name: 'SceneEditor',
     component: () => import('../views/EditorViews/ScenesEditorViews/SceneEditorView.vue'),
+    props: true
+  },
+  {
+    path: '/resourcemanager/:baseDir',
+    name: 'ResourceManager',
+    component: () => import('../views/EditorViews/ResourceManagerView.vue'),
     props: true
   }
 ]

@@ -7,12 +7,12 @@ import router from '../../router';
 import { sleep } from '../../scripts/sleep';
 
 const props = defineProps({
-  storyInfoDir: String
+  baseDir: String
 })
 
 const storyInfo = ref<StoryInfo>(
   await resolveStoryInfo(
-    decodeURIComponent(props.storyInfoDir as string)
+    decodeURIComponent(props.baseDir as string)
   )
 );
 
