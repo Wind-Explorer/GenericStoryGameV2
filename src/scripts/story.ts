@@ -7,6 +7,7 @@ import { getObjFromPath } from './pathManipulation';
 
 /**
  * Function that ensures path passed in exists.
+ * @param path Path to ensure exists.
  */
 async function ensureDirExists(path: string) {
   if (!await exists(path)) {
@@ -74,17 +75,28 @@ export interface SceneInfo {
   scene_actions: SceneActions;
 }
 
+/**
+ * Enum which defines possible location of stories.
+*/
 export enum StoryLocation {
   Collections,
   Workspace,
 }
 
+/**
+ * Interface which defines structure of story info
+ * with extra information to be used in editor.
+ */
 export interface ExtraStoryInfo {
   base_story_info: StoryInfo;
   resources_count: number;
   scenes_count: number;
 }
 
+/**
+ * Interface which defines structure of scene info
+ * with extra information to be used in editor.
+ */
 export interface ExtraSceneInfo {
   base_scene_info: SceneInfo;
   scene_name: string;
@@ -161,6 +173,7 @@ export async function resolveScenesFromFS(baseDir: string): Promise<ExtraSceneIn
 
 /**
  * Function that resolves story info from a story save directory.
+ * @param baseDir Path to story save directory.
  */
 export async function resolveStoryInfo(baseDir: string): Promise<StoryInfo> {
 
@@ -192,7 +205,7 @@ export async function resolveStoryInfo(baseDir: string): Promise<StoryInfo> {
 /**
  * Function that resolves more story info from a story save directory for editing purposes.
  * @param baseDir Path to story save directory.
- * @returns `ExtraStoryInfo` object.
+ * @returns `ExtraStoryInfo`
  */
 export async function resolveExtraStoryInfo(baseDir: string): Promise<ExtraStoryInfo> {
   const baseStoryInfo = await resolveStoryInfo(baseDir);
@@ -206,7 +219,9 @@ export async function resolveExtraStoryInfo(baseDir: string): Promise<ExtraStory
 }
 
 /**
- * Function that resolves scene actions for use in scene info.
+ * Function that prepares scene actions for use in scene info.
+ * @param sceneAction Scene action to resolve.
+ * @param baseDir Base directory pointing to the path of the story.
  */
 function resolveSceneActions(sceneAction: SceneActions, baseDir: string): SceneActions {
   if (sceneAction.multiple_choice) {
@@ -245,6 +260,7 @@ function resolveSceneActions(sceneAction: SceneActions, baseDir: string): SceneA
 
 /**
  * Helper function to get story base directory path from scene JSON path.
+ * @param scenePath Path to scene JSON file.
  */
 function resolveBaseDirFromScenePath(scenePath: string) {
   let splittedScenePath = scenePath.split('/');
@@ -281,6 +297,9 @@ export async function resolveSceneInfo(scenePath: string) {
 
 /**
  * Function that initializes a new story with template content.
+ * @param story_title Title of the story.
+ * @param story_description Description of the story.
+ * @param story_author Author of the story.
  */
 export async function createNewStory(story_title: string, story_description: string, story_author: string) {
 
@@ -321,7 +340,7 @@ export async function createNewStory(story_title: string, story_description: str
 }
 
 /**
- * 
+ * Writes the updated story info into the filesystem.
  * @param data StoryInfo object containing data to be written to disk.
  * @param base_dir Base directory pointing to the path of the story.
  */
