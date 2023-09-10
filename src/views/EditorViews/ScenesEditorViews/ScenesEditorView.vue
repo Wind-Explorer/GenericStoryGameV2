@@ -134,12 +134,17 @@ const scenesList = await resolveScenesFromFS(decodeURIComponent(props.baseDir as
   overflow: hidden;
   border: 2px solid #77777777;
   transition: 0.2s;
+  transform-origin: bottom;
 }
 
 .scene-entry:hover {
   transform: scale(1.02);
-  transform-origin: bottom;
   box-shadow: -1px 3px 5px #00000077;
+}
+
+.scene-entry:active {
+  transform: unset;
+  box-shadow: unset;
 }
 
 .scene-entry-preview-text {
