@@ -1,13 +1,5 @@
 import { StoryInfo, SceneInfo } from "./story";
-
-/**
- * Function that generates a random hex color code.
- * @returns `string`
- */
-function getRandomColor(): string {
-  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-  return "#" + randomColor;
-}
+import { getRandomColor } from "./utils";
 
 /**
  * Template story info.

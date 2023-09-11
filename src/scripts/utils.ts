@@ -49,3 +49,12 @@ export function resolveNameOfFileManager(): string {
       return 'File Manager';
   }
 }
+
+/**
+ * Function that generates a random hex color code.
+ * @returns `string`
+ */
+export function getRandomColor(): string {
+  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+  return "#" + randomColor;
+}
