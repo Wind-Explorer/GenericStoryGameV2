@@ -130,7 +130,6 @@ export async function resolveStoriesFromFS(location: StoryLocation = StoryLocati
  * @returns Array of `ExtraSceneInfo` objects.
  */
 export async function resolveScenesFromFS(baseDir: string): Promise<ExtraSceneInfo[]> {
-  console.log(baseDir);
   return readDir(`${baseDir}/scenes`).then(async (scenes) => {
 
     // TODO: If story save directory is empty, return empty array.
