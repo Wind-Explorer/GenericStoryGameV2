@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api";
 import { createDir, exists } from "@tauri-apps/api/fs";
+import { sep } from "@tauri-apps/api/path";
 import { Command } from "@tauri-apps/api/shell";
 
 const currentOS = await invoke('resolve_current_os') as any as string;
@@ -19,7 +20,7 @@ export async function sleep(ms: number): Promise<void> {
  * @returns string The name of the file / direcotry
  */
 export function getObjFromPath(path: string): string {
-  const pathArray = path.split('/');
+  const pathArray = sanitizePath(path).split(sep);
   return pathArray[pathArray.length - 1];
 }
 
@@ -57,4 +58,31 @@ export function resolveNameOfFileManager(): string {
 export function getRandomColor(): string {
   const randomColor = Math.floor(Math.random() * 16777215).toString(16);
   return "#" + randomColor;
+}
+
+/**
+ * Normalize and remove duplicate path separators
+ * @param path Path to be processed
+ * @param separator Path separator - defaults to system path separator
+ * @returns Processed path
+ */
+export function sanitizePath(path: string, separator: string = sep): string {
+  const sanitizedPath: string[] = [];
+  path.split(/[\\/]/).forEach(path => {
+    if (path !== '') sanitizedPath.push(path);
+  });
+  const joinedPath = sanitizedPath.join(separator);
+  return path.startsWith(separator) ? separator + joinedPath : joinedPath;
+}
+
+/**
+ * Joins multiple strings together as system file path.
+ * @param paths Paths to join.
+ */
+export function joinPath(...paths: string[]): string {
+  paths.forEach(path => {
+    if (path.endsWith(sep))
+      path = path.slice(0, -1);
+  });
+  return sanitizePath(paths.join(sep));
 }

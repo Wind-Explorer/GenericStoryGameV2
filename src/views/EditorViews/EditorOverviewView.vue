@@ -2,7 +2,7 @@
 import LabelWithTooltip from '../../components/LabelWithTooltip.vue';
 import { reactive } from 'vue';
 import { ExtraStoryInfo, resolveExtraStoryInfo, writeStoryInfoToDisk } from '../../scripts/story';
-import { getObjFromPath, openInFileManager, resolveNameOfFileManager } from '../../scripts/utils';
+import { getObjFromPath, openInFileManager, resolveNameOfFileManager, joinPath } from '../../scripts/utils';
 import { House, Select } from '@element-plus/icons-vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { ElMessage } from 'element-plus';
@@ -78,7 +78,7 @@ async function saveData() {
 				<div class="resources-entry">
 					<el-text size="large">{{ storyInfo.resources_count }} file{{ storyInfo.resources_count > 1 ? 's' : '' }} in the
 						resources folder</el-text>
-					<el-button @click="openInFileManager(`${(baseDir as string)}/resources`)">{{ `Manage in
+					<el-button @click="openInFileManager(joinPath((baseDir as string), 'resources'))">{{ `Manage in
 						${resolveNameOfFileManager()}` }}</el-button>
 				</div>
 			</el-descriptions-item>
