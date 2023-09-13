@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { SceneInfo, resolveSceneInfo } from '../../../scripts/story';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
-import { getObjFromPath } from '../../../scripts/utils';
 import { House, Plus, Select } from '@element-plus/icons-vue';
 
 // Scripts for the component
@@ -11,17 +7,7 @@ const props = defineProps({
   sceneDir: String,
 })
 
-const sceneName = ref(getObjFromPath(decodeURIComponent(props.sceneDir as string)).replace('.json', ''));
-
-const sceneInfo = ref<SceneInfo>(
-  await resolveSceneInfo(
-    decodeURIComponent(props.sceneDir as string)
-  )
-);
-
-const useImageAsBackground = ref(sceneInfo.value.background_color != null ? false : true);
-const multiChoiceNavigation = ref(sceneInfo.value.scene_actions.multiple_choice != null ? true : false);
-const narrationScene = ref(sceneInfo.value.narration_text != null ? true : false);
+console.log(props.sceneDir);
 
 </script>
 
@@ -34,35 +20,34 @@ const narrationScene = ref(sceneInfo.value.narration_text != null ? true : false
           <el-scrollbar>
             <el-form label-position="top">
               <el-form-item label="Scene name">
-                <el-input readonly v-model="sceneName" />
+                <el-input readonly />
               </el-form-item>
               <el-divider />
               <el-form-item label="Background type">
-                <el-radio-group v-model="useImageAsBackground">
-                  <el-radio :label="false">Color</el-radio>
-                  <el-radio :label="true">Media</el-radio>
+                <el-radio-group>
+                  <el-radio>Color</el-radio>
+                  <el-radio>Media</el-radio>
                 </el-radio-group>
                 <div class="background-type-values">
-                  <div v-if="!useImageAsBackground" class="background-type-values color-picker">
-                    <el-input readonly
-                      :model-value="sceneInfo.background_color != null ? sceneInfo.background_color : 'Pick a color'" />
-                    <el-color-picker v-model="(sceneInfo.background_color as string)" />
+                  <div v-if="true" class="background-type-values color-picker">
+                    <el-input readonly />
+                    <el-color-picker />
                   </div>
-                  <el-button v-if="useImageAsBackground" class="background-type-values media-picker">Change</el-button>
+                  <el-button v-if="false" class="background-type-values media-picker">Change</el-button>
                 </div>
               </el-form-item>
               <el-divider />
               <el-form-item label="Navigation type">
-                <el-radio-group v-model="multiChoiceNavigation">
-                  <el-radio :label="false">Single</el-radio>
-                  <el-radio :label="true">Multi</el-radio>
+                <el-radio-group>
+                  <el-radio>Single</el-radio>
+                  <el-radio>Multi</el-radio>
                 </el-radio-group>
               </el-form-item>
               <el-divider />
               <el-form-item label="Text display">
-                <el-radio-group v-model="narrationScene">
-                  <el-radio :label="true">Narration</el-radio>
-                  <el-radio :label="false">Attention</el-radio>
+                <el-radio-group>
+                  <el-radio>Narration</el-radio>
+                  <el-radio>Attention</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-form>
@@ -76,48 +61,44 @@ const narrationScene = ref(sceneInfo.value.narration_text != null ? true : false
       <div class="col-grid grid2">
         <div class="row-grid">
           <div id="scene-preview" class="component">
-            <div class="scene-preview-background" v-if="sceneInfo.background_color != null"
-              :style="`background-color: ${sceneInfo.background_color}`"></div>
-            <img class="scene-preview-background" v-if="sceneInfo.media != null"
-              :src="convertFileSrc(sceneInfo.media as string)" />
-            <p v-if="narrationScene" id="scene-preview-narration-text" class="background-neutral-text">{{
-              sceneInfo.narration_text }}</p>
-            <p v-if="!narrationScene" id="scene-preview-center-text" class="background-neutral-text">{{
-              sceneInfo.center_text }}</p>
-            <div v-if="multiChoiceNavigation" id="scene-preview-mcq">
-              <div class="mcq-button" v-for=" mcqEntry  in  sceneInfo.scene_actions.multiple_choice ">
-                <p class="background-neutral-text">{{ mcqEntry.action }}</p>
+            <div class="scene-preview-background" v-if="true" :style="`background-color: indigo`"></div>
+            <img class="scene-preview-background" v-if="false" />
+            <p v-if="true" id="scene-preview-narration-text" class="background-neutral-text">narration narration yes yes
+            </p>
+            <p v-if="true" id="scene-preview-center-text" class="background-neutral-text">center text very centered</p>
+            <div v-if="true" id="scene-preview-mcq">
+              <div class="mcq-button" v-for="e in 4">
+                <p class="background-neutral-text">Action {{ e }}</p>
               </div>
             </div>
-            <div v-if="!multiChoiceNavigation" id="scene-preview-catc">
+            <div v-if="true" id="scene-preview-catc">
               <p>Click anywhere to continue</p>
             </div>
           </div>
         </div>
         <div>
-          <el-input v-if="narrationScene" class="scene-textarea" id="narration-text" v-model="sceneInfo.narration_text"
-            maxlength="300" type="textarea" resize="none" :autosize="{ minRows: 2, maxRows: 2 }"
+          <el-input v-if="true" class="scene-textarea" id="narration-text" maxlength="300" type="textarea" resize="none"
+            :autosize="{ minRows: 2, maxRows: 2 }"
             placeholder="Narration Text (appears at the top right of the scene)"></el-input>
-          <el-input v-if="!narrationScene" class="scene-textarea" id="center-text" v-model="sceneInfo.center_text"
-            type="textarea" resize="none" maxlength="200" :autosize="{ minRows: 2, maxRows: 2 }"
+          <el-input v-if="false" class="scene-textarea" id="center-text" type="textarea" resize="none" maxlength="200"
+            :autosize="{ minRows: 2, maxRows: 2 }"
             placeholder="Attention Text (appears at the center of the scene)"></el-input>
         </div>
       </div>
-      <div v-if="multiChoiceNavigation" class="mcq-edit component">
+      <div v-if="true" class="mcq-edit component">
         <el-scrollbar>
-          <div class="empty-mcq"
-            v-if="sceneInfo.scene_actions.multiple_choice == null || sceneInfo.scene_actions.multiple_choice.length <= 0">
+          <div class="empty-mcq" v-if="true">
             <el-empty description="Click the button below to begin." />
           </div>
-          <el-card class="mcq-edit-card" v-for="mcqEntry in sceneInfo.scene_actions.multiple_choice">
+          <el-card v-if="false" class="mcq-edit-card" v-for="e in 4">
             <div class="mcq-edit-entry">
               <el-form label-position="top">
                 <el-form-item label="Action">
-                  <el-input v-model="mcqEntry.action" />
+                  <el-input :model-value="e" />
                 </el-form-item>
                 <el-form-item label="Destination">
                   <div style="display: flex; gap: 5px;">
-                    <el-input readonly :model-value="getObjFromPath(mcqEntry.destination).replace('.json', '')" />
+                    <el-input readonly />
                     <el-button text type="primary">Change</el-button>
                   </div>
                 </el-form-item>
@@ -129,14 +110,13 @@ const narrationScene = ref(sceneInfo.value.narration_text != null ? true : false
           <el-button text bg :icon="Plus">New option</el-button>
         </div>
       </div>
-      <el-card v-if="!multiChoiceNavigation" class="mcq-edit component">
+      <el-card v-if="false" class="mcq-edit component">
         <p>Single choice</p>
         <el-divider></el-divider>
         <el-form label-position="top">
           <el-form-item label="Destination">
             <div style="display: flex; gap: 5px;">
-              <el-input readonly
-                :model-value="getObjFromPath(sceneInfo.scene_actions.single_choice ?? '').replace('.json', '')" />
+              <el-input readonly />
               <el-button text type="primary">Change</el-button>
             </div>
           </el-form-item>
