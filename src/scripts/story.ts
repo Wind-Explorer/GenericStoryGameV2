@@ -76,6 +76,28 @@ export enum StoryLocation {
 }
 
 /**
+ * Enum which defines possible types of scene text.
+ */
+export enum SceneTextType {
+  Narration,
+  Attention,
+  None,
+}
+
+/**
+ * Enum which defines possible types of scene navigation.
+ */
+export enum SceneNavigationType {
+  SingleChoice,
+  MultipleChoice,
+}
+
+export enum SceneBackgroundType {
+  Media,
+  Color,
+}
+
+/**
  * Interface which defines structure of story info
  * with extra information to be used in editor.
  */

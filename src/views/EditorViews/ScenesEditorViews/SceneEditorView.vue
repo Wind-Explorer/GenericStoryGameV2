@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { House, Plus, Select } from '@element-plus/icons-vue';
+import { House, Plus, Select, Warning } from '@element-plus/icons-vue';
+import { SceneEditor } from '../../../scripts/sceneEditor';
+import { resolveSceneInfo, SceneTextType, SceneNavigationType, SceneBackgroundType } from '../../../scripts/story';
+import { getObjFromPath, getRandomColor, sanitizePath } from '../../../scripts/utils';
+import { ref, watch } from 'vue';
+import { convertFileSrc } from '@tauri-apps/api/tauri';
 
 // Scripts for the component
 
@@ -7,8 +12,25 @@ const props = defineProps({
   sceneDir: String,
 })
 
-console.log(props.sceneDir);
+const sceneDir = sanitizePath(props.sceneDir as string);
 
+const sceneEditorData = ref<SceneEditor>(
+  new SceneEditor(
+    await resolveSceneInfo(sceneDir)
+  )
+);
+
+const sceneBackgroundColor = ref(sceneEditorData.value.scene.background_color ?? getRandomColor());
+
+// When background color changes, update the value in the class.
+watch(sceneBackgroundColor, async () => {
+  sceneEditorData.value.setBackgroundColor(sceneBackgroundColor.value);
+  console.log(sceneEditorData.value.scene.background_color);
+});
+
+watch(sceneEditorData.value, () => {
+  console.log('something changed!!!');
+});
 </script>
 
 <template>
@@ -20,34 +42,36 @@ console.log(props.sceneDir);
           <el-scrollbar>
             <el-form label-position="top">
               <el-form-item label="Scene name">
-                <el-input readonly />
+                <el-input readonly :model-value="getObjFromPath(sceneDir)" />
               </el-form-item>
               <el-divider />
               <el-form-item label="Background type">
-                <el-radio-group>
-                  <el-radio>Color</el-radio>
-                  <el-radio>Media</el-radio>
+                <el-radio-group v-model="sceneEditorData.sceneBackgroundType">
+                  <el-radio :label="SceneBackgroundType.Color">Color</el-radio>
+                  <el-radio :label="SceneBackgroundType.Media">Media</el-radio>
                 </el-radio-group>
                 <div class="background-type-values">
-                  <div v-if="true" class="background-type-values color-picker">
-                    <el-input readonly />
-                    <el-color-picker />
+                  <div v-if="sceneEditorData.sceneBackgroundType === SceneBackgroundType.Color"
+                    class="background-type-values color-picker">
+                    <el-input readonly v-model="sceneBackgroundColor" />
+                    <el-color-picker v-model="sceneBackgroundColor" />
                   </div>
-                  <el-button v-if="false" class="background-type-values media-picker">Change</el-button>
+                  <el-button v-if="sceneEditorData.sceneBackgroundType === SceneBackgroundType.Media"
+                    class="background-type-values media-picker">Change</el-button>
                 </div>
               </el-form-item>
               <el-divider />
               <el-form-item label="Navigation type">
-                <el-radio-group>
-                  <el-radio>Single</el-radio>
-                  <el-radio>Multi</el-radio>
+                <el-radio-group v-model="sceneEditorData.sceneNavigationType">
+                  <el-radio :label="SceneNavigationType.SingleChoice">Single</el-radio>
+                  <el-radio :label="SceneNavigationType.MultipleChoice">Multi</el-radio>
                 </el-radio-group>
               </el-form-item>
               <el-divider />
               <el-form-item label="Text display">
-                <el-radio-group>
-                  <el-radio>Narration</el-radio>
-                  <el-radio>Attention</el-radio>
+                <el-radio-group v-model="sceneEditorData.sceneTextType">
+                  <el-radio :label="SceneTextType.Narration">Narration</el-radio>
+                  <el-radio :label="SceneTextType.Attention">Attention</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-form>
@@ -61,44 +85,64 @@ console.log(props.sceneDir);
       <div class="col-grid grid2">
         <div class="row-grid">
           <div id="scene-preview" class="component">
-            <div class="scene-preview-background" v-if="true" :style="`background-color: indigo`"></div>
-            <img class="scene-preview-background" v-if="false" />
-            <p v-if="true" id="scene-preview-narration-text" class="background-neutral-text">narration narration yes yes
+            <div class="scene-preview-background" v-if="sceneEditorData.sceneBackgroundType === SceneBackgroundType.Color"
+              :style="`background-color: ${sceneBackgroundColor};`"></div>
+            <el-image class="scene-preview-background" fit="cover"
+              v-if="sceneEditorData.sceneBackgroundType === SceneBackgroundType.Media"
+              :src="sceneEditorData.scene.media != null ? convertFileSrc(sceneEditorData.scene.media) : ''">
+              <template #error>
+                <div class="failed-to-load-image-message">
+                  <el-icon>
+                    <Warning />
+                  </el-icon>
+                  <el-text size="large" truncated>Graphics is failing to display. Please inspect your media
+                    selection.</el-text>
+                </div>
+              </template>
+            </el-image>
+            <p v-if="sceneEditorData.sceneTextType === SceneTextType.Narration" id="scene-preview-narration-text"
+              class="background-neutral-text">
+              {{ sceneEditorData.scene.narration_text }}
             </p>
-            <p v-if="true" id="scene-preview-center-text" class="background-neutral-text">center text very centered</p>
-            <div v-if="true" id="scene-preview-mcq">
-              <div class="mcq-button" v-for="e in 4">
-                <p class="background-neutral-text">Action {{ e }}</p>
+            <p v-if="sceneEditorData.sceneTextType === SceneTextType.Attention" id="scene-preview-center-text"
+              class="background-neutral-text">{{ sceneEditorData.scene.center_text }}</p>
+            <div v-if="sceneEditorData.sceneNavigationType == SceneNavigationType.MultipleChoice" id="scene-preview-mcq">
+              <div class="mcq-button" v-for="mcqEntry in sceneEditorData.scene.scene_actions.multiple_choice">
+                <p class="background-neutral-text">{{ mcqEntry.action }}</p>
               </div>
             </div>
-            <div v-if="true" id="scene-preview-catc">
+            <div v-if="sceneEditorData.sceneNavigationType == SceneNavigationType.SingleChoice" id="scene-preview-catc"
+              class="background-neutral-text">
               <p>Click anywhere to continue</p>
             </div>
           </div>
         </div>
         <div>
-          <el-input v-if="true" class="scene-textarea" id="narration-text" maxlength="300" type="textarea" resize="none"
-            :autosize="{ minRows: 2, maxRows: 2 }"
+          <el-input v-if="sceneEditorData.sceneTextType === SceneTextType.Narration"
+            v-model="sceneEditorData.scene.narration_text" class="scene-textarea" id="narration-text" maxlength="300"
+            type="textarea" resize="none" :autosize="{ minRows: 2, maxRows: 2 }"
             placeholder="Narration Text (appears at the top right of the scene)"></el-input>
-          <el-input v-if="false" class="scene-textarea" id="center-text" type="textarea" resize="none" maxlength="200"
-            :autosize="{ minRows: 2, maxRows: 2 }"
+          <el-input v-if="sceneEditorData.sceneTextType === SceneTextType.Attention"
+            v-model="sceneEditorData.scene.center_text" class="scene-textarea" id="center-text" type="textarea"
+            resize="none" maxlength="200" :autosize="{ minRows: 2, maxRows: 2 }"
             placeholder="Attention Text (appears at the center of the scene)"></el-input>
         </div>
       </div>
-      <div v-if="true" class="mcq-edit component">
+      <div v-if="sceneEditorData.sceneNavigationType === SceneNavigationType.MultipleChoice" class="mcq-edit component">
         <el-scrollbar>
-          <div class="empty-mcq" v-if="true">
+          <div class="empty-mcq"
+            v-if="sceneEditorData.scene.scene_actions.multiple_choice == null || sceneEditorData.scene.scene_actions.multiple_choice.length <= 0">
             <el-empty description="Click the button below to begin." />
           </div>
-          <el-card v-if="false" class="mcq-edit-card" v-for="e in 4">
+          <el-card class="mcq-edit-card" v-for="mcqEntry in sceneEditorData.scene.scene_actions.multiple_choice">
             <div class="mcq-edit-entry">
               <el-form label-position="top">
                 <el-form-item label="Action">
-                  <el-input :model-value="e" />
+                  <el-input v-model="mcqEntry.action" />
                 </el-form-item>
                 <el-form-item label="Destination">
                   <div style="display: flex; gap: 5px;">
-                    <el-input readonly />
+                    <el-input readonly :model-value="getObjFromPath(mcqEntry.destination)" />
                     <el-button text type="primary">Change</el-button>
                   </div>
                 </el-form-item>
@@ -110,7 +154,7 @@ console.log(props.sceneDir);
           <el-button text bg :icon="Plus">New option</el-button>
         </div>
       </div>
-      <el-card v-if="false" class="mcq-edit component">
+      <el-card v-if="sceneEditorData.sceneNavigationType === SceneNavigationType.SingleChoice" class="mcq-edit component">
         <p>Single choice</p>
         <el-divider></el-divider>
         <el-form label-position="top">
@@ -224,7 +268,6 @@ console.log(props.sceneDir);
   position: absolute;
   width: 100%;
   height: 100%;
-  object-fit: cover;
   top: 0;
   bottom: 0;
   left: 0;
@@ -267,6 +310,21 @@ console.log(props.sceneDir);
   position: relative;
   transform: scale(0.8);
   margin-top: 20vh;
+}
+
+.failed-to-load-image-message {
+  position: relative;
+  background-color: #a5000033;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  font-size: 15px;
+  gap: 8px;
+}
+
+.failed-to-load-image-message * {
+  margin: auto 0;
+  color: red;
 }
 
 #scene-preview {
@@ -313,7 +371,6 @@ console.log(props.sceneDir);
   right: 0;
   text-align: center;
   font-size: 0.9vw;
-  text-shadow: 0px 0px 0.1vw rgba(0, 0, 0, 1), 0px 0px 0.3vw rgba(0, 0, 0, 0.5), 0px 0px 0.8vw rgba(0, 0, 0, 0.5);
   opacity: 0.8;
   font-weight: 300;
 }
