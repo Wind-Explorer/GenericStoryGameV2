@@ -278,7 +278,6 @@ watch(sceneEditorData.value, () => {
   width: 30vw;
   max-width: 260px;
   min-width: 180px;
-  height: 100%;
   position: relative;
 }
 
