@@ -4,9 +4,8 @@ import { VideoPlay, Files, House } from '@element-plus/icons-vue'
 import StoriesList from '../../components/StoriesList.vue'
 import { dialogStyling } from '../../scripts/dialog.css'
 import { ref } from 'vue';
-
+import MenuBackground from '../../components/MenuBackground.vue';
 import PageTitle from '../../components/PageTitle.vue';
-import AnimatingGradient from '../../components/AnimatingGradient.vue';
 
 const storiesListDialogVisible = ref(false);
 </script>
@@ -15,7 +14,7 @@ const storiesListDialogVisible = ref(false);
   <div class="container">
     <!-- HTML elements for the component -->
     <PageTitle title="Play" subtitle="Pick up where you left off or select one from your collection." />
-    <AnimatingGradient />
+    <MenuBackground />
     <div class="navigation-button">
       <div class="main-navigation-buttons">
         <el-button-group>

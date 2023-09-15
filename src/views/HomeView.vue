@@ -2,9 +2,8 @@
 // Scripts for the component
 import { VideoPlay, Edit, Setting, SwitchButton } from '@element-plus/icons-vue'
 import { exit } from '@tauri-apps/api/process';
-
+import MenuBackground from '../components/MenuBackground.vue';
 import PageTitle from '../components/PageTitle.vue';
-import AnimatingGradient from '../components/AnimatingGradient.vue';
 
 async function quitApp() {
   await exit(1);
@@ -15,7 +14,7 @@ async function quitApp() {
   <div class="container">
     <!-- HTML elements for the component -->
     <PageTitle title="Generic Story Game" subtitle="Version 0.5.0" />
-    <AnimatingGradient />
+    <MenuBackground />
     <div class="navigation-button">
       <div class="main-navigation-buttons">
         <el-button-group>

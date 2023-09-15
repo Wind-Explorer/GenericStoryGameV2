@@ -41,17 +41,13 @@ code {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: var(--el-button-bg-color);
-  backdrop-filter: blur(60px) brightness(1.13);
-  -webkit-backdrop-filter: blur(60px) brightness(1.13);
+  background-color: #f8f8f8;
   padding: 30px;
 }
 
 html.dark {
   .navigation-button {
-    border-top: 1px solid #77777777;
-    backdrop-filter: blur(60px) brightness(0.6);
-    -webkit-backdrop-filter: blur(60px) brightness(0.6);
+    background-color: rgb(27, 27, 27);
   }
 }
 

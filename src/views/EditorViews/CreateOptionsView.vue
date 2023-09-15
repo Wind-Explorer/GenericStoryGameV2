@@ -1,12 +1,13 @@
 <script setup lang="ts">
 // Scripts for the component
 import PageTitle from '../../components/PageTitle.vue';
-import AnimatingGradient from '../../components/AnimatingGradient.vue';
 import EditorStoriesList from '../../components/EditorStoriesList.vue';
 import { dialogStyling } from '../../scripts/dialog.css'
 import { Plus, Files, House } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue';
 import { createNewStory } from '../../scripts/story';
+
+import MenuBackground from '../../components/MenuBackground.vue';
 
 const newStoryDialogVisible = ref(false);
 const storiesListDialogVisible = ref(false);
@@ -37,7 +38,7 @@ async function prepareNewStoryCreation() {
   <div class="container">
     <!-- HTML elements for the component -->
     <PageTitle title="Create" subtitle="Tell a story the way you want." />
-    <AnimatingGradient />
+    <MenuBackground />
     <div class="navigation-button">
       <div class="main-navigation-buttons">
         <el-button-group>

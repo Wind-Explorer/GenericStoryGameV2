@@ -47,6 +47,5 @@ html.dark {
 .transition-enter-from,
 .transition-leave-to {
   opacity: 0;
-  transform-origin: center;
 }
 </style>
