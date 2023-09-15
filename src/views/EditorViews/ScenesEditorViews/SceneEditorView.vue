@@ -95,8 +95,8 @@ watch(sceneEditorData.value, () => {
                   <el-icon>
                     <Warning />
                   </el-icon>
-                  <el-text size="large" truncated>Graphics is failing to display. Please inspect your media
-                    selection.</el-text>
+                  <el-text size="large" truncated>Did you add an image for display? Either that or something is very
+                    wrong.</el-text>
                 </div>
               </template>
             </el-image>
@@ -134,7 +134,8 @@ watch(sceneEditorData.value, () => {
             v-if="sceneEditorData.scene.scene_actions.multiple_choice == null || sceneEditorData.scene.scene_actions.multiple_choice.length <= 0">
             <el-empty description="Click the button below to begin." />
           </div>
-          <el-card class="mcq-edit-card" v-for="mcqEntry in sceneEditorData.scene.scene_actions.multiple_choice">
+          <el-card v-if="sceneEditorData.scene.scene_actions.multiple_choice != null" class="mcq-edit-card"
+            v-for="mcqEntry in sceneEditorData.scene.scene_actions.multiple_choice">
             <div class="mcq-edit-entry">
               <el-form label-position="top">
                 <el-form-item label="Action">
@@ -147,11 +148,17 @@ watch(sceneEditorData.value, () => {
                   </div>
                 </el-form-item>
               </el-form>
+              <el-button @click="sceneEditorData.removeNavigationOption(mcqEntry)" type="danger" size="small" text
+                class="remove-mcq-option-button">
+                <el-icon>
+                  <DeleteFilled />
+                </el-icon>
+              </el-button>
             </div>
           </el-card>
         </el-scrollbar>
         <div class="add-mcq-div">
-          <el-button text bg :icon="Plus">New option</el-button>
+          <el-button @click="sceneEditorData.addNewNavigationOption()" text bg :icon="Plus">New option</el-button>
         </div>
       </div>
       <el-card v-if="sceneEditorData.sceneNavigationType === SceneNavigationType.SingleChoice" class="mcq-edit component">
@@ -160,7 +167,8 @@ watch(sceneEditorData.value, () => {
         <el-form label-position="top">
           <el-form-item label="Destination">
             <div style="display: flex; gap: 5px;">
-              <el-input readonly />
+              <el-input readonly
+                :model-value="getObjFromPath(sceneEditorData.scene.scene_actions.single_choice ?? 'No Destination')" />
               <el-button text type="primary">Change</el-button>
             </div>
           </el-form-item>
@@ -218,6 +226,7 @@ watch(sceneEditorData.value, () => {
 }
 
 .mcq-edit-entry {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -324,6 +333,12 @@ watch(sceneEditorData.value, () => {
 .failed-to-load-image-message * {
   margin: auto 0;
   color: red;
+}
+
+.remove-mcq-option-button {
+  position: absolute;
+  right: -15px;
+  top: -15px;
 }
 
 #scene-preview {

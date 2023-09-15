@@ -1,4 +1,4 @@
-import { SceneBackgroundType, SceneInfo, SceneNavigationType, SceneTextType } from "./story";
+import { MultipleChoice, SceneBackgroundType, SceneInfo, SceneNavigationType, SceneTextType } from "./story";
 
 /**
  * An instance of scene editor offering interfaces to edit a scene.
@@ -15,6 +15,10 @@ export class SceneEditor {
     this.sceneBackgroundType = this.resolveCurrentSceneBackgroundType();
   }
 
+  /**
+   * Resolves the current text type for the scene.
+   * @returns The current text type for the scene.
+   */
   resolveCurrentSceneTextType(): SceneTextType {
     // Priorotizes attention / center text.
     if (this.scene.center_text != null) {
@@ -26,6 +30,10 @@ export class SceneEditor {
     }
   }
 
+  /**
+   * Resolves the current navigation type of the scene.
+   * @returns The current navigation type of the scene.
+   */
   resolveCurrentSceneNavigationType(): SceneNavigationType {
     // Priorotizes multiple choice.
     if (this.scene.scene_actions.multiple_choice != null) {
@@ -37,6 +45,10 @@ export class SceneEditor {
     }
   }
 
+  /**
+   * Resolves the current background type of the scene.
+   * @returns The current background type of the scene.
+   */
   resolveCurrentSceneBackgroundType(): SceneBackgroundType {
     // Priorotizes image.
     if (this.scene.media != null) {
@@ -46,6 +58,9 @@ export class SceneEditor {
     }
   }
 
+  /**
+   * Sets the value of the current text type property.
+   */
   setCurrentTextType() {
     // Priorotizes attention / center text.
     if (this.scene.center_text != null) {
@@ -70,5 +85,27 @@ export class SceneEditor {
    */
   setBackgroundColor(colorCode: string) {
     this.scene.background_color = colorCode;
+  }
+
+  /**
+   * Initializes a new navigation entry.
+   */
+  addNewNavigationOption() {
+    this.scene.scene_actions.multiple_choice?.push({
+      action: 'New action',
+      destination: 'No Destination'
+    });
+  }
+
+  /**
+   * Modifies specified navigation entry.
+   * @param index The entry to be removed
+   */
+  removeNavigationOption(entry: MultipleChoice) {
+    if (this.scene.scene_actions.multiple_choice == null) {
+      return;
+    }
+    let index = this.scene.scene_actions.multiple_choice.findIndex((value, _, __) => value === entry);
+    this.scene.scene_actions.multiple_choice.splice(index, 1);
   }
 }
