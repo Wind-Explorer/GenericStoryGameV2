@@ -6,6 +6,7 @@ import { getObjFromPath, openInFileManager, resolveNameOfFileManager, joinPath }
 import { House, Select } from '@element-plus/icons-vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { ElMessage } from 'element-plus';
+import { strings } from '../../scripts/strings';
 
 // Scripts for the component
 
@@ -78,7 +79,8 @@ async function saveData() {
 				<div class="resources-entry">
 					<el-text size="large">{{ storyInfo.resources_count }} file{{ storyInfo.resources_count > 1 ? 's' : '' }} in the
 						resources folder</el-text>
-					<el-button @click="openInFileManager(joinPath((baseDir as string), 'resources'))">{{ `Manage in
+					<el-button @click="openInFileManager(joinPath((baseDir as string), strings.fileNames.resourcesFolder))">{{
+						`Manage in
 						${resolveNameOfFileManager()}` }}</el-button>
 				</div>
 			</el-descriptions-item>

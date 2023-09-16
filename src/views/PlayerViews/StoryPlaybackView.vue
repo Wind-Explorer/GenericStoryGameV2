@@ -5,6 +5,7 @@ import { StoryInfo, resolveStoryInfo, SceneInfo, resolveSceneInfo } from '../../
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import router from '../../router';
 import { sleep } from '../../scripts/utils';
+import { strings } from '../../scripts/strings';
 
 const props = defineProps({
   baseDir: String
@@ -88,7 +89,7 @@ function setNavButtonsState(enabled: boolean, element: HTMLElement) {
  */
 async function initiateNavigation(scenePath: string, single_choice: boolean = false) {
   // Check if destination is the end.
-  if (scenePath == "#END") {
+  if (scenePath == strings.navigationKeywords.end) {
     // Router back to where user came from (PlayOptionsPage).
     router.go(-1);
     return;

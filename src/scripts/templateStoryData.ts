@@ -1,4 +1,5 @@
 import { StoryInfo, SceneInfo } from "./story";
+import { strings } from "./strings";
 import { getRandomColor } from "./utils";
 
 /**
@@ -8,11 +9,11 @@ import { getRandomColor } from "./utils";
 export function templateStoryInfo(story_title: string, story_description: string, story_author: string): StoryInfo {
   return {
     title: story_title,
-    description: story_description.length <= 0 ? 'An exciting generic story.' : story_description,
-    author: story_author.length <= 0 ? 'A mysterious someone' : story_author,
+    description: story_description.length <= 0 ? strings.templateStoryInfo.description : story_description,
+    author: story_author.length <= 0 ? strings.templateStoryInfo.author : story_author,
     creation_date: new Date(),
-    thumbnail: 'resources/thumb.jpg',
-    entry_point: 'scenes/First Scene.json',
+    thumbnail: `${strings.fileNames.resourcesFolder}/${strings.fileNames.thumbnail}`,
+    entry_point: `${strings.fileNames.scenesFolder}/${strings.fileNames.firstScene}`,
     base_dir: ''
   }
 }
@@ -21,13 +22,13 @@ export function templateStoryInfo(story_title: string, story_description: string
  * First template scene info.
  */
 export const templateSceneInfo1: SceneInfo = {
-  center_text: "This is the first scene of the story. It's a very exciting scene.",
+  center_text: strings.templateSceneInfo.sceneText1,
   narration_text: null,
   background_color: getRandomColor(),
   media: null,
   scene_actions: {
     multiple_choice: null,
-    single_choice: "scenes/Second Scene.json",
+    single_choice: `${strings.fileNames.scenesFolder}/${strings.fileNames.secondScene}`,
   }
 }
 
@@ -36,18 +37,18 @@ export const templateSceneInfo1: SceneInfo = {
  */
 export const templateSceneInfo2: SceneInfo = {
   center_text: null,
-  narration_text: "Welcome to the second and the last scene! Open up the editor and start creating your own story!",
+  narration_text: strings.templateSceneInfo.sceneText2.text,
   background_color: getRandomColor(),
   media: null,
   scene_actions: {
     multiple_choice: [
       {
-        action: "Go to the first scene",
-        destination: "scenes/First Scene.json"
+        action: strings.templateSceneInfo.sceneText2.sceneOption1,
+        destination: `${strings.fileNames.scenesFolder}/${strings.fileNames.firstScene}`
       },
       {
-        action: "End the story now",
-        destination: "#END"
+        action: strings.templateSceneInfo.sceneText2.sceneOption2,
+        destination: strings.navigationKeywords.end
       }
     ],
     single_choice: null,

@@ -1,6 +1,7 @@
 import { writeTextFile } from "@tauri-apps/api/fs";
 import { MultipleChoice, SceneActions, SceneBackgroundType, SceneInfo, SceneNavigationType, SceneTextType } from "./story";
 import { convertAbsoluteToRelative } from "./utils";
+import { strings } from "./strings";
 
 /**
  * An instance of scene editor offering interfaces to edit a scene.
@@ -128,16 +129,16 @@ export class SceneEditor {
     // If MCQ is not null, process each entry.
     if (sceneActions.multiple_choice != null) {
       sceneActions.multiple_choice.forEach((value, _, __) => {
-        // If the destination of this entry is #END, skip.
-        if (value.destination === '#END') { return }
+        // If the destination of this entry is the end, skip.
+        if (value.destination === strings.navigationKeywords.end) { return }
 
         // Otherwise, convert the destination to relative path.
         value.destination = convertAbsoluteToRelative(value.destination, this.baseDir);
       });
     }
 
-    // If SCQ is not null and not #END, convert to relative path.
-    else if (sceneActions.single_choice != null && sceneActions.single_choice !== '#END') {
+    // If SCQ is not null and not the end, convert to relative path.
+    else if (sceneActions.single_choice != null && sceneActions.single_choice !== strings.navigationKeywords.end) {
       sceneActions.single_choice = convertAbsoluteToRelative(sceneActions.single_choice, this.baseDir);
     }
 
@@ -176,7 +177,7 @@ export class SceneEditor {
   addNewNavigationOption() {
     this.scene.scene_actions.multiple_choice?.push({
       action: 'New action',
-      destination: '#END'
+      destination: strings.navigationKeywords.end
     });
   }
 

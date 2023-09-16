@@ -5,6 +5,7 @@ import { bookUint8Array } from './book.png';
 import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
 import { getObjFromPath, ensureDirExists, joinPath, sanitizePath, convertAbsoluteToRelative } from './utils';
 import { sep } from "@tauri-apps/api/path";
+import { strings } from './strings';
 
 /**
  * Path to application data directory.
@@ -17,15 +18,14 @@ console.log(await appDataDir());
  * 
  * Resolves to `$APPDATA/collections`.
  */
-const collectionsPath = await ensureDirExists(joinPath(appDataDirPath, 'collections'));
+const collectionsPath = await ensureDirExists(joinPath(appDataDirPath, strings.fileNames.collectionsFolder));
 
 /**
  * Path to story creator workspace directory.
  * 
  * Resolves to `$APPDATA/workspace`.
  */
-const workspacePath = await ensureDirExists(joinPath(appDataDirPath, 'workspace'));
-console.log(joinPath(appDataDirPath, 'workspace'));
+const workspacePath = await ensureDirExists(joinPath(appDataDirPath, strings.fileNames.workspaceFolder));
 
 /**
  * Interface which defines structure of story info.
@@ -155,7 +155,7 @@ export async function resolveStoriesFromFS(location: StoryLocation = StoryLocati
  * @returns Array of `ExtraSceneInfo` objects.
  */
 export async function resolveScenesFromFS(baseDir: string): Promise<ExtraSceneInfo[]> {
-  return readDir(joinPath(baseDir, 'scenes')).then(async (scenes) => {
+  return readDir(joinPath(baseDir, strings.fileNames.scenesFolder)).then(async (scenes) => {
 
     // TODO: If story save directory is empty, return empty array.
 
@@ -191,7 +191,7 @@ export async function resolveScenesFromFS(baseDir: string): Promise<ExtraSceneIn
 export async function resolveStoryInfo(baseDir: string): Promise<StoryInfo> {
 
   // Read story info as JSON data from story save directory.
-  let storyInfoAsJSON = await readTextFile(joinPath(baseDir, 'gsg.json'));
+  let storyInfoAsJSON = await readTextFile(joinPath(baseDir, strings.fileNames.core));
 
   // Parse story info from JSON data.
   const storyInfo = JSON.parse(storyInfoAsJSON, (key, value) => {
@@ -222,8 +222,8 @@ export async function resolveStoryInfo(baseDir: string): Promise<StoryInfo> {
  */
 export async function resolveExtraStoryInfo(baseDir: string): Promise<ExtraStoryInfo> {
   const baseStoryInfo = await resolveStoryInfo(baseDir);
-  const resourcesCount = await readDir(joinPath(baseDir, 'resources')).then((resources) => resources.length);
-  const scenesCount = await readDir(joinPath(baseDir, 'scenes')).then((scenes) => scenes.length);
+  const resourcesCount = await readDir(joinPath(baseDir, strings.fileNames.resourcesFolder)).then((resources) => resources.length);
+  const scenesCount = await readDir(joinPath(baseDir, strings.fileNames.scenesFolder)).then((scenes) => scenes.length);
   return {
     base_story_info: baseStoryInfo,
     resources_count: resourcesCount,
@@ -247,7 +247,7 @@ function resolveSceneActions(sceneAction: SceneActions, baseDir: string): SceneA
           const value = multipleChoice.destination;
 
           // Before concatenating, check if it's null or is ending tag.
-          if (value == null || value == "#END") {
+          if (value == null || value == strings.navigationKeywords.end) {
             return value;
           } else {
             return joinPath(baseDir, value);
@@ -262,7 +262,7 @@ function resolveSceneActions(sceneAction: SceneActions, baseDir: string): SceneA
     const value = sceneAction.single_choice;
 
     // Before concatenating, check if it's null or is ending tag.
-    if (value == null || value == "#END") {
+    if (value == null || value == strings.navigationKeywords.end) {
       return value;
     } else {
       return joinPath(baseDir, value);
@@ -324,8 +324,8 @@ export async function createNewStory(story_title: string, story_description: str
 
   // Declare the paths for story directory
   const baseDir = joinPath(workspacePath, uuidDirName);
-  const scenesDir = joinPath(baseDir, 'scenes');
-  const resourcesDir = joinPath(baseDir, 'resources');
+  const scenesDir = joinPath(baseDir, strings.fileNames.scenesFolder);
+  const resourcesDir = joinPath(baseDir, strings.fileNames.resourcesFolder);
 
   // Create the directories
   /*
@@ -342,14 +342,14 @@ export async function createNewStory(story_title: string, story_description: str
   let newStoryInfoAsJSON = JSON.stringify(newStoryInfo, null);
 
   // Write the story info JSON data to the story directory
-  await writeTextFile(joinPath(baseDir, 'gsg.json'), newStoryInfoAsJSON);
+  await writeTextFile(joinPath(baseDir, strings.fileNames.core), newStoryInfoAsJSON);
 
   // Generate template story thumbnail
-  await writeBinaryFile(joinPath(resourcesDir, 'thumb.jpg'), bookUint8Array());
+  await writeBinaryFile(joinPath(resourcesDir, strings.fileNames.thumbnail), bookUint8Array());
 
   // Populate the story with two example scenes
-  await writeTextFile(joinPath(scenesDir, 'First Scene.json'), JSON.stringify(templateSceneInfo1, null));
-  await writeTextFile(joinPath(scenesDir, 'Second Scene.json'), JSON.stringify(templateSceneInfo2, null));
+  await writeTextFile(joinPath(scenesDir, strings.fileNames.firstScene), JSON.stringify(templateSceneInfo1, null));
+  await writeTextFile(joinPath(scenesDir, strings.fileNames.secondScene), JSON.stringify(templateSceneInfo2, null));
 }
 
 /**
@@ -373,6 +373,6 @@ export async function writeStoryInfoToDisk(data: StoryInfo, baseDir: string) {
     else { return value };
   });
 
-  // Write data to gsg.json.
-  await writeTextFile(joinPath(baseDir, 'gsg.json'), JSONData);
+  // Write data to story core.
+  await writeTextFile(joinPath(baseDir, strings.fileNames.core), JSONData);
 }
