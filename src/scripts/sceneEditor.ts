@@ -19,6 +19,13 @@ export class SceneEditor {
     this.sceneBackgroundType = this.resolveCurrentSceneBackgroundType();
     this.sceneDir = sceneDir;
     this.baseDir = baseDir;
+    this.preventNull();
+  }
+
+  preventNull() {
+    if (this.scene.scene_actions.multiple_choice == null) {
+      this.scene.scene_actions.multiple_choice = [];
+    }
   }
 
   /**
