@@ -3,7 +3,7 @@ import { House, Plus, Select, Warning } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { SceneEditor } from '../../../scripts/sceneEditor';
 import { resolveSceneInfo, SceneTextType, SceneNavigationType, SceneBackgroundType, resolveBaseDirFromScenePath } from '../../../scripts/story';
-import { getObjFromPath, getRandomColor, sanitizePath } from '../../../scripts/utils';
+import { getObjFromPath, sanitizePath } from '../../../scripts/utils';
 import { ref, watch } from 'vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 
@@ -23,7 +23,7 @@ const sceneEditorData = ref<SceneEditor>(
   )
 );
 
-const sceneBackgroundColor = ref(sceneEditorData.value.scene.background_color ?? getRandomColor());
+const sceneBackgroundColor = ref(sceneEditorData.value.scene.background_color ?? '');
 
 // When background color changes, update the value in the class.
 watch(sceneBackgroundColor, async () => {
@@ -61,7 +61,7 @@ function saveChanges() {
                 <div class="background-type-values">
                   <div v-if="sceneEditorData.sceneBackgroundType === SceneBackgroundType.Color"
                     class="background-type-values color-picker">
-                    <el-input readonly v-model="sceneBackgroundColor" />
+                    <el-input readonly placeholder="Pick a color" v-model="sceneBackgroundColor" />
                     <el-color-picker v-model="sceneBackgroundColor" />
                   </div>
                   <el-button v-if="sceneEditorData.sceneBackgroundType === SceneBackgroundType.Media"

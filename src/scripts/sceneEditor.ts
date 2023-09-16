@@ -66,8 +66,10 @@ export class SceneEditor {
     // Priorotizes image.
     if (this.scene.media != null) {
       return SceneBackgroundType.Media;
-    } else {
+    } else if (this.scene.background_color != null) {
       return SceneBackgroundType.Color;
+    } else {
+      return SceneBackgroundType.Media;
     }
   }
 
