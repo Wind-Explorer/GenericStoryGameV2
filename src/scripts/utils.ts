@@ -86,3 +86,14 @@ export function joinPath(...paths: string[]): string {
   });
   return sanitizePath(paths.join(sep));
 }
+
+/**
+ * Converts an absolute path to a path relative to the story base directory.
+ * @param fullPath Absolute path
+ * @param baseDir Base directory
+ * @returns Path relative to story base directory
+ */
+export function convertAbsoluteToRelative(fullPath: string, baseDir: string): string {
+  // Separators for paths stored defaults to POSIX ('/')
+  return sanitizePath(fullPath.replace(`${baseDir}${sep}`, ''), '/');
+}

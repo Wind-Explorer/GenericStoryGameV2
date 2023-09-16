@@ -1,4 +1,6 @@
-import { MultipleChoice, SceneBackgroundType, SceneInfo, SceneNavigationType, SceneTextType } from "./story";
+import { writeTextFile } from "@tauri-apps/api/fs";
+import { MultipleChoice, SceneActions, SceneBackgroundType, SceneInfo, SceneNavigationType, SceneTextType } from "./story";
+import { convertAbsoluteToRelative } from "./utils";
 
 /**
  * An instance of scene editor offering interfaces to edit a scene.
@@ -8,11 +10,15 @@ export class SceneEditor {
   sceneTextType: SceneTextType;
   sceneNavigationType: SceneNavigationType;
   sceneBackgroundType: SceneBackgroundType;
-  constructor(scene: SceneInfo) {
+  sceneDir: string;
+  baseDir: string;
+  constructor(scene: SceneInfo, sceneDir: string, baseDir: string) {
     this.scene = scene;
     this.sceneTextType = this.resolveCurrentSceneTextType();
     this.sceneNavigationType = this.resolveCurrentSceneNavigationType();
     this.sceneBackgroundType = this.resolveCurrentSceneBackgroundType();
+    this.sceneDir = sceneDir;
+    this.baseDir = baseDir;
   }
 
   /**
@@ -62,10 +68,9 @@ export class SceneEditor {
    * Sets the value of the current text type property.
    */
   setCurrentTextType() {
-    // Priorotizes attention / center text.
-    if (this.scene.center_text != null) {
+    if (this.sceneTextType === SceneTextType.Attention) {
       this.scene.narration_text = null;
-    } else if (this.scene.narration_text != null) {
+    } else if (this.sceneTextType === SceneTextType.Narration) {
       this.scene.center_text = null;
     } else {
       this.scene.center_text = "";
@@ -73,10 +78,79 @@ export class SceneEditor {
     }
   }
 
-  saveSceneToDisk() {
-    // Determine which of the available text type to use.
-    // If more than one exists, preserve the priorotized type.
+  /**
+   * Sets the value of the current navigation type property.
+   */
+  setCurrentNavigationType() {
+    if (this.sceneNavigationType === SceneNavigationType.MultipleChoice) {
+      this.scene.scene_actions.single_choice = null;
+    } else if (this.sceneNavigationType === SceneNavigationType.SingleChoice) {
+      this.scene.scene_actions.multiple_choice = null;
+    }
+  }
+
+  /**
+   * Sets the value of the current background type property.
+   */
+  setCurrentSceneBackgroundType() {
+    if (this.sceneBackgroundType === SceneBackgroundType.Media) {
+      this.scene.background_color = null;
+    } else if (this.sceneBackgroundType === SceneBackgroundType.Color) {
+      this.scene.media = null;
+    }
+  }
+
+  /**
+   * Sets the value of the current types property.
+   */
+  setTypes() {
     this.setCurrentTextType();
+    this.setCurrentNavigationType();
+    this.setCurrentSceneBackgroundType();
+  }
+
+  /**
+   * Prepare scene action information for storage.
+   * @param sceneActions Scene action information to be processed.
+   * @returns Processed scene action information.
+   */
+  processSceneActions(sceneActions: SceneActions): SceneActions {
+
+    // If MCQ is not null, process each entry.
+    if (sceneActions.multiple_choice != null) {
+      sceneActions.multiple_choice.forEach((value, _, __) => {
+        // If the destination of this entry is #END, skip.
+        if (value.destination === '#END') { return }
+
+        // Otherwise, convert the destination to relative path.
+        value.destination = convertAbsoluteToRelative(value.destination, this.baseDir);
+      });
+    }
+
+    // If SCQ is not null and not #END, convert to relative path.
+    else if (sceneActions.single_choice != null && sceneActions.single_choice !== '#END') {
+      sceneActions.single_choice = convertAbsoluteToRelative(sceneActions.single_choice, this.baseDir);
+    }
+
+    return sceneActions;
+  }
+
+  /**
+   * Saves the scene to story save directory.
+   */
+  async saveSceneToDisk() {
+    this.setTypes();
+    let sceneJson = JSON.stringify(this.scene, (key, value) => {
+      if (key === 'media' && value != null) {
+        return convertAbsoluteToRelative(value, this.baseDir);
+      } else if (key === 'scene_actions') {
+        value = this.processSceneActions(value);
+      }
+      return value;
+    });
+
+    // Write to file.
+    await writeTextFile(this.sceneDir, sceneJson);
   }
 
   /**
@@ -93,12 +167,12 @@ export class SceneEditor {
   addNewNavigationOption() {
     this.scene.scene_actions.multiple_choice?.push({
       action: 'New action',
-      destination: 'No Destination'
+      destination: '#END'
     });
   }
 
   /**
-   * Modifies specified navigation entry.
+   * Removes specified navigation entry.
    * @param index The entry to be removed
    */
   removeNavigationOption(entry: MultipleChoice) {

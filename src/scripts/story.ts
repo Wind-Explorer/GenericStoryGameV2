@@ -3,7 +3,7 @@ import { createDir, readDir, readTextFile, writeBinaryFile, writeTextFile } from
 import { v4 as uuidv4 } from 'uuid';
 import { bookUint8Array } from './book.png';
 import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
-import { getObjFromPath, ensureDirExists, joinPath, sanitizePath } from './utils';
+import { getObjFromPath, ensureDirExists, joinPath, sanitizePath, convertAbsoluteToRelative } from './utils';
 import { sep } from "@tauri-apps/api/path";
 
 /**
@@ -275,7 +275,7 @@ function resolveSceneActions(sceneAction: SceneActions, baseDir: string): SceneA
  * Helper function to get story base directory path from scene JSON path.
  * @param scenePath Path to scene JSON file.
  */
-function resolveBaseDirFromScenePath(scenePath: string) {
+export function resolveBaseDirFromScenePath(scenePath: string) {
   let splittedScenePath = sanitizePath(scenePath).split(sep);
   splittedScenePath.pop();
   splittedScenePath.pop();
@@ -363,8 +363,7 @@ export async function writeStoryInfoToDisk(data: StoryInfo, baseDir: string) {
     // For thumbnail and entry_point paths, return path
     // relative to story directory (strip away absolute path).
     if (key === 'thumbnail' || key === 'entry_point') {
-      // Separators for paths stored defaults to POSIX ('/')
-      return sanitizePath(value.replace(`${baseDir}${sep}`, ''), '/');
+      return convertAbsoluteToRelative(value, baseDir);
     }
 
     // base_dir should be left empty.

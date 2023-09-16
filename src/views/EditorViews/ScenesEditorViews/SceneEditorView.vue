@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { House, Plus, Select, Warning } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 import { SceneEditor } from '../../../scripts/sceneEditor';
-import { resolveSceneInfo, SceneTextType, SceneNavigationType, SceneBackgroundType } from '../../../scripts/story';
+import { resolveSceneInfo, SceneTextType, SceneNavigationType, SceneBackgroundType, resolveBaseDirFromScenePath } from '../../../scripts/story';
 import { getObjFromPath, getRandomColor, sanitizePath } from '../../../scripts/utils';
 import { ref, watch } from 'vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
@@ -16,7 +17,9 @@ const sceneDir = sanitizePath(props.sceneDir as string);
 
 const sceneEditorData = ref<SceneEditor>(
   new SceneEditor(
-    await resolveSceneInfo(sceneDir)
+    await resolveSceneInfo(sceneDir),
+    sceneDir,
+    resolveBaseDirFromScenePath(sceneDir)
   )
 );
 
@@ -31,6 +34,11 @@ watch(sceneBackgroundColor, async () => {
 watch(sceneEditorData.value, () => {
   console.log('something changed!!!');
 });
+
+function saveChanges() {
+  sceneEditorData.value.saveSceneToDisk();
+  ElMessage({ message: 'Saved', grouping: true, type: 'success' })
+}
 </script>
 
 <template>
@@ -77,7 +85,7 @@ watch(sceneEditorData.value, () => {
             </el-form>
           </el-scrollbar>
           <div class="scene-preferences-actions">
-            <el-button type="success" plain :icon="Select">Save</el-button>
+            <el-button @click="saveChanges" type="success" plain :icon="Select">Save</el-button>
             <el-button @click="$router.go(-1)" plain :icon="House" style="width: min-content;" />
           </div>
         </div>
