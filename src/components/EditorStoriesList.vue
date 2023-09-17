@@ -4,9 +4,8 @@ import { Edit, More, Refresh, FolderOpened } from '@element-plus/icons-vue';
 import { ElMessage, ElScrollbar } from 'element-plus'
 import { StoryInfo, StoryLocation, resolveStoriesFromFS } from '../scripts/story';
 import { ref } from 'vue';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
+import StoriesListEntry from './StoriesListEntry.vue';
 
-const showTime = ref<boolean>(false);
 const story_entry_scroll = ref<InstanceType<typeof ElScrollbar>>()
 
 const storyInfos = ref<StoryInfo[]>([]);
@@ -33,20 +32,7 @@ async function refreshStoriesList() {
     <el-scrollbar id="story-entry-scroll" ref="story_entry_scroll" v-if="storyInfos.length > 0">
       <el-card v-for="storyInfo in storyInfos" shadow="hover" class="story-entry-card">
         <div class="story-entry" :key="storyInfo.entry_point">
-          <div class="story-info">
-            <div class="thumbnail">
-              <img :src="convertFileSrc(storyInfo.thumbnail)" alt="Story thumbnail" />
-            </div>
-            <div class="textual">
-              <h2>{{ storyInfo.title }}</h2>
-              <h3>{{ storyInfo.author }}</h3>
-              <p v-if="!showTime" @click="() => { showTime = !showTime }">{{
-                storyInfo.creation_date.toLocaleDateString()
-              }}</p>
-              <p v-if="showTime" @click="() => { showTime = !showTime }">{{ storyInfo.creation_date.toLocaleString() }}
-              </p>
-            </div>
-          </div>
+          <StoriesListEntry :story-info="storyInfo" />
           <div class="play-button">
             <el-dropdown class="story-entry-dropdown">
               <el-icon>
@@ -110,44 +96,8 @@ async function refreshStoriesList() {
   font-size: 20px;
 }
 
-.story-info {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-}
-
 .story-entry-dropdown {
   margin-top: auto;
   margin-bottom: auto;
-}
-
-.textual {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  margin-top: auto;
-  margin-bottom: auto;
-  gap: 5px;
-}
-
-.story-info h3 {
-  opacity: 0.7;
-  font-weight: 500;
-}
-
-.story-info p {
-  opacity: 0.5;
-  font-size: 13px;
-}
-
-.story-info p:hover {
-  opacity: 1;
-}
-
-.thumbnail img {
-  height: 90px;
-  width: 90px;
-  object-fit: cover;
-  border-radius: 4px;
 }
 </style>
