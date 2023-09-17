@@ -1,14 +1,36 @@
 <script setup lang="ts">
 // Scripts for the component
 import { House } from '@element-plus/icons-vue';
-import { resolveScenesFromFS } from '../../../scripts/story';
+import { createNewScene, resolveScenesFromFS } from '../../../scripts/story';
+import { dialogStyling } from '../../../scripts/dialog.css'
 import { convertFileSrc } from '@tauri-apps/api/tauri';
+import { ref, watch } from 'vue';
+import { sanitizeFileName } from '../../../scripts/utils';
 
 const props = defineProps({
   baseDir: String,
 })
 
-const scenesList = await resolveScenesFromFS(decodeURIComponent(props.baseDir as string));
+const isNewSceneDialogVisible = ref(false);
+const newSceneType = ref(0);
+const newSceneName = ref('');
+
+let scenesList = ref(await resolveScenesFromFS(decodeURIComponent(props.baseDir as string)));
+
+async function loadSceneFromFS() {
+  scenesList.value = await resolveScenesFromFS(decodeURIComponent(props.baseDir as string));
+}
+
+async function executeAddNewScene() {
+  isNewSceneDialogVisible.value = false;
+  await createNewScene(props.baseDir as string, newSceneName.value, newSceneType.value);
+  await loadSceneFromFS();
+  newSceneName.value = '';
+}
+
+watch(newSceneName, () => {
+  newSceneName.value = sanitizeFileName(newSceneName.value);
+});
 </script>
 
 <template>
@@ -20,7 +42,7 @@ const scenesList = await resolveScenesFromFS(decodeURIComponent(props.baseDir as
     </div>
     <el-scrollbar class="scenes-scrollarea">
       <div class="scenes-div">
-        <button class="scene-entry add-scene-button">
+        <button @click="isNewSceneDialogVisible = true" class="scene-entry add-scene-button">
           <div class="add-scene-button content">
             <div class="add-scene-button content text">
               <el-icon class="add-scene-button content icon">
@@ -52,6 +74,46 @@ const scenesList = await resolveScenesFromFS(decodeURIComponent(props.baseDir as
       </el-icon>
       <p>Select a scene to edit or add a new scene.</p>
     </div>
+    <el-dialog :style="dialogStyling" v-model="isNewSceneDialogVisible" :show-close="false" width="80%" align-center>
+      <template #header>
+        <h2 class="dialog-center-title">New scene</h2>
+      </template>
+      <div class="new-scene-dialog-content">
+        <el-form label-position="top">
+          <el-form-item label="Name for your new scene">
+            <el-input v-model="newSceneName" size="large" maxlength="69"
+              placeholder="brand new scene for a brand new day" />
+          </el-form-item>
+          <el-form-item label="Choose a template to get started with">
+            <el-radio-group v-model="newSceneType">
+              <el-radio-button :label="0">
+                <div class="scene-type-entry">
+                  <div class="tmp-rect"></div>
+                  <h3>Narration</h3>
+                </div>
+              </el-radio-button>
+              <el-radio-button :label="1">
+                <div class="scene-type-entry">
+                  <div class="tmp-rect"></div>
+                  <h3>Attention</h3>
+                </div>
+              </el-radio-button>
+              <el-radio-button :label="2">
+                <div class="scene-type-entry">
+                  <div class="tmp-rect"></div>
+                  <h3>Custom (blank)</h3>
+                </div>
+              </el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+      </div>
+      <template #footer>
+        <div class="new-scene-dialog-footer">
+          <el-button @click="executeAddNewScene" :disabled="newSceneName.length <= 0" type="primary">Add</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -174,5 +236,37 @@ const scenesList = await resolveScenesFromFS(decodeURIComponent(props.baseDir as
   border-top: 1px solid #77777777;
   padding-top: 8px;
   margin-top: 0;
+}
+
+.new-scene-dialog-content {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.scene-type-entry {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 5px;
+}
+
+.new-scene-dialog-footer {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.new-scene-dialog-footer * {
+  width: 150px;
+}
+
+.tmp-rect {
+  width: 150px;
+  height: 110px;
+  background-color: #333333;
+  border-radius: 5px;
 }
 </style>

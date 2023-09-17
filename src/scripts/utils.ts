@@ -97,3 +97,12 @@ export function convertAbsoluteToRelative(fullPath: string, baseDir: string): st
   // Separators for paths stored defaults to POSIX ('/')
   return sanitizePath(fullPath.replace(`${baseDir}${sep}`, ''), '/');
 }
+
+/**
+ * Sanitizes a file name by removing prohibited characters.
+ * @param fileName File name to sanitize
+*/
+export function sanitizeFileName(fileName: string): string {
+  const prohibitedChars = /[<>:"/\\|?*\x00-\x1F]/g; // regex for prohibited characters
+  return fileName.replace(prohibitedChars, ''); // remove prohibited characters from the file name
+}

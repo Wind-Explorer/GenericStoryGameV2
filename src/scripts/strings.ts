@@ -12,7 +12,13 @@ export const strings = {
       text: "Welcome to the second and the last scene! Open up the editor and start creating your own story!",
       sceneOption1: "Go to the first scene",
       sceneOption2: "End the story now"
-    }
+    },
+    narrationScene: {
+      text: "This is a narration scene with multiple navigation options. Players can decide which direction they want to take.",
+      sceneOption1: "An action the player can take",
+      sceneOption2: "Another new action for the player",
+    },
+    attentionScene: "An attention scene grabs the player's attention.",
   },
   fileNames: {
     core: 'gsg.json',

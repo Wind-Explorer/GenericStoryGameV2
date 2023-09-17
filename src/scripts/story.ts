@@ -2,8 +2,8 @@ import { appDataDir } from '@tauri-apps/api/path';
 import { createDir, readDir, readTextFile, writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
 import { v4 as uuidv4 } from 'uuid';
 import { bookUint8Array } from './book.png';
-import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
-import { getObjFromPath, ensureDirExists, joinPath, sanitizePath, convertAbsoluteToRelative } from './utils';
+import { templateAttentionSceneInfo, templateBlankSceneInfo, templateNarrationSceneInfo, templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
+import { getObjFromPath, ensureDirExists, joinPath, sanitizePath, convertAbsoluteToRelative, getRandomColor } from './utils';
 import { sep } from "@tauri-apps/api/path";
 import { strings } from './strings';
 
@@ -375,4 +375,38 @@ export async function writeStoryInfoToDisk(data: StoryInfo, baseDir: string) {
 
   // Write data to story core.
   await writeTextFile(joinPath(baseDir, strings.fileNames.core), JSONData);
+}
+
+function resolveTemplateSceneType(index: number): SceneInfo {
+  switch (index) {
+    case 0:
+      return templateNarrationSceneInfo;
+    case 1:
+      return templateAttentionSceneInfo;
+    case 2:
+      return templateBlankSceneInfo;
+    default:
+      return templateBlankSceneInfo;
+  }
+}
+
+/**
+ * Writes a new scene into the filesystem.
+ * @param baseDir Base directory
+ * @param sceneName Name of scene
+ * @param sceneInfo Scene info object
+ */
+export async function createNewScene(baseDir: string, sceneName: string, sceneInfoIndex: number) {
+  const sceneDir = joinPath(
+    baseDir, // Base directory of story.
+    strings.fileNames.scenesFolder, // Scenes folder.
+    sceneName + '.json' // Scene name with .json suffix.
+  );
+  const backgroundColorHandler = (key: string, value: any) => {
+    if (key === 'background_color') {
+      return getRandomColor();
+    }
+    return value;
+  };
+  await writeTextFile(sceneDir, JSON.stringify(resolveTemplateSceneType(sceneInfoIndex), backgroundColorHandler));
 }
