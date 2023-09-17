@@ -23,7 +23,7 @@ async function loadSceneFromFS() {
 
 async function executeAddNewScene() {
   isNewSceneDialogVisible.value = false;
-  await createNewScene(props.baseDir as string, newSceneName.value, newSceneType.value);
+  await createNewScene(props.baseDir as string, newSceneName.value.trim(), newSceneType.value);
   await loadSceneFromFS();
   newSceneName.value = '';
 }

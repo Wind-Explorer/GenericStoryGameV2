@@ -313,8 +313,9 @@ export async function resolveSceneInfo(scenePath: string) {
  * @param story_title Title of the story.
  * @param story_description Description of the story.
  * @param story_author Author of the story.
+ * @returns Path to the base directory of the story.
  */
-export async function createNewStory(story_title: string, story_description: string, story_author: string) {
+export async function createNewStory(story_title: string, story_description: string, story_author: string): Promise<string> {
 
   // Generates a new UUID for use as new story directory name
   let uuidDirName =
@@ -350,6 +351,9 @@ export async function createNewStory(story_title: string, story_description: str
   // Populate the story with two example scenes
   await writeTextFile(joinPath(scenesDir, strings.fileNames.firstScene), JSON.stringify(templateSceneInfo1, null));
   await writeTextFile(joinPath(scenesDir, strings.fileNames.secondScene), JSON.stringify(templateSceneInfo2, null));
+
+  // Return the base directory to the story.
+  return baseDir;
 }
 
 /**

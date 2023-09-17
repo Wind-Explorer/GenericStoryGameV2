@@ -4,10 +4,12 @@ import PageTitle from '../../components/PageTitle.vue';
 import EditorStoriesList from '../../components/EditorStoriesList.vue';
 import { dialogStyling } from '../../scripts/dialog.css'
 import { Plus, Files, House } from '@element-plus/icons-vue'
-import { reactive, ref } from 'vue';
+import { ElMessage } from 'element-plus';
+import { ref, watch } from 'vue';
 import { createNewStory } from '../../scripts/story';
 
 import MenuBackground from '../../components/MenuBackground.vue';
+import { sanitizeFileName } from '../../scripts/utils';
 
 const newStoryDialogVisible = ref(false);
 const storiesListDialogVisible = ref(false);
@@ -18,7 +20,7 @@ interface NewStoryInfo {
   author: string
 }
 
-const newStoryInfo = reactive<NewStoryInfo>({
+const newStoryInfo = ref<NewStoryInfo>({
   title: '',
   description: '',
   author: ''
@@ -26,12 +28,17 @@ const newStoryInfo = reactive<NewStoryInfo>({
 
 async function prepareNewStoryCreation() {
   await createNewStory(
-    newStoryInfo.title.trim(),
-    newStoryInfo.description.trim(),
-    newStoryInfo.author.trim()
+    newStoryInfo.value.title.trim(),
+    newStoryInfo.value.description.trim(),
+    newStoryInfo.value.author.trim()
   );
   newStoryDialogVisible.value = false;
+  ElMessage({ message: 'Created!', grouping: true, type: 'success' });
 }
+
+watch(newStoryInfo.value, () => {
+  newStoryInfo.value.title = sanitizeFileName(newStoryInfo.value.title);
+});
 </script>
 
 <template>
@@ -67,7 +74,7 @@ async function prepareNewStoryCreation() {
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button type="primary" @click="prepareNewStoryCreation">
+        <el-button :disabled="newStoryInfo.title.length <= 0" type="primary" @click="prepareNewStoryCreation">
           Create
         </el-button>
       </template>
