@@ -80,7 +80,7 @@ watch(newSceneName, () => {
       </template>
       <div class="new-scene-dialog-content">
         <el-form label-position="top">
-          <el-form-item label="Name for your new scene">
+          <el-form-item :required="true" label="Name for your new scene">
             <el-input v-model="newSceneName" size="large" maxlength="69"
               placeholder="brand new scene for a brand new day" />
           </el-form-item>
@@ -88,19 +88,19 @@ watch(newSceneName, () => {
             <el-radio-group v-model="newSceneType">
               <el-radio-button :label="0">
                 <div class="scene-type-entry">
-                  <div class="tmp-rect"></div>
+                  <img class="illust-rect" src="../../../assets/Narration.svg" />
                   <h3>Narration</h3>
                 </div>
               </el-radio-button>
               <el-radio-button :label="1">
                 <div class="scene-type-entry">
-                  <div class="tmp-rect"></div>
+                  <img class="illust-rect" src="../../../assets/Attention.svg" />
                   <h3>Attention</h3>
                 </div>
               </el-radio-button>
               <el-radio-button :label="2">
                 <div class="scene-type-entry">
-                  <div class="tmp-rect"></div>
+                  <img class="illust-rect" src="../../../assets/Blank.svg" />
                   <h3>Custom (blank)</h3>
                 </div>
               </el-radio-button>
@@ -263,10 +263,18 @@ watch(newSceneName, () => {
   width: 150px;
 }
 
-.tmp-rect {
+.illust-rect {
   width: 150px;
   height: 110px;
   background-color: #333333;
-  border-radius: 5px;
+  border-radius: 8px;
+  opacity: 0.9;
+  filter: brightness(2.1) contrast(2);
+}
+
+html.dark {
+  .illust-rect {
+    filter: contrast(2);
+  }
 }
 </style>
