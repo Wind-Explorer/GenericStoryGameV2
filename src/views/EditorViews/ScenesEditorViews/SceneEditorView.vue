@@ -9,8 +9,9 @@ import {
   SceneBackgroundType,
   resolveBaseDirFromScenePath,
   resolveScenesFromFS,
+  sceneNameToRelativePath,
 } from '../../../scripts/story';
-import { getObjFromPath, sanitizePath, findElementIndexFromArray, joinPath } from '../../../scripts/utils';
+import { getObjFromPath, sanitizePath, findElementIndexFromArray } from '../../../scripts/utils';
 import { ref, watch } from 'vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { strings } from '../../../scripts/strings';
@@ -66,7 +67,7 @@ watch(sceneDestinationModels.value, () => {
   sceneEditorData.value.scene.scene_actions.multiple_choice.forEach((mcqEntry, index) => {
     const value = sceneDestinationModels.value[index];
     if (value === strings.navigationKeywords.end) { mcqEntry.destination = value; return; }
-    mcqEntry.destination = joinPath(sceneEditorData.value.baseDir, strings.fileNames.scenesFolder, value + '.json');
+    mcqEntry.destination = sceneNameToRelativePath(value);
   });
 });
 
