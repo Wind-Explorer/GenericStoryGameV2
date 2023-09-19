@@ -2,10 +2,18 @@
 import { House, Plus, Select, Warning } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { SceneEditor } from '../../../scripts/sceneEditor';
-import { resolveSceneInfo, SceneTextType, SceneNavigationType, SceneBackgroundType, resolveBaseDirFromScenePath } from '../../../scripts/story';
-import { getObjFromPath, sanitizePath } from '../../../scripts/utils';
+import {
+  resolveSceneInfo,
+  SceneTextType,
+  SceneNavigationType,
+  SceneBackgroundType,
+  resolveBaseDirFromScenePath,
+  resolveScenesFromFS,
+} from '../../../scripts/story';
+import { getObjFromPath, sanitizePath, findElementIndexFromArray, joinPath } from '../../../scripts/utils';
 import { ref, watch } from 'vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
+import { strings } from '../../../scripts/strings';
 
 // Scripts for the component
 
@@ -25,6 +33,43 @@ const sceneEditorData = ref<SceneEditor>(
 
 const sceneBackgroundColor = ref(sceneEditorData.value.scene.background_color ?? '');
 
+const possibleDestinations = ref([
+  {
+    label: 'Special entries',
+    values: [
+      "#END"
+    ],
+  },
+  {
+    label: 'Your scenes',
+    values: await resolveScenesFromFS(sceneEditorData.value.baseDir).then((scenes) => {
+      return scenes.map((scene) => {
+        return scene.scene_name;
+      });
+    })
+  },
+])
+
+const sceneDestinationModels = ref<string[]>([]);
+function populateSceneDestinationModels() {
+  if (sceneEditorData.value.scene.scene_actions.multiple_choice == null) {
+    return;
+  }
+  sceneDestinationModels.value = sceneEditorData.value.scene.scene_actions.multiple_choice.map((mcqEntry) => {
+    return getObjFromPath(mcqEntry.destination).replace('.json', '');
+  })
+}
+populateSceneDestinationModels();
+
+watch(sceneDestinationModels.value, () => {
+  if (sceneEditorData.value.scene.scene_actions.multiple_choice == null) { return; }
+  sceneEditorData.value.scene.scene_actions.multiple_choice.forEach((mcqEntry, index) => {
+    const value = sceneDestinationModels.value[index];
+    if (value === strings.navigationKeywords.end) { mcqEntry.destination = value; return; }
+    mcqEntry.destination = joinPath(sceneEditorData.value.baseDir, strings.fileNames.scenesFolder, value + '.json');
+  });
+});
+
 // When background color changes, update the value in the class.
 watch(sceneBackgroundColor, async () => {
   sceneEditorData.value.setBackgroundColor(sceneBackgroundColor.value);
@@ -33,6 +78,7 @@ watch(sceneBackgroundColor, async () => {
 
 watch(sceneEditorData.value, () => {
   console.log('something changed!!!');
+  populateSceneDestinationModels();
 });
 
 function saveChanges() {
@@ -151,8 +197,14 @@ function saveChanges() {
                 </el-form-item>
                 <el-form-item label="Destination">
                   <div style="display: flex; gap: 5px;">
-                    <el-input readonly :model-value="getObjFromPath(mcqEntry.destination)" />
-                    <el-button text type="primary">Change</el-button>
+                    <!-- <el-input readonly :model-value="getObjFromPath(mcqEntry.destination)" /> -->
+                    <el-select
+                      v-model="sceneDestinationModels![findElementIndexFromArray(mcqEntry, sceneEditorData.scene.scene_actions.multiple_choice)]"
+                      placeholder="Select">
+                      <el-option-group v-for="group in possibleDestinations" :label="group.label">
+                        <el-option v-for="item in group.values" :key="item" :label="item" :value="item" />
+                      </el-option-group>
+                    </el-select>
                   </div>
                 </el-form-item>
               </el-form>

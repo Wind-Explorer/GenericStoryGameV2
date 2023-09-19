@@ -414,3 +414,12 @@ export async function createNewScene(baseDir: string, sceneName: string, sceneIn
   };
   await writeTextFile(sceneDir, JSON.stringify(resolveTemplateSceneType(sceneInfoIndex), backgroundColorHandler));
 }
+
+/**
+ * Converts a scene name to a relative JSON file path.
+ * @param sceneName Name of the scene to be converted.
+ * @returns Converted relative path.
+ */
+export function sceneNameToRelativePath(sceneName: string): string {
+  return sanitizePath(joinPath(strings.fileNames.scenesFolder, sceneName + '.json'), '/');
+}

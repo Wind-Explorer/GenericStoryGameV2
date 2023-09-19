@@ -1,6 +1,6 @@
 import { writeTextFile } from "@tauri-apps/api/fs";
 import { MultipleChoice, SceneActions, SceneBackgroundType, SceneInfo, SceneNavigationType, SceneTextType } from "./story";
-import { convertAbsoluteToRelative } from "./utils";
+import { convertAbsoluteToRelative, findElementIndexFromArray } from "./utils";
 import { strings } from "./strings";
 
 /**
@@ -150,6 +150,7 @@ export class SceneEditor {
    */
   async saveSceneToDisk() {
     this.setTypes();
+    console.log(this.scene.scene_actions.multiple_choice);
     let sceneJson = JSON.stringify(this.scene, (key, value) => {
       if (key === 'media' && value != null) {
         return convertAbsoluteToRelative(value, this.baseDir);
@@ -189,7 +190,7 @@ export class SceneEditor {
     if (this.scene.scene_actions.multiple_choice == null) {
       return;
     }
-    let index = this.scene.scene_actions.multiple_choice.findIndex((value, _, __) => value === entry);
+    let index = findElementIndexFromArray(entry, this.scene.scene_actions.multiple_choice)
     this.scene.scene_actions.multiple_choice.splice(index, 1);
   }
 }

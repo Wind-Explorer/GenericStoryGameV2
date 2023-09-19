@@ -106,3 +106,15 @@ export function sanitizeFileName(fileName: string): string {
   const prohibitedChars = /[<>:"/\\|?*\x00-\x1F]/g; // regex for prohibited characters
   return fileName.replace(prohibitedChars, ''); // remove prohibited characters from the file name
 }
+
+/**
+ * Finds the index of an element in an array.
+ * @param element The element to search.
+ * @param array The array to be searched
+ * @returns The index of the element in the array. -1 if not found.
+ */
+export function findElementIndexFromArray(element: any, array: any[]): number {
+  return array.findIndex((value, _, __) => {
+    return value === element;
+  });
+}
