@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import LabelWithTooltip from '../../components/LabelWithTooltip.vue';
-import { reactive } from 'vue';
-import { ExtraStoryInfo, resolveExtraStoryInfo, writeStoryInfoToDisk } from '../../scripts/story';
+import { reactive, ref, watch } from 'vue';
+import { ExtraStoryInfo, resolveExtraStoryInfo, resolveScenesFromFS, sceneNameToRelativePath, writeStoryInfoToDisk } from '../../scripts/story';
 import { getObjFromPath, openInFileManager, resolveNameOfFileManager, joinPath } from '../../scripts/utils';
 import { House, Select } from '@element-plus/icons-vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
@@ -19,6 +19,21 @@ const storyInfo = reactive<ExtraStoryInfo>(
 		decodeURIComponent(props.baseDir as string)
 	)
 );
+
+const availableEntryPoints = ref<string[]>([]);
+const storyEntryPoint = ref(getObjFromPath(storyInfo.base_story_info.entry_point).replace('.json', ''));
+
+async function populateAvaliableEntryPoints() {
+	availableEntryPoints.value = (await resolveScenesFromFS(props.baseDir as string)).map((scene) => {
+		return scene.scene_name;
+	})
+}
+populateAvaliableEntryPoints();
+
+watch(storyEntryPoint, (newVal) => {
+	console.log("New entry point: " + newVal);
+	storyInfo.base_story_info.entry_point = sceneNameToRelativePath(newVal);
+})
 
 async function saveData() {
 	await writeStoryInfoToDisk(storyInfo.base_story_info, props.baseDir as string);
@@ -49,7 +64,7 @@ async function saveData() {
 					<LabelWithTooltip label="Description" tooltip="Overview of what the story is about" />
 				</template>
 				<el-input placeholder="Description" type="textarea" resize="none" maxlength="420"
-					:autosize="{ minRows: 4, maxRows: 4 }" v-model="storyInfo.base_story_info.description"></el-input>
+					:autosize="{ minRows: 2, maxRows: 2 }" v-model="storyInfo.base_story_info.description"></el-input>
 			</el-descriptions-item>
 			<el-descriptions-item label-align="left" align="left">
 				<template #label>
@@ -82,6 +97,17 @@ async function saveData() {
 					<el-button @click="openInFileManager(joinPath((baseDir as string), strings.fileNames.resourcesFolder))">{{
 						`Manage in
 						${resolveNameOfFileManager()}` }}</el-button>
+				</div>
+			</el-descriptions-item>
+			<el-descriptions-item label-align="left" align="left">
+				<template #label>
+					<LabelWithTooltip label="Entry Point" tooltip="The first scene to be loaded" />
+				</template>
+				<div class="entry-point-entry">
+					<el-text size="large">Select from your scenes</el-text>
+					<el-select v-model="storyEntryPoint">
+						<el-option v-for="item in availableEntryPoints" :key="item" :label="item" :value="item" />
+					</el-select>
 				</div>
 			</el-descriptions-item>
 			<el-descriptions-item label-align="left" align="left">
@@ -127,6 +153,12 @@ async function saveData() {
 }
 
 .resources-entry {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.entry-point-entry {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;

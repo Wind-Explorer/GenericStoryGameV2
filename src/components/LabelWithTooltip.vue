@@ -11,7 +11,7 @@ const props = defineProps({
     <!-- HTML elements for the component -->
     <el-text>{{ props.label }}</el-text>
     <el-tooltip :content="props.tooltip" placement="top">
-      <el-icon>
+      <el-icon class="tooltip-icon">
         <InfoFilled />
       </el-icon>
     </el-tooltip>
@@ -29,5 +29,9 @@ const props = defineProps({
 .component-container * {
   margin-top: auto;
   margin-bottom: auto;
+}
+
+.tooltip-icon {
+  opacity: 0.5;
 }
 </style>
