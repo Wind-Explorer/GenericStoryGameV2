@@ -2,8 +2,8 @@ import { appDataDir } from '@tauri-apps/api/path';
 import { createDir, readDir, readTextFile, writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
 import { v4 as uuidv4 } from 'uuid';
 import { bookUint8Array } from './book.png';
-import { templateAttentionSceneInfo, templateBlankSceneInfo, templateNarrationSceneInfo, templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
-import { getObjFromPath, ensureDirExists, joinPath, sanitizePath, convertAbsoluteToRelative, getRandomColor } from './utils';
+import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
+import { getObjFromPath, ensureDirExists, joinPath, sanitizePath, convertAbsoluteToRelative } from './utils';
 import { sep } from "@tauri-apps/api/path";
 import { strings } from './strings';
 
