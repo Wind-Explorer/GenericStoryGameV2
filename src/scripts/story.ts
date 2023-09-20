@@ -114,7 +114,7 @@ export interface ExtraStoryInfo {
 export interface ExtraSceneInfo {
   base_scene_info: SceneInfo;
   scene_name: string;
-  scene_dir: string;
+  scene_path: string;
 }
 
 /**
@@ -172,7 +172,7 @@ export async function resolveScenesFromFS(baseDir: string): Promise<ExtraSceneIn
 
           // Get scene name from path, removing .json suffix.
           scene_name: getObjFromPath(scenePath).replace('.json', ''),
-          scene_dir: scenePath,
+          scene_path: scenePath,
         }
         sceneInfos.push(extraSceneInfo);
       } catch {
@@ -379,40 +379,6 @@ export async function writeStoryInfoToDisk(data: StoryInfo, baseDir: string) {
 
   // Write data to story core.
   await writeTextFile(joinPath(baseDir, strings.fileNames.core), JSONData);
-}
-
-function resolveTemplateSceneType(index: number): SceneInfo {
-  switch (index) {
-    case 0:
-      return templateNarrationSceneInfo;
-    case 1:
-      return templateAttentionSceneInfo;
-    case 2:
-      return templateBlankSceneInfo;
-    default:
-      return templateBlankSceneInfo;
-  }
-}
-
-/**
- * Writes a new scene into the filesystem.
- * @param baseDir Base directory
- * @param sceneName Name of scene
- * @param sceneInfo Scene info object
- */
-export async function createNewScene(baseDir: string, sceneName: string, sceneInfoIndex: number) {
-  const sceneDir = joinPath(
-    baseDir, // Base directory of story.
-    strings.fileNames.scenesFolder, // Scenes folder.
-    sceneName + '.json' // Scene name with .json suffix.
-  );
-  const backgroundColorHandler = (key: string, value: any) => {
-    if (key === 'background_color') {
-      return getRandomColor();
-    }
-    return value;
-  };
-  await writeTextFile(sceneDir, JSON.stringify(resolveTemplateSceneType(sceneInfoIndex), backgroundColorHandler));
 }
 
 /**

@@ -65,7 +65,7 @@
         "createDir": true,
         "removeDir": false,
         "removeFile": false,
-        "renameFile": false,
+        "renameFile": true,
         "exists": true,
         "scope": [
           "$APPDATA",

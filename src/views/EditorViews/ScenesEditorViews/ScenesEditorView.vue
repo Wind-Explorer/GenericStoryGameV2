@@ -1,11 +1,12 @@
 <script setup lang="ts">
 // Scripts for the component
 import { House } from '@element-plus/icons-vue';
-import { createNewScene, resolveScenesFromFS } from '../../../scripts/story';
 import { dialogStyling } from '../../../scripts/dialog.css'
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { ref, watch } from 'vue';
 import { sanitizeFileName } from '../../../scripts/utils';
+import { ScenesManager } from '../../../scripts/scenesManager';
+import { resolveScenesFromFS } from '../../../scripts/story';
 
 const props = defineProps({
   baseDir: String,
@@ -15,16 +16,13 @@ const isNewSceneDialogVisible = ref(false);
 const newSceneType = ref(0);
 const newSceneName = ref('');
 
-let scenesList = ref(await resolveScenesFromFS(decodeURIComponent(props.baseDir as string)));
+const baseDir = decodeURIComponent(props.baseDir as string);
 
-async function loadSceneFromFS() {
-  scenesList.value = await resolveScenesFromFS(decodeURIComponent(props.baseDir as string));
-}
+const scenesManager = ref(new ScenesManager(await resolveScenesFromFS(baseDir), baseDir));
 
-async function executeAddNewScene() {
+async function addScene() {
   isNewSceneDialogVisible.value = false;
-  await createNewScene(props.baseDir as string, newSceneName.value.trim(), newSceneType.value);
-  await loadSceneFromFS();
+  scenesManager.value.createScene(newSceneName.value, newSceneType.value);
   newSceneName.value = '';
 }
 
@@ -52,8 +50,8 @@ watch(newSceneName, () => {
             </div>
           </div>
         </button>
-        <button v-for="scene in scenesList" style="position: relative;" class="scene-entry"
-          @click="$router.push(`/sceneeditor/${encodeURIComponent(scene.scene_dir)}`)">
+        <button v-for="scene in scenesManager.scenesList" style="position: relative;" class="scene-entry"
+          @click="$router.push(`/sceneeditor/${encodeURIComponent(scene.scene_path)}`)">
           <img class="scene-background img" v-if="scene.base_scene_info.media != null"
             :src="convertFileSrc(scene.base_scene_info.media)" />
           <div class="scene-background div" v-if="scene.base_scene_info.background_color != null"
@@ -110,7 +108,7 @@ watch(newSceneName, () => {
       </div>
       <template #footer>
         <div class="new-scene-dialog-footer">
-          <el-button @click="executeAddNewScene" :disabled="newSceneName.length <= 0" type="primary">Add</el-button>
+          <el-button @click="addScene" :disabled="newSceneName.length <= 0" type="primary">Add</el-button>
         </div>
       </template>
     </el-dialog>

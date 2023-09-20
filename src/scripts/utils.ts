@@ -118,3 +118,17 @@ export function findElementIndexFromArray(element: any, array: any[]): number {
     return value === element;
   });
 }
+
+/**
+ * Generates a path with a new name from an old path with an old name.
+ * 
+ * Helper function for use with `renameFile()` from Tauri API.
+ * @param filePath Path of old file
+ * @param newName New name for the file
+ * @returns Absolute path to the file with new name.
+ */
+export function resolveNewPathFromNewName(filePath: string, newName: string): string {
+  const pathArray = filePath.split(sep);
+  pathArray.pop();
+  return joinPath(pathArray.join(sep), newName);
+}
