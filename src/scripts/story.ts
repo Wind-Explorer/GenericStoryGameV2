@@ -28,7 +28,7 @@ const collectionsPath = await ensureDirExists(joinPath(appDataDirPath, strings.f
 const workspacePath = await ensureDirExists(joinPath(appDataDirPath, strings.fileNames.workspaceFolder));
 
 /**
- * Interface which defines structure of story info.
+ * Structure of story info.
  */
 export interface StoryInfo {
   title: string;
@@ -41,7 +41,7 @@ export interface StoryInfo {
 }
 
 /**
- * Interface which defines structure of scene actions from scene info.
+ * Structure of scene actions from scene info.
  */
 export interface SceneActions {
   multiple_choice: MultipleChoice[] | null;
@@ -49,7 +49,7 @@ export interface SceneActions {
 }
 
 /**
- * Interface which defines structure of multiple choice from scene actions.
+ * Structure of multiple choice from scene actions.
  */
 export interface MultipleChoice {
   action: string;
@@ -57,7 +57,7 @@ export interface MultipleChoice {
 }
 
 /**
- * Interface which defines structure of scene info.
+ * Structure of scene info.
  */
 export interface SceneInfo {
   center_text: string | null;
@@ -68,7 +68,7 @@ export interface SceneInfo {
 }
 
 /**
- * Enum which defines possible location of stories.
+ * Possible location of stories.
 */
 export enum StoryLocation {
   Collections,
@@ -76,7 +76,7 @@ export enum StoryLocation {
 }
 
 /**
- * Enum which defines possible types of scene text.
+ * Possible types of scene text.
  */
 export enum SceneTextType {
   Narration,
@@ -85,7 +85,7 @@ export enum SceneTextType {
 }
 
 /**
- * Enum which defines possible types of scene navigation.
+ * Possible types of scene navigation.
  */
 export enum SceneNavigationType {
   SingleChoice,
@@ -98,7 +98,7 @@ export enum SceneBackgroundType {
 }
 
 /**
- * Interface which defines structure of story info
+ * Structure of story info
  * with extra information to be used in editor.
  */
 export interface ExtraStoryInfo {
@@ -108,8 +108,7 @@ export interface ExtraStoryInfo {
 }
 
 /**
- * Interface which defines structure of scene info
- * with extra information to be used in editor.
+ * Structure of scene info with extra information to be used in editor.
  */
 export interface ExtraSceneInfo {
   base_scene_info: SceneInfo;
@@ -118,7 +117,7 @@ export interface ExtraSceneInfo {
 }
 
 /**
- * Function that resolves story collection located on file system.
+ * Resolves story collection located on file system.
  * @param location Location of story collection.
  */
 export async function resolveStoriesFromFS(location: StoryLocation = StoryLocation.Collections): Promise<StoryInfo[]> {
@@ -150,7 +149,7 @@ export async function resolveStoriesFromFS(location: StoryLocation = StoryLocati
 }
 
 /**
- * Function that resolves scenes from a story save directory.
+ * Resolves scenes from a story save directory.
  * @param baseDir Path to story save directory.
  * @returns Array of `ExtraSceneInfo` objects.
  */
@@ -185,7 +184,7 @@ export async function resolveScenesFromFS(baseDir: string): Promise<ExtraSceneIn
 }
 
 /**
- * Function that resolves story info from a story save directory.
+ * Resolves story info from a story save directory.
  * @param baseDir Path to story save directory.
  */
 export async function resolveStoryInfo(baseDir: string): Promise<StoryInfo> {
@@ -216,7 +215,7 @@ export async function resolveStoryInfo(baseDir: string): Promise<StoryInfo> {
 }
 
 /**
- * Function that resolves more story info from a story save directory for editing purposes.
+ * Resolves more story info from a story save directory for editing purposes.
  * @param baseDir Path to story save directory.
  * @returns `ExtraStoryInfo`
  */
@@ -232,7 +231,7 @@ export async function resolveExtraStoryInfo(baseDir: string): Promise<ExtraStory
 }
 
 /**
- * Function that prepares scene actions for use in scene info.
+ * Prepares scene actions for use in scene info.
  * @param sceneAction Scene action to resolve.
  * @param baseDir Base directory pointing to the path of the story.
  */
@@ -283,7 +282,8 @@ export function resolveBaseDirFromScenePath(scenePath: string) {
 }
 
 /**
- * Function that resolves scene info from path to scene JSON data.
+ * Resolves scene info from path to scene JSON data.
+ * @param scenePath Path to scene JSON file.
  */
 export async function resolveSceneInfo(scenePath: string) {
 
@@ -309,7 +309,7 @@ export async function resolveSceneInfo(scenePath: string) {
 }
 
 /**
- * Function that initializes a new story with template content.
+ * Initializes a new story with template content.
  * @param story_title Title of the story.
  * @param story_description Description of the story.
  * @param story_author Author of the story.

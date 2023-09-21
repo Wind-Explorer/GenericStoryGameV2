@@ -23,6 +23,9 @@ export class SceneEditor {
     this.preventNull();
   }
 
+  /**
+   * Prevents null values from being assigned to scene actions.
+   */
   preventNull() {
     if (this.scene.scene_actions.multiple_choice == null) {
       this.scene.scene_actions.multiple_choice = [];

@@ -25,7 +25,7 @@ export function getObjFromPath(path: string): string {
 }
 
 /**
- * Function that ensures path passed in exists.
+ * Ensures path passed in exists.
  * @param path Path to ensure exists.
  * @returns `Promise<string>` Path that was passed in.
  */
@@ -36,10 +36,18 @@ export async function ensureDirExists(path: string): Promise<string> {
   return path;
 }
 
+/**
+ * Opens the file manager in the specified directory.
+ * @param dir Directory to open the file manager in.
+ */
 export async function openInFileManager(dir: string) {
   new Command(`file-manager-${currentOS}`, [dir]).execute();
 }
 
+/**
+ * Resolves the name of the file manager for the current OS.
+ * @returns Name of the file manager for the current OS.
+ */
 export function resolveNameOfFileManager(): string {
   switch (currentOS) {
     case 'windows':
@@ -52,7 +60,7 @@ export function resolveNameOfFileManager(): string {
 }
 
 /**
- * Function that generates a random hex color code.
+ * Generates a random hex color code.
  * @returns `string`
  */
 export function getRandomColor(): string {
