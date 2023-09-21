@@ -1,10 +1,11 @@
 <script setup lang="ts">
 // Scripts for the component
-import { House } from '@element-plus/icons-vue';
+import { Delete, EditPen, House, InfoFilled } from '@element-plus/icons-vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { dialogStyling } from '../../../scripts/dialog.css'
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { ref, watch } from 'vue';
-import { sanitizeFileName } from '../../../scripts/utils';
+import { sanitizeFileName, findElementIndexFromArray } from '../../../scripts/utils';
 import { ScenesManager } from '../../../scripts/scenesManager';
 import { resolveScenesFromFS } from '../../../scripts/story';
 
@@ -20,10 +21,57 @@ const baseDir = decodeURIComponent(props.baseDir as string);
 
 const scenesManager = ref(new ScenesManager(await resolveScenesFromFS(baseDir), baseDir));
 
+function sceneExistsErrMsg() { ElMessage({ message: 'A scene with that name already exists.', type: 'error' }) };
+
 async function addScene() {
   isNewSceneDialogVisible.value = false;
-  scenesManager.value.createScene(newSceneName.value, newSceneType.value);
+  if (scenesManager.value.sceneExists(newSceneName.value)) {
+    sceneExistsErrMsg();
+    return;
+  } else {
+    scenesManager.value.createScene(newSceneName.value, newSceneType.value);
+  }
   newSceneName.value = '';
+}
+
+function prepareDeleteScene(sceneIndex: number) {
+  ElMessageBox.confirm(
+    'This action is irreversable.',
+    'Are you sure?',
+    {
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      scenesManager.value.removeScene(sceneIndex);
+    })
+    .catch(() => {
+      // silence.
+    });
+}
+
+function renameScene(sceneIndex: number) {
+  ElMessageBox.prompt(' ', 'Enter a new name for the scene', {
+    confirmButtonText: 'Rename',
+    cancelButtonText: 'Cancel',
+    inputPlaceholder: scenesManager.value.scenesList[sceneIndex].scene_name,
+    inputPattern: /^(?!.*[<>:"/\\|?*\x00-\x1F]).*$/,
+    inputErrorMessage: 'Prohibited characters found in name',
+  })
+    .then(({ value }) => {
+      const newName = sanitizeFileName(value);
+      if (scenesManager.value.sceneExists(newName)) {
+        sceneExistsErrMsg();
+        return;
+      } else {
+        scenesManager.value.renameScene(sceneIndex, newName);
+      }
+    })
+    .catch(() => {
+      // silence.
+    });
 }
 
 watch(newSceneName, () => {
@@ -57,12 +105,33 @@ watch(newSceneName, () => {
           <div class="scene-background div" v-if="scene.base_scene_info.background_color != null"
             :style="`background-color: ${scene.base_scene_info.background_color}`"></div>
           <div class="scene-entry-preview-text">
-            <h3 class="background-neutral-text">{{ scene.scene_name }}</h3>
+            <h3 class="background-neutral-text scene-entry-preview-title">{{ scene.scene_name }}</h3>
             <div>
               <p class="background-neutral-text">{{ scene.base_scene_info.center_text }}</p>
               <p class="background-neutral-text">{{ scene.base_scene_info.narration_text }}</p>
             </div>
           </div>
+          <el-dropdown class="story-entry-dropdown">
+            <el-icon>
+              <More />
+            </el-icon>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="renameScene(findElementIndexFromArray(scene, scenesManager.scenesList))">
+                  <el-icon>
+                    <EditPen />
+                  </el-icon>
+                  Rename
+                </el-dropdown-item>
+                <el-dropdown-item @click="prepareDeleteScene(findElementIndexFromArray(scene, scenesManager.scenesList))">
+                  <el-icon>
+                    <Delete />
+                  </el-icon>
+                  Delete
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </button>
       </div>
     </el-scrollbar>
@@ -224,6 +293,10 @@ watch(newSceneName, () => {
   font-size: 16px;
 }
 
+.scene-entry-preview-title {
+  margin-right: 30px;
+}
+
 .bottom-text {
   margin: 10px;
   display: flex;
@@ -274,5 +347,13 @@ html.dark {
   .illust-rect {
     filter: contrast(2);
   }
+}
+
+.story-entry-dropdown {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 20px;
+  filter: drop-shadow(0px 0px 5px #000000);
 }
 </style>

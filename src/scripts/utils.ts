@@ -130,5 +130,5 @@ export function findElementIndexFromArray(element: any, array: any[]): number {
 export function resolveNewPathFromNewName(filePath: string, newName: string): string {
   const pathArray = filePath.split(sep);
   pathArray.pop();
-  return joinPath(pathArray.join(sep), newName);
+  return joinPath(pathArray.join(sep), newName + '.json');
 }

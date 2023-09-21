@@ -64,7 +64,7 @@
         "copyFile": false,
         "createDir": true,
         "removeDir": false,
-        "removeFile": false,
+        "removeFile": true,
         "renameFile": true,
         "exists": true,
         "scope": [

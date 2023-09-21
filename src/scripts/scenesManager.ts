@@ -30,9 +30,24 @@ export class ScenesManager {
     }
   }
 
+  sceneExists(name: string): boolean {
+    let nameAlreadyExists = false;
+    this.scenesList.forEach(scene => {
+      if (scene.scene_name !== name) {
+        return;
+      }
+      nameAlreadyExists = true;
+      return;
+    });
+    return nameAlreadyExists;
+  }
+
   renameScene(sceneIndex: number, newName: string) {
     const oldScenePath = this.scenesList[sceneIndex].scene_path;
-    renameFile(oldScenePath, resolveNewPathFromNewName(oldScenePath, newName));
+    renameFile(oldScenePath, resolveNewPathFromNewName(oldScenePath, newName))
+      .catch((error) => {
+        throw new Error('Failed to rename scene: ' + error);
+      });
     this.loadScenesFromFS();
   }
 
