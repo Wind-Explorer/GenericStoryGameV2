@@ -11,7 +11,6 @@ import { strings } from './strings';
  * Path to application data directory.
  */
 const appDataDirPath = await ensureDirExists(await appDataDir());
-console.log(await appDataDir());
 
 /**
  * Path to stories collection directory.

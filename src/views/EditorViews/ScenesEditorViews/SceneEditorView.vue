@@ -86,11 +86,9 @@ watch(singleSceneDestinationModel, () => {
 // When background color changes, update the value in the class.
 watch(sceneBackgroundColor, async () => {
   sceneEditorData.value.setBackgroundColor(sceneBackgroundColor.value);
-  console.log(sceneEditorData.value.scene.background_color);
 });
 
 watch(sceneEditorData.value, () => {
-  console.log('something changed!!!');
   populateSceneDestinationModels();
 });
 

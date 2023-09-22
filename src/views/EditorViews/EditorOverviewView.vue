@@ -31,7 +31,6 @@ async function populateAvaliableEntryPoints() {
 populateAvaliableEntryPoints();
 
 watch(storyEntryPoint, (newVal) => {
-	console.log("New entry point: " + newVal);
 	storyInfo.base_story_info.entry_point = sceneNameToRelativePath(newVal);
 })
 

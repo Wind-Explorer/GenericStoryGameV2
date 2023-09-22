@@ -160,7 +160,6 @@ export class SceneEditor {
    */
   async saveSceneToDisk() {
     this.setTypes();
-    console.log(this.scene.scene_actions.multiple_choice);
     let sceneJson = JSON.stringify(this.scene, (key, value) => {
       if (key === 'media' && value != null) {
         return convertAbsoluteToRelative(value, this.baseDir);
