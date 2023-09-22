@@ -1,6 +1,6 @@
 import { writeTextFile } from "@tauri-apps/api/fs";
 import { MultipleChoice, SceneActions, SceneBackgroundType, SceneInfo, SceneNavigationType, SceneTextType } from "./story";
-import { convertAbsoluteToRelative, findElementIndexFromArray } from "./utils";
+import { convertAbsoluteToRelative, findElementIndexFromArray, joinPath } from "./utils";
 import { strings } from "./strings";
 
 /**
@@ -29,6 +29,9 @@ export class SceneEditor {
   preventNull() {
     if (this.scene.scene_actions.multiple_choice == null) {
       this.scene.scene_actions.multiple_choice = [];
+    }
+    if (this.scene.scene_actions.single_choice == null) {
+      this.scene.scene_actions.single_choice = '';
     }
   }
 
@@ -141,8 +144,12 @@ export class SceneEditor {
     }
 
     // If SCQ is not null and not the end, convert to relative path.
-    else if (sceneActions.single_choice != null && sceneActions.single_choice !== strings.navigationKeywords.end) {
-      sceneActions.single_choice = convertAbsoluteToRelative(sceneActions.single_choice, this.baseDir);
+    else if (sceneActions.single_choice != null) {
+      if (sceneActions.single_choice !== strings.navigationKeywords.end) {
+        sceneActions.single_choice = convertAbsoluteToRelative(sceneActions.single_choice, this.baseDir);
+      } else {
+        sceneActions.single_choice = sceneActions.single_choice;
+      }
     }
 
     return sceneActions;
@@ -195,5 +202,9 @@ export class SceneEditor {
     }
     let index = findElementIndexFromArray(entry, this.scene.scene_actions.multiple_choice)
     this.scene.scene_actions.multiple_choice.splice(index, 1);
+  }
+
+  changeSingleOptionDestination(destinationName: string) {
+    this.scene.scene_actions.single_choice = joinPath(strings.fileNames.scenesFolder, destinationName + '.json');
   }
 }
