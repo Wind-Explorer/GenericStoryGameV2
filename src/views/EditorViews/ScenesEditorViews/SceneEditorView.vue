@@ -106,9 +106,7 @@ function saveChanges() {
         <div class="scene-preferences-div">
           <el-scrollbar>
             <el-form label-position="top">
-              <el-form-item label="Scene name">
-                <el-input readonly :model-value="getObjFromPath(sceneDir)" />
-              </el-form-item>
+              <el-text size="large" tag="b">{{ getObjFromPath(sceneDir).replace('.json', '') }}</el-text>
               <el-divider />
               <el-form-item label="Background type">
                 <el-radio-group v-model="sceneEditorData.sceneBackgroundType">
