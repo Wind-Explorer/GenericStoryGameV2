@@ -1,5 +1,5 @@
 import { FileEntry, writeTextFile } from "@tauri-apps/api/fs";
-import { MultipleChoice, SceneActions, SceneBackgroundType, SceneInfo, SceneNavigationType, SceneTextType, resolveBaseDirFromScenePath } from "./story";
+import { MultipleChoice, SceneActions, SceneBackgroundType, SceneInfo, SceneNavigationType, SceneTextType, resolveBaseDirFromScenePath, sceneNameToRelativePath } from "./story";
 import { convertAbsoluteToRelative, findElementIndexFromArray, joinPath } from "./utils";
 import { strings } from "./strings";
 
@@ -216,11 +216,45 @@ export class SceneEditor {
     this.scene.scene_actions.single_choice = joinPath(strings.fileNames.scenesFolder, destinationName + '.json');
   }
 
+  /**
+   * Sets the value of media for the scene as relative path to the media file.
+   * @param fileName Name of the file to be set as background media.
+   */
   setBackgroundMedia(fileName: string) {
     this.availableStoryResources.forEach((resource) => {
       if (resource.name === fileName) {
         this.scene.media = resource.path;
       }
     });
+  }
+
+  /**
+   * Sets the destination value of multiple choice navigation entries.
+   * @param destinations MCQ destination values.
+   */
+  setMCQDestinations(destinations: string[]) {
+    if (this.scene.scene_actions.multiple_choice == null) { return }
+    this.scene.scene_actions.multiple_choice.forEach((mcqEntry, index) => {
+      const value = destinations[index];
+      if (value === strings.navigationKeywords.end) {
+        mcqEntry.destination = value;
+        return;
+      }
+      mcqEntry.destination = sceneNameToRelativePath(value);
+      return;
+    });
+  }
+
+  /**
+   * Sets the destination value of single choice navigation entry.
+   * @param destinations SCQ destination values.
+   */
+  setSCQDestination(destination: string) {
+    if (this.scene.scene_actions.single_choice == null) { return; }
+    if (destination === strings.navigationKeywords.end) {
+      this.scene.scene_actions.single_choice = destination;
+      return;
+    }
+    this.scene.scene_actions.single_choice = sceneNameToRelativePath(destination);
   }
 }

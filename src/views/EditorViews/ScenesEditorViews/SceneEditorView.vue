@@ -8,14 +8,12 @@ import {
   SceneNavigationType,
   SceneBackgroundType,
   resolveScenesFromFS,
-  sceneNameToRelativePath,
   resolveAvailableStoryResource,
   resolveBaseDirFromScenePath,
 } from '../../../scripts/story';
 import { getObjFromPath, sanitizePath, findElementIndexFromArray } from '../../../scripts/utils';
-import { ref, watch } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
-import { strings } from '../../../scripts/strings';
 
 // Scripts for the component
 
@@ -52,7 +50,7 @@ const possibleDestinations = ref([
   },
 ])
 
-const sceneDestinationModels = ref<string[]>([]);
+const sceneDestinationModels = reactive({ value: [] as string[] });
 const singleSceneDestinationModel = ref('');
 const sceneMediaChosen = ref('');
 
@@ -72,20 +70,12 @@ async function populateUIInputs() {
 
 populateUIInputs();
 
-watch(sceneDestinationModels.value, () => {
-  if (sceneEditorData.value.scene.scene_actions.multiple_choice == null) { return; }
-  sceneEditorData.value.scene.scene_actions.multiple_choice.forEach((mcqEntry, index) => {
-    const value = sceneDestinationModels.value[index];
-    if (value === strings.navigationKeywords.end) { mcqEntry.destination = value; return; }
-    mcqEntry.destination = sceneNameToRelativePath(value);
-  });
+watch(sceneDestinationModels, () => {
+  sceneEditorData.value.setMCQDestinations(sceneDestinationModels.value);
 });
 
 watch(singleSceneDestinationModel, () => {
-  if (sceneEditorData.value.scene.scene_actions.single_choice == null) { return; }
-  const value = singleSceneDestinationModel.value;
-  if (value === strings.navigationKeywords.end) { sceneEditorData.value.scene.scene_actions.single_choice = value; return; }
-  sceneEditorData.value.scene.scene_actions.single_choice = sceneNameToRelativePath(value);
+  sceneEditorData.value.setSCQDestination(singleSceneDestinationModel.value);
 });
 
 // When background media changes, update the value in the class.
@@ -223,7 +213,7 @@ function saveChanges() {
                 <el-form-item label="Destination">
                   <div style="display: flex; gap: 5px;">
                     <el-select
-                      v-model="sceneDestinationModels![findElementIndexFromArray(mcqEntry, sceneEditorData.scene.scene_actions.multiple_choice)]"
+                      v-model="sceneDestinationModels.value[findElementIndexFromArray(mcqEntry, sceneEditorData.scene.scene_actions.multiple_choice)]"
                       placeholder="Select">
                       <el-option-group v-for="group in possibleDestinations" :label="group.label">
                         <el-option v-for="item in group.values" :key="item" :label="item" :value="item" />
@@ -251,7 +241,7 @@ function saveChanges() {
         <el-form label-position="top">
           <el-form-item label="Destination">
             <div style="display: flex; gap: 5px;">
-              <el-select v-model="singleSceneDestinationModel" placeholder="Select">
+              <el-select v-model="singleSceneDestinationModel" placeholder="Select a destination">
                 <el-option-group v-for="group in possibleDestinations" :label="group.label">
                   <el-option v-for="item in group.values" :key="item" :label="item" :value="item" />
                 </el-option-group>
