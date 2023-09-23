@@ -432,7 +432,7 @@ function saveChanges() {
   font-weight: 600;
   width: 100%;
   max-width: 45vw;
-  margin: auto 5vw;
+  margin: auto;
   text-align: center;
 }
 
