@@ -1,5 +1,5 @@
 import { appDataDir } from '@tauri-apps/api/path';
-import { createDir, readDir, readTextFile, writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
+import { FileEntry, createDir, readDir, readTextFile, writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
 import { v4 as uuidv4 } from 'uuid';
 import { bookUint8Array } from './book.png';
 import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
@@ -305,6 +305,15 @@ export async function resolveSceneInfo(scenePath: string) {
     return value;
   }) as SceneInfo;
   return sceneInfo;
+}
+
+/**
+ * Fetch available story resources found in story save.
+ * @returns A list of available story resources.
+ */
+export async function resolveAvailableStoryResource(baseDir: string): Promise<FileEntry[]> {
+  let availableResourcesFromSave = await readDir(joinPath(baseDir, strings.fileNames.resourcesFolder));
+  return availableResourcesFromSave;
 }
 
 /**

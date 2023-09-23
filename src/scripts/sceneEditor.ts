@@ -1,5 +1,5 @@
-import { writeTextFile } from "@tauri-apps/api/fs";
-import { MultipleChoice, SceneActions, SceneBackgroundType, SceneInfo, SceneNavigationType, SceneTextType } from "./story";
+import { FileEntry, writeTextFile } from "@tauri-apps/api/fs";
+import { MultipleChoice, SceneActions, SceneBackgroundType, SceneInfo, SceneNavigationType, SceneTextType, resolveBaseDirFromScenePath } from "./story";
 import { convertAbsoluteToRelative, findElementIndexFromArray, joinPath } from "./utils";
 import { strings } from "./strings";
 
@@ -13,13 +13,15 @@ export class SceneEditor {
   sceneBackgroundType: SceneBackgroundType;
   sceneDir: string;
   baseDir: string;
-  constructor(scene: SceneInfo, sceneDir: string, baseDir: string) {
+  availableStoryResources: FileEntry[];
+  constructor(scene: SceneInfo, sceneDir: string, availableStoryResources: FileEntry[]) {
     this.scene = scene;
     this.sceneTextType = this.resolveCurrentSceneTextType();
     this.sceneNavigationType = this.resolveCurrentSceneNavigationType();
     this.sceneBackgroundType = this.resolveCurrentSceneBackgroundType();
     this.sceneDir = sceneDir;
-    this.baseDir = baseDir;
+    this.baseDir = resolveBaseDirFromScenePath(this.sceneDir);
+    this.availableStoryResources = availableStoryResources;
     this.preventNull();
   }
 
@@ -32,6 +34,9 @@ export class SceneEditor {
     }
     if (this.scene.scene_actions.single_choice == null) {
       this.scene.scene_actions.single_choice = '';
+    }
+    if (this.scene.media == null) {
+      this.scene.media = '';
     }
   }
 
@@ -203,7 +208,19 @@ export class SceneEditor {
     this.scene.scene_actions.multiple_choice.splice(index, 1);
   }
 
+  /**
+   * Sets the value of the single choice navigation entry.
+   * @param destinationName Name of the destination scene.
+   */
   changeSingleOptionDestination(destinationName: string) {
     this.scene.scene_actions.single_choice = joinPath(strings.fileNames.scenesFolder, destinationName + '.json');
+  }
+
+  setBackgroundMedia(fileName: string) {
+    this.availableStoryResources.forEach((resource) => {
+      if (resource.name === fileName) {
+        this.scene.media = resource.path;
+      }
+    });
   }
 }

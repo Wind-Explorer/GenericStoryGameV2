@@ -7,9 +7,10 @@ import {
   SceneTextType,
   SceneNavigationType,
   SceneBackgroundType,
-  resolveBaseDirFromScenePath,
   resolveScenesFromFS,
   sceneNameToRelativePath,
+  resolveAvailableStoryResource,
+  resolveBaseDirFromScenePath,
 } from '../../../scripts/story';
 import { getObjFromPath, sanitizePath, findElementIndexFromArray } from '../../../scripts/utils';
 import { ref, watch } from 'vue';
@@ -28,7 +29,7 @@ const sceneEditorData = ref<SceneEditor>(
   new SceneEditor(
     await resolveSceneInfo(sceneDir),
     sceneDir,
-    resolveBaseDirFromScenePath(sceneDir)
+    await resolveAvailableStoryResource(resolveBaseDirFromScenePath(sceneDir))
   )
 );
 
@@ -53,8 +54,9 @@ const possibleDestinations = ref([
 
 const sceneDestinationModels = ref<string[]>([]);
 const singleSceneDestinationModel = ref('');
+const sceneMediaChosen = ref('');
 
-function populateSceneDestinationModels() {
+async function populateUIInputs() {
   if (sceneEditorData.value.scene.scene_actions.multiple_choice != null) {
     sceneDestinationModels.value = sceneEditorData.value.scene.scene_actions.multiple_choice.map((mcqEntry) => {
       return getObjFromPath(mcqEntry.destination).replace('.json', '');
@@ -63,9 +65,12 @@ function populateSceneDestinationModels() {
   if (sceneEditorData.value.scene.scene_actions.single_choice != null) {
     singleSceneDestinationModel.value = getObjFromPath(sceneEditorData.value.scene.scene_actions.single_choice).replace('.json', '');
   }
+  if (sceneEditorData.value.scene.media != null) {
+    sceneMediaChosen.value = getObjFromPath(sceneEditorData.value.scene.media);
+  }
 }
 
-populateSceneDestinationModels();
+populateUIInputs();
 
 watch(sceneDestinationModels.value, () => {
   if (sceneEditorData.value.scene.scene_actions.multiple_choice == null) { return; }
@@ -83,13 +88,18 @@ watch(singleSceneDestinationModel, () => {
   sceneEditorData.value.scene.scene_actions.single_choice = sceneNameToRelativePath(value);
 });
 
+// When background media changes, update the value in the class.
+watch(sceneMediaChosen, () => {
+  sceneEditorData.value.setBackgroundMedia(sceneMediaChosen.value);
+});
+
 // When background color changes, update the value in the class.
-watch(sceneBackgroundColor, async () => {
+watch(sceneBackgroundColor, () => {
   sceneEditorData.value.setBackgroundColor(sceneBackgroundColor.value);
 });
 
 watch(sceneEditorData.value, () => {
-  populateSceneDestinationModels();
+  populateUIInputs();
 });
 
 function saveChanges() {
@@ -119,8 +129,14 @@ function saveChanges() {
                     <el-input readonly placeholder="Pick a color" v-model="sceneBackgroundColor" />
                     <el-color-picker v-model="sceneBackgroundColor" />
                   </div>
-                  <el-button v-if="sceneEditorData.sceneBackgroundType === SceneBackgroundType.Media"
-                    class="background-type-values media-picker">Change</el-button>
+                  <el-select v-if="sceneEditorData.sceneBackgroundType === SceneBackgroundType.Media"
+                    v-model="sceneMediaChosen" placeholder="Select from resources">
+                    <el-option v-for="item in sceneEditorData.availableStoryResources" :key="item" :value="item.name"
+                      class='img-select-entry' style="height: 90px;">
+                      <img class='img-select-entry img' :src="convertFileSrc(item.path)" />
+                      <el-text class='img-select-entry text'>{{ item.name }}</el-text>
+                    </el-option>
+                  </el-select>
                 </div>
               </el-form-item>
               <el-divider />
@@ -152,7 +168,7 @@ function saveChanges() {
               :style="`background-color: ${sceneBackgroundColor};`"></div>
             <el-image class="scene-preview-background" fit="cover"
               v-if="sceneEditorData.sceneBackgroundType === SceneBackgroundType.Media"
-              :src="sceneEditorData.scene.media != null ? convertFileSrc(sceneEditorData.scene.media) : ''">
+              :src="convertFileSrc(sceneEditorData.scene.media ?? '')">
               <template #error>
                 <div class="failed-to-load-image-message">
                   <el-icon>
@@ -327,10 +343,6 @@ function saveChanges() {
   gap: 10px;
 }
 
-.background-type-values.media-picker {
-  width: 100%;
-}
-
 .scene-preferences-div {
   position: absolute;
   display: flex;
@@ -409,6 +421,28 @@ function saveChanges() {
   position: absolute;
   right: -15px;
   top: -15px;
+}
+
+.img-select-entry {
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-between; */
+  gap: 20px;
+  margin: 5px;
+  border-radius: 5px;
+  transition: 0.2s;
+}
+
+.img-select-entry.img {
+  object-fit: cover;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 2px solid #77777733;
+}
+
+.img-select-entry.text {
+  margin: auto 0;
+  font-size: 18px;
 }
 
 #scene-preview {
