@@ -355,5 +355,6 @@ html.dark {
   right: 15px;
   font-size: 20px;
   filter: drop-shadow(0px 0px 5px #000000);
+  color: #fff;
 }
 </style>
