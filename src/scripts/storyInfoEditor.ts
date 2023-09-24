@@ -1,4 +1,4 @@
-import { writeTextFile } from "@tauri-apps/api/fs";
+import { FileEntry, readDir, writeTextFile } from "@tauri-apps/api/fs";
 import { ExtraStoryInfo, resolveScenesFromFS, sceneNameToRelativePath } from "./story";
 import { convertAbsoluteToRelative, getObjFromPath, joinPath } from "./utils";
 import { strings } from "./strings";
@@ -9,9 +9,11 @@ import { strings } from "./strings";
 export class StoryInfoEditor {
   baseDir: string;
   storyInfo: ExtraStoryInfo;
+  storyResources: Promise<FileEntry[]>;
   constructor(storyInfo: ExtraStoryInfo) {
     this.baseDir = storyInfo.base_story_info.base_dir;
     this.storyInfo = storyInfo;
+    this.storyResources = this.resolveStoryResources();
   }
 
   /**
@@ -61,5 +63,21 @@ export class StoryInfoEditor {
 
     // Write data to story core.
     await writeTextFile(joinPath(this.baseDir, strings.fileNames.core), JSONData);
+  }
+
+  async resolveStoryResources() {
+    return await readDir(joinPath(this.baseDir, strings.fileNames.resourcesFolder));
+  }
+
+  resolveStoryThumbnail() {
+    return this.storyInfo.base_story_info.thumbnail;
+  }
+
+  async setStoryThumbnail(newThumbnailName: string) {
+    (await this.storyResources).forEach(resource => {
+      if (resource.name === newThumbnailName) {
+        this.storyInfo.base_story_info.thumbnail = resource.path;
+      }
+    });
   }
 }

@@ -25,10 +25,16 @@ const storyInfoEditor = ref(
 
 const availableEntryPoints = await storyInfoEditor.value.resolveAvailableEntryPointNames();
 const storyEntryPoint = ref(storyInfoEditor.value.resolveEntryPointName());
+const storyThumbnail = ref(getObjFromPath(storyInfoEditor.value.resolveStoryThumbnail()));
+const storyResources = await storyInfoEditor.value.resolveStoryResources();
 
 watch(storyEntryPoint, (newVal) => {
 	storyInfoEditor.value.setEntryPoint(newVal);
 })
+
+watch(storyThumbnail, (newVal) => {
+	storyInfoEditor.value.setStoryThumbnail(newVal);
+});
 
 async function saveData() {
 	await storyInfoEditor.value.writeStoryInfoToDisk();
@@ -77,10 +83,15 @@ async function saveData() {
 					<div>
 						<el-avatar style="box-shadow: 0 0 1px #333;" shape="square" :size="70"
 							:src="convertFileSrc(storyInfoEditor.storyInfo.base_story_info.thumbnail)" fit="cover" />
-						<el-text size="large">{{ getObjFromPath(storyInfoEditor.storyInfo.base_story_info.thumbnail) }}</el-text>
 					</div>
 					<div>
-						<el-button>Choose from resources...</el-button>
+						<el-select v-model="storyThumbnail" placeholder="Select from resources">
+							<el-option v-for="item in storyResources" :key="item" :value="item.name" class='img-select-entry'
+								style="height: 90px;">
+								<img class='img-select-entry img' :src="convertFileSrc(item.path)" />
+								<el-text class='img-select-entry text'>{{ item.name }}</el-text>
+							</el-option>
+						</el-select>
 					</div>
 				</div>
 			</el-descriptions-item>

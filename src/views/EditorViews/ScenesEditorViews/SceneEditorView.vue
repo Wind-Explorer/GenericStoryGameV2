@@ -413,28 +413,6 @@ function saveChanges() {
   top: -15px;
 }
 
-.img-select-entry {
-  display: flex;
-  flex-direction: row;
-  /* justify-content: space-between; */
-  gap: 20px;
-  margin: 5px;
-  border-radius: 5px;
-  transition: 0.2s;
-}
-
-.img-select-entry.img {
-  object-fit: cover;
-  margin: 10px 0;
-  border-radius: 6px;
-  border: 2px solid #77777733;
-}
-
-.img-select-entry.text {
-  margin: auto 0;
-  font-size: 18px;
-}
-
 #scene-preview {
   width: 100%;
   position: relative;
