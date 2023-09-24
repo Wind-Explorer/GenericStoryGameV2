@@ -65,14 +65,26 @@ export class StoryInfoEditor {
     await writeTextFile(joinPath(this.baseDir, strings.fileNames.core), JSONData);
   }
 
-  async resolveStoryResources() {
+  /**
+   * Resolves available resources from the filesystem.
+   * @returns A list of available resources.
+   */
+  async resolveStoryResources(): Promise<FileEntry[]> {
     return await readDir(joinPath(this.baseDir, strings.fileNames.resourcesFolder));
   }
 
-  resolveStoryThumbnail() {
+  /**
+   * Resolves the thumbnail of the story.
+   * @returns The thumbnail of the story.
+   */
+  resolveStoryThumbnail(): string {
     return this.storyInfo.base_story_info.thumbnail;
   }
 
+  /**
+   * Sets the thumbnail of the story.
+   * @param newThumbnailName The name of the new thumbnail.
+   */
   async setStoryThumbnail(newThumbnailName: string) {
     (await this.storyResources).forEach(resource => {
       if (resource.name === newThumbnailName) {
