@@ -1,0 +1,65 @@
+import { writeTextFile } from "@tauri-apps/api/fs";
+import { ExtraStoryInfo, resolveScenesFromFS, sceneNameToRelativePath } from "./story";
+import { convertAbsoluteToRelative, getObjFromPath, joinPath } from "./utils";
+import { strings } from "./strings";
+
+/**
+ * A class that allows for editing of story info.
+ */
+export class StoryInfoEditor {
+  baseDir: string;
+  storyInfo: ExtraStoryInfo;
+  constructor(storyInfo: ExtraStoryInfo) {
+    this.baseDir = storyInfo.base_story_info.base_dir;
+    this.storyInfo = storyInfo;
+  }
+
+  /**
+   * Resolves available entry points from the filesystem.
+   * @returns A list of available entry points.
+   */
+  async resolveAvailableEntryPointNames(): Promise<string[]> {
+    return (await resolveScenesFromFS(this.baseDir as string)).map((scene) => {
+      return scene.scene_name;
+    })
+  }
+
+  /**
+   * Sets the entry point of the story.
+   * @param entryPoint The entry point to set.
+   */
+  setEntryPoint(entryPointName: string) {
+    this.storyInfo.base_story_info.entry_point = sceneNameToRelativePath(entryPointName);
+  }
+
+  /**
+   * Resolves the name of the entry point.
+   * @returns The name of the entry point.
+   */
+  resolveEntryPointName(): string {
+    return getObjFromPath(this.storyInfo.base_story_info.entry_point).replace('.json', '');
+  }
+
+  /**
+ * Writes the updated story info into the filesystem.
+ */
+  async writeStoryInfoToDisk() {
+    const JSONData = JSON.stringify(this.storyInfo.base_story_info, (key, value) => {
+
+      // For thumbnail and entry_point paths, return path
+      // relative to story directory (strip away absolute path).
+      if (key === 'thumbnail' || key === 'entry_point') {
+        return convertAbsoluteToRelative(value, this.baseDir);
+      }
+
+      // base_dir should be left empty.
+      else if (key === 'base_dir') {
+        return '';
+      }
+      else { return value };
+    });
+
+    // Write data to story core.
+    await writeTextFile(joinPath(this.baseDir, strings.fileNames.core), JSONData);
+  }
+}

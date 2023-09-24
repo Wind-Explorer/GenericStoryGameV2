@@ -3,7 +3,7 @@ import { FileEntry, createDir, readDir, readTextFile, writeBinaryFile, writeText
 import { v4 as uuidv4 } from 'uuid';
 import { bookUint8Array } from './book.png';
 import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
-import { getObjFromPath, ensureDirExists, joinPath, sanitizePath, convertAbsoluteToRelative } from './utils';
+import { getObjFromPath, ensureDirExists, joinPath, sanitizePath } from './utils';
 import { sep } from "@tauri-apps/api/path";
 import { strings } from './strings';
 
@@ -362,31 +362,6 @@ export async function createNewStory(story_title: string, story_description: str
 
   // Return the base directory to the story.
   return baseDir;
-}
-
-/**
- * Writes the updated story info into the filesystem.
- * @param data StoryInfo object containing data to be written to disk.
- * @param baseDir Base directory pointing to the path of the story.
- */
-export async function writeStoryInfoToDisk(data: StoryInfo, baseDir: string) {
-  const JSONData = JSON.stringify(data, (key, value) => {
-
-    // For thumbnail and entry_point paths, return path
-    // relative to story directory (strip away absolute path).
-    if (key === 'thumbnail' || key === 'entry_point') {
-      return convertAbsoluteToRelative(value, baseDir);
-    }
-
-    // base_dir should be left empty.
-    else if (key === 'base_dir') {
-      return '';
-    }
-    else { return value };
-  });
-
-  // Write data to story core.
-  await writeTextFile(joinPath(baseDir, strings.fileNames.core), JSONData);
 }
 
 /**
