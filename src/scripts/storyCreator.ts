@@ -49,8 +49,8 @@ export class StoryCreator {
     `recursive` is set to true, so `baseDir` will
     also be created without explicitly instructing.
     */
-    createDir(scenesDir, { recursive: true });
-    createDir(resourcesDir, { recursive: true });
+    await createDir(scenesDir, { recursive: true });
+    await createDir(resourcesDir, { recursive: true });
 
     // Create a new story info object with user's inputs
     let newStoryInfo: StoryInfo = templateStoryInfo(story_title, story_description, story_author);
