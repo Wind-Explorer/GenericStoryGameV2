@@ -26,8 +26,8 @@ async function refreshStoriesList() {
     <!-- HTML elements for the component -->
     <el-empty id="empty-story-list" v-if="storyInfos.length == 0"
       description="Looks like you've got no stories in your collection!">
-      <el-button type="default" :icon="Refresh" @click="refreshStoriesList">Refresh</el-button>
-      <el-button type="default" :icon="FolderOpened" disabled>Import...</el-button>
+      <el-button :icon="Refresh" @click="refreshStoriesList">Refresh</el-button>
+      <el-button :icon="FolderOpened" disabled>Import...</el-button>
     </el-empty>
     <el-scrollbar id="story-entry-scroll" ref="story_entry_scroll" v-if="storyInfos.length > 0">
       <el-card v-for="storyInfo in storyInfos" shadow="hover" class="story-entry-card">
@@ -37,7 +37,7 @@ async function refreshStoriesList() {
             plain size="large" :icon="VideoPlay" round class="play-button">Play</el-button>
         </div>
       </el-card>
-      <el-button id="refresh-button" type="default" :icon="Refresh" @click="refreshStoriesList">Refresh</el-button>
+      <el-button id="refresh-button" :icon="Refresh" @click="refreshStoriesList">Refresh</el-button>
     </el-scrollbar>
   </div>
 </template>
