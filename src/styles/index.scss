@@ -130,11 +130,15 @@ html.dark {
   position: relative;
   margin-top: auto;
   margin-bottom: auto;
-  display: flex;
-  gap: 20px;
+  font-size: 20px;
 }
 
-.play-button * {
+.play-button-div {
+  gap: 20px;
+  display: flex;
+}
+
+.play-button-div * {
   font-size: 20px;
 }
 

@@ -41,7 +41,7 @@ html.dark {
 
 .transition-enter-active,
 .transition-leave-active {
-  transition: 0.4s;
+  transition: 0.3s;
 }
 
 .transition-enter-from,

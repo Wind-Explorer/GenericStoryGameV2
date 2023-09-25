@@ -44,36 +44,4 @@ async function refreshStoriesList() {
 
 <style scoped lang="scss">
 /* CSS styles for the component */
-#empty-story-list {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
-#story-entry-scroll {
-  padding: 15px;
-}
-
-.story-entry-card {
-  margin-bottom: 15px;
-}
-
-.story-entry {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-#refresh-button {
-  width: 100%;
-}
-
-.play-button {
-  font-size: 20px;
-  position: relative;
-  margin-top: auto;
-  margin-bottom: auto;
-}
 </style>

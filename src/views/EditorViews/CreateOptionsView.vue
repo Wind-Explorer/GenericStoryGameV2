@@ -96,7 +96,7 @@ watch(newStoryInfo.value, () => {
           <el-card v-for="storyInfo in storyCreator.storyInfos" shadow="hover" class="story-entry-card">
             <div class="story-entry" :key="storyInfo.entry_point">
               <StoriesListEntry :story-info="storyInfo" />
-              <div class="play-button">
+              <div class="play-button-div">
                 <el-dropdown class="story-entry-dropdown">
                   <el-icon>
                     <More />
@@ -110,7 +110,7 @@ watch(newStoryInfo.value, () => {
                   </template>
                 </el-dropdown>
                 <el-button @click="$router.push(`/editoroverview/${(encodeURIComponent(storyInfo.base_dir))}`)"
-                  type="primary" plain size="large" :icon="Edit" round>Edit</el-button>
+                  type="primary" plain size="large" :icon="Edit" round class="play-button">Edit</el-button>
               </div>
             </div>
           </el-card>
