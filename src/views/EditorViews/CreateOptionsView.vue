@@ -1,15 +1,15 @@
 <script setup lang="ts">
 // Scripts for the component
 import PageTitle from '../../components/PageTitle.vue';
-import EditorStoriesList from '../../components/EditorStoriesList.vue';
 import { dialogStyling } from '../../scripts/dialog.css'
-import { Plus, Files, House } from '@element-plus/icons-vue'
+import { Plus, Files, House, Edit, More, Refresh, FolderOpened } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus';
 import { ref, watch } from 'vue';
-import { createNewStory } from '../../scripts/story';
-
+import { StoryLocation, resolveStoriesFromFS } from '../../scripts/story';
+import StoriesListEntry from '../../components/StoriesListEntry.vue';
 import MenuBackground from '../../components/MenuBackground.vue';
 import { sanitizeFileName } from '../../scripts/utils';
+import { StoryCreator } from '../../scripts/storyCreator';
 
 const newStoryDialogVisible = ref(false);
 const storiesListDialogVisible = ref(false);
@@ -26,8 +26,10 @@ const newStoryInfo = ref<NewStoryInfo>({
   author: ''
 });
 
+const storyCreator = ref(new StoryCreator(await resolveStoriesFromFS(StoryLocation.Workspace)));
+
 async function prepareNewStoryCreation() {
-  await createNewStory(
+  await storyCreator.value.createNewStory(
     newStoryInfo.value.title.trim(),
     newStoryInfo.value.description.trim(),
     newStoryInfo.value.author.trim()
@@ -83,7 +85,39 @@ watch(newStoryInfo.value, () => {
       <template #header>
         <h2 class="dialog-center-title">Your Workspace</h2>
       </template>
-      <EditorStoriesList class="stories-list" />
+      <!-- <EditorStoriesList class="stories-list" /> -->
+      <div class="stories-list">
+        <el-empty id="empty-story-list" v-if="storyCreator.storyInfos.length == 0"
+          description="Looks like you've got no stories in your workspace!">
+          <el-button type="default" :icon="Refresh" @click="storyCreator.refreshStoryInfos()">Refresh</el-button>
+          <el-button type="default" :icon="FolderOpened" disabled>Import...</el-button>
+        </el-empty>
+        <el-scrollbar id="story-entry-scroll" ref="story_entry_scroll" v-if="storyCreator.storyInfos.length > 0">
+          <el-card v-for="storyInfo in storyCreator.storyInfos" shadow="hover" class="story-entry-card">
+            <div class="story-entry" :key="storyInfo.entry_point">
+              <StoriesListEntry :story-info="storyInfo" />
+              <div class="play-button">
+                <el-dropdown class="story-entry-dropdown">
+                  <el-icon>
+                    <More />
+                  </el-icon>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item>Details</el-dropdown-item>
+                      <el-dropdown-item>Move into collection</el-dropdown-item>
+                      <el-dropdown-item>Export...</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+                <el-button @click="$router.push(`/editoroverview/${(encodeURIComponent(storyInfo.base_dir))}`)"
+                  type="primary" plain size="large" :icon="Edit" round>Edit</el-button>
+              </div>
+            </div>
+          </el-card>
+          <el-button id="refresh-button" type="default" :icon="Refresh"
+            @click="storyCreator.refreshStoryInfos()">Refresh</el-button>
+        </el-scrollbar>
+      </div>
     </el-dialog>
   </div>
 </template>

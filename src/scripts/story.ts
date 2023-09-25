@@ -1,8 +1,5 @@
 import { appDataDir } from '@tauri-apps/api/path';
-import { FileEntry, createDir, readDir, readTextFile, writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
-import { v4 as uuidv4 } from 'uuid';
-import { bookUint8Array } from './book.png';
-import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
+import { FileEntry, readDir, readTextFile } from '@tauri-apps/api/fs';
 import { getObjFromPath, ensureDirExists, joinPath, sanitizePath } from './utils';
 import { sep } from "@tauri-apps/api/path";
 import { strings } from './strings';
@@ -24,7 +21,7 @@ const collectionsPath = await ensureDirExists(joinPath(appDataDirPath, strings.f
  * 
  * Resolves to `$APPDATA/workspace`.
  */
-const workspacePath = await ensureDirExists(joinPath(appDataDirPath, strings.fileNames.workspaceFolder));
+export const workspacePath = await ensureDirExists(joinPath(appDataDirPath, strings.fileNames.workspaceFolder));
 
 /**
  * Structure of story info.
@@ -314,54 +311,6 @@ export async function resolveSceneInfo(scenePath: string) {
 export async function resolveAvailableStoryResource(baseDir: string): Promise<FileEntry[]> {
   let availableResourcesFromSave = await readDir(joinPath(baseDir, strings.fileNames.resourcesFolder));
   return availableResourcesFromSave;
-}
-
-/**
- * Initializes a new story with template content.
- * @param story_title Title of the story.
- * @param story_description Description of the story.
- * @param story_author Author of the story.
- * @returns Path to the base directory of the story.
- */
-export async function createNewStory(story_title: string, story_description: string, story_author: string): Promise<string> {
-
-  // Generates a new UUID for use as new story directory name
-  let uuidDirName =
-    window.isSecureContext ?
-      self.crypto.randomUUID()
-      : uuidv4();
-
-  // Declare the paths for story directory
-  const baseDir = joinPath(workspacePath, uuidDirName);
-  const scenesDir = joinPath(baseDir, strings.fileNames.scenesFolder);
-  const resourcesDir = joinPath(baseDir, strings.fileNames.resourcesFolder);
-
-  // Create the directories
-  /*
-  `recursive` is set to true, so `baseDir` will
-  also be created without explicitly instructing.
-  */
-  createDir(scenesDir, { recursive: true });
-  createDir(resourcesDir, { recursive: true });
-
-  // Create a new story info object with user's inputs
-  let newStoryInfo: StoryInfo = templateStoryInfo(story_title, story_description, story_author);
-
-  // Converts the story info object into JSON data
-  let newStoryInfoAsJSON = JSON.stringify(newStoryInfo, null);
-
-  // Write the story info JSON data to the story directory
-  await writeTextFile(joinPath(baseDir, strings.fileNames.core), newStoryInfoAsJSON);
-
-  // Generate template story thumbnail
-  await writeBinaryFile(joinPath(resourcesDir, strings.fileNames.thumbnail), bookUint8Array());
-
-  // Populate the story with two example scenes
-  await writeTextFile(joinPath(scenesDir, strings.fileNames.firstScene), JSON.stringify(templateSceneInfo1, null));
-  await writeTextFile(joinPath(scenesDir, strings.fileNames.secondScene), JSON.stringify(templateSceneInfo2, null));
-
-  // Return the base directory to the story.
-  return baseDir;
 }
 
 /**
