@@ -63,7 +63,7 @@
         "readDir": true,
         "copyFile": false,
         "createDir": true,
-        "removeDir": false,
+        "removeDir": true,
         "removeFile": true,
         "renameFile": true,
         "exists": true,

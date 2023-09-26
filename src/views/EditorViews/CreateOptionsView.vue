@@ -2,10 +2,10 @@
 // Scripts for the component
 import PageTitle from '../../components/PageTitle.vue';
 import { dialogStyling } from '../../scripts/dialog.css'
-import { Plus, Files, House, Edit, More, Refresh, FolderOpened } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus';
+import { Plus, Files, House, Edit, More, Refresh, FolderOpened, Delete, Upload } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { ref, watch } from 'vue';
-import { StoryLocation, resolveStoriesFromFS } from '../../scripts/story';
+import { StoryInfo, StoryLocation, resolveStoriesFromFS } from '../../scripts/story';
 import StoriesListEntry from '../../components/StoriesListEntry.vue';
 import MenuBackground from '../../components/MenuBackground.vue';
 import { sanitizeFileName } from '../../scripts/utils';
@@ -36,6 +36,26 @@ async function prepareNewStoryCreation() {
   );
   newStoryDialogVisible.value = false;
   ElMessage({ message: 'Created!', grouping: true, type: 'success' });
+}
+
+function prepareStoryDeletion(storyInfo: StoryInfo) {
+  ElMessageBox.confirm(
+    'This action is irreversable.',
+    'Are you sure?',
+    {
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      type: 'warning',
+    }
+  )
+    .then(async () => {
+      await storyCreator.value.deleteStory(storyInfo);
+      ElMessage({ message: 'Poof.', grouping: true, type: 'success' });
+      storyCreator.value.refreshStoryInfos();
+    })
+    .catch(() => {
+      // silence.
+    });
 }
 
 watch(newStoryInfo.value, () => {
@@ -103,9 +123,8 @@ watch(newStoryInfo.value, () => {
                   </el-icon>
                   <template #dropdown>
                     <el-dropdown-menu>
-                      <el-dropdown-item>Details</el-dropdown-item>
-                      <el-dropdown-item>Move into collection</el-dropdown-item>
-                      <el-dropdown-item>Export...</el-dropdown-item>
+                      <el-dropdown-item :icon="Upload">Export...</el-dropdown-item>
+                      <el-dropdown-item :icon="Delete" @click="prepareStoryDeletion(storyInfo)">Delete</el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
                 </el-dropdown>
@@ -114,8 +133,7 @@ watch(newStoryInfo.value, () => {
               </div>
             </div>
           </el-card>
-          <el-button id="refresh-button" :icon="Refresh"
-            @click="storyCreator.refreshStoryInfos()">Refresh</el-button>
+          <el-button id="refresh-button" :icon="Refresh" @click="storyCreator.refreshStoryInfos()">Refresh</el-button>
         </el-scrollbar>
       </div>
     </el-dialog>
