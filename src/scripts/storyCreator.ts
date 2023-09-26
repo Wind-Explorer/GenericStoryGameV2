@@ -80,7 +80,6 @@ export class StoryCreator {
    * @param storyInfo Path to the base directory of the story.
    */
   async deleteStory(storyInfo: StoryInfo) {
-    console.log(storyInfo.base_dir);
     await removeDir(storyInfo.base_dir, { recursive: true })
   }
 }
