@@ -68,6 +68,9 @@ export class StoryCreator {
     await writeTextFile(joinPath(scenesDir, strings.fileNames.firstScene), JSON.stringify(templateSceneInfo1, null));
     await writeTextFile(joinPath(scenesDir, strings.fileNames.secondScene), JSON.stringify(templateSceneInfo2, null));
 
+    // Refresh the story list
+    this.refreshStoryInfos();
+
     // Return the base directory to the story.
     return baseDir;
   }
