@@ -58,6 +58,11 @@ function prepareStoryDeletion(storyInfo: StoryInfo) {
     });
 }
 
+function refreshStoryInfos() {
+  storyCreator.value.refreshStoryInfos();
+  ElMessage({ message: 'Refreshed!', grouping: true, type: 'success' });
+}
+
 watch(newStoryInfo.value, () => {
   newStoryInfo.value.title = sanitizeFileName(newStoryInfo.value.title);
 });
@@ -133,7 +138,7 @@ watch(newStoryInfo.value, () => {
               </div>
             </div>
           </el-card>
-          <el-button id="refresh-button" :icon="Refresh" @click="storyCreator.refreshStoryInfos()">Refresh</el-button>
+          <el-button id="refresh-button" :icon="Refresh" @click="refreshStoryInfos()">Refresh</el-button>
         </el-scrollbar>
       </div>
     </el-dialog>
