@@ -20,11 +20,13 @@ const showTime = ref(false);
       </div>
       <div class="textual">
         <h2>{{ props.storyInfo.title }}</h2>
-        <h3>{{ props.storyInfo.author }}</h3>
-        <p v-if="!showTime" @click="() => { showTime = !showTime }">{{
+        <h3>by {{ props.storyInfo.author }}</h3>
+        <p id="story-description">{{ props.storyInfo.description }}</p>
+        <p class="time-date" v-if="!showTime" @click="() => { showTime = !showTime }">{{
           props.storyInfo.creation_date.toLocaleDateString()
         }}</p>
-        <p v-if="showTime" @click="() => { showTime = !showTime }">{{ props.storyInfo.creation_date.toLocaleString() }}
+        <p class="time-date" v-if="showTime" @click="() => { showTime = !showTime }">{{
+          props.storyInfo.creation_date.toLocaleString() }}
         </p>
       </div>
     </div>
@@ -34,23 +36,11 @@ const showTime = ref(false);
 <style scoped>
 /* CSS styles for the component */
 .story-info {
+  position: relative;
   display: flex;
   flex-direction: row;
   gap: 20px;
-}
-
-.story-info h3 {
-  opacity: 0.7;
-  font-weight: 500;
-}
-
-.story-info p {
-  opacity: 0.5;
-  font-size: 13px;
-}
-
-.story-info p:hover {
-  opacity: 1;
+  margin-right: 40px;
 }
 
 .textual {
@@ -59,7 +49,31 @@ const showTime = ref(false);
   text-align: left;
   margin-top: auto;
   margin-bottom: auto;
-  gap: 5px;
+  gap: 8px;
+  width: 100%;
+}
+
+.textual * {
+  width: 100%;
+}
+
+
+.textual h3 {
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+.time-date {
+  opacity: 0.5;
+  font-size: 13px;
+}
+
+.time-date:hover {
+  opacity: 1;
+}
+
+.thumbnail {
+  margin: auto auto;
 }
 
 .thumbnail img {
@@ -67,5 +81,14 @@ const showTime = ref(false);
   width: 90px;
   object-fit: cover;
   border-radius: 4px;
+  border: 1px solid #77777777;
+}
+
+#story-description {
+  border-left: 4px solid #77777777;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: #77777711;
+  opacity: 0.7;
 }
 </style>
