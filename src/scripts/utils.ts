@@ -1,9 +1,9 @@
-import { invoke } from "@tauri-apps/api";
 import { createDir, exists } from "@tauri-apps/api/fs";
 import { sep } from "@tauri-apps/api/path";
 import { Command } from "@tauri-apps/api/shell";
+import { RustBackend } from "./rustBackend";
 
-const currentOS = await invoke('resolve_current_os') as any as string;
+const currentOS = await RustBackend.resolveCurrentOS();
 
 /**
  * Pause the execution for the specified amount of time.
