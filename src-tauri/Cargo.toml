@@ -1,10 +1,10 @@
 [package]
-name = "GenericStoryGameV2"
+name = "generic-story-game-v2"
 version = "0.0.124"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+description = "Elegant & (VERY) easy story telling derived from the original Generic Story Game by the two."
+authors = ["Wind-Explorer@github.com", "ZhichGaming@github.com"]
+license = "GPL-3.0-or-later"
+repository = "https://github.com/wind-explorer/GenericStoryGameV2"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

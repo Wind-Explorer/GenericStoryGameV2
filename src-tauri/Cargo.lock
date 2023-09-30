@@ -3,17 +3,6 @@
 version = 3
 
 [[package]]
-name = "GenericStoryGameV2"
-version = "0.0.124"
-dependencies = [
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "zip",
-]
-
-[[package]]
 name = "addr2line"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -979,6 +968,17 @@ checksum = "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
 dependencies = [
  "typenum",
  "version_check",
+]
+
+[[package]]
+name = "generic-story-game-v2"
+version = "0.0.124"
+dependencies = [
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "zip",
 ]
 
 [[package]]
