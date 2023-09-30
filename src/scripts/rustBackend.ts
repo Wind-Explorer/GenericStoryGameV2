@@ -1,12 +1,14 @@
 import { invoke } from "@tauri-apps/api";
 
 export class ArchiveManager {
-  static compressFolder(folderPath: string, outputPath: string) {
-    return invoke("compress_folder", { folderPath: folderPath, outputPath: outputPath });
+  static async compressFolder(folderPath: string, outputPath: string): Promise<string> {
+    await invoke("compress_folder", { folderPath: folderPath, outputPath: outputPath });
+    return outputPath;
   }
 
-  static decompressArchive(archivePath: string, outputFolder: string) {
-    return invoke("decompress_archive", { archivePath: archivePath, outputFolder: outputFolder });
+  static async decompressArchive(archivePath: string, outputFolder: string): Promise<string> {
+    await invoke("decompress_archive", { archivePath: archivePath, outputFolder: outputFolder });
+    return outputFolder;
   }
 }
 
