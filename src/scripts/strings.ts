@@ -32,5 +32,11 @@ export const strings = {
   },
   navigationKeywords: {
     end: '#END',
+  },
+  fileTypes: {
+    storySave: {
+      extension: 'gsg',
+      description: 'Generic Story Game Save'
+    },
   }
 }

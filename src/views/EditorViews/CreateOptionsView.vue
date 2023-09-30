@@ -10,6 +10,7 @@ import StoriesListEntry from '../../components/StoriesListEntry.vue';
 import MenuBackground from '../../components/MenuBackground.vue';
 import { sanitizeFileName } from '../../scripts/utils';
 import { StoryCreator } from '../../scripts/storyCreator';
+import { StorySaveManager } from '../../scripts/storySaveManager';
 
 const newStoryDialogVisible = ref(false);
 const storiesListDialogVisible = ref(false);
@@ -128,7 +129,8 @@ watch(newStoryInfo.value, () => {
                   </el-icon>
                   <template #dropdown>
                     <el-dropdown-menu>
-                      <el-dropdown-item :icon="Upload">Export...</el-dropdown-item>
+                      <el-dropdown-item :icon="Upload"
+                        @click="StorySaveManager.exportStory(storyInfo)">Export...</el-dropdown-item>
                       <el-dropdown-item :icon="Delete" @click="prepareStoryDeletion(storyInfo)">Delete</el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
