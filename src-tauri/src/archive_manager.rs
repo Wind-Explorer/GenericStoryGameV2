@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 use zip::write::FileOptions;
-use zip::{ZipArchive, ZipWriter};
+use zip::{CompressionMethod, ZipArchive, ZipWriter};
 
 /// Adds a folder to a zip file
 /// # Arguments
@@ -22,7 +22,10 @@ fn add_folder_to_zip(
             add_folder_to_zip(zip, &path, base_path)?;
         } else {
             let relative_path = path.strip_prefix(base_path).unwrap();
-            let options = FileOptions::default().unix_permissions(0o755);
+            let options = FileOptions::default()
+                .unix_permissions(0o755)
+                .compression_method(CompressionMethod::Deflated)
+                .compression_level(Some(9));
             let mut file = File::open(&path)?;
             let mut buffer = Vec::new();
             file.read_to_end(&mut buffer)?;
