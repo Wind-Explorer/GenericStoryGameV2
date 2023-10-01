@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Scripts for the component
-import { VideoPlay, Refresh, FolderOpened } from '@element-plus/icons-vue';
+import { VideoPlay, Refresh, FolderOpened, Download } from '@element-plus/icons-vue';
 import { ElMessage, ElScrollbar } from 'element-plus'
 import { StoryInfo, resolveStoriesFromFS } from '../scripts/story';
 import { ref } from 'vue';
@@ -17,6 +17,10 @@ async function refreshStoriesList() {
     story_entry_scroll.value.setScrollTop(0);
   }
   ElMessage({ message: 'Refreshed', grouping: true, type: 'success' })
+}
+
+async function importStory() {
+  // TODO: implement
 }
 
 </script>
@@ -37,7 +41,12 @@ async function refreshStoriesList() {
             plain size="large" :icon="VideoPlay" round class="play-button">Play</el-button>
         </div>
       </el-card>
-      <el-button id="refresh-button" :icon="Refresh" @click="refreshStoriesList">Refresh</el-button>
+      <div class="list-bottom">
+        <el-button id="refresh-button" class="list-bottom-button" :icon="Refresh"
+          @click="refreshStoriesList()">Refresh</el-button>
+        <el-button id="import-button" class="list-bottom-button" :icon="Download"
+          @click="importStory()">Import</el-button>
+      </div>
     </el-scrollbar>
   </div>
 </template>
