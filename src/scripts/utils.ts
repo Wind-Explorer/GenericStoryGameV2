@@ -2,6 +2,7 @@ import { createDir, exists } from "@tauri-apps/api/fs";
 import { sep } from "@tauri-apps/api/path";
 import { Command } from "@tauri-apps/api/shell";
 import { RustBackend } from "./rustBackend";
+import { v4 as uuidv4 } from 'uuid';
 
 const currentOS = await RustBackend.resolveCurrentOS();
 
@@ -139,4 +140,13 @@ export function resolveNewPathFromNewName(filePath: string, newName: string): st
   const pathArray = filePath.split(sep);
   pathArray.pop();
   return joinPath(pathArray.join(sep), newName + '.json');
+}
+
+/**
+ * Generates a new UUID.
+ */
+export function newUUID(): string {
+  return window.isSecureContext ?
+    self.crypto.randomUUID()
+    : uuidv4();
 }

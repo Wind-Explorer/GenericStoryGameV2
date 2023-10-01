@@ -122,10 +122,6 @@ html.dark {
   justify-content: space-between;
 }
 
-#refresh-button {
-  width: 100%;
-}
-
 .play-button {
   position: relative;
   margin-top: auto;
@@ -145,4 +141,13 @@ html.dark {
 .story-entry-dropdown {
   margin-top: auto;
   margin-bottom: auto;
+}
+
+.list-bottom {
+  display: flex;
+  justify-content: right;
+}
+
+.list-bottom-button {
+  width: 100%;
 }

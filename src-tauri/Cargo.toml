@@ -14,6 +14,7 @@ tauri-build = { version = "1.4", features = [] }
 
 [dependencies]
 tauri = { version = "1.4", features = [
+  "dialog-open",
   "dialog-save",
   "fs-remove-dir",
   "fs-remove-file",

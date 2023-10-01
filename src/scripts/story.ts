@@ -14,7 +14,7 @@ const appDataDirPath = await ensureDirExists(await appDataDir());
  * 
  * Resolves to `$APPDATA/collections`.
  */
-const collectionsPath = await ensureDirExists(joinPath(appDataDirPath, strings.fileNames.collectionsFolder));
+export const collectionsPath = await ensureDirExists(joinPath(appDataDirPath, strings.fileNames.collectionsFolder));
 
 /**
  * Path to story creator workspace directory.

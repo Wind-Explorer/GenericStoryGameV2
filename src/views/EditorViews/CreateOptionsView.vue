@@ -2,7 +2,7 @@
 // Scripts for the component
 import PageTitle from '../../components/PageTitle.vue';
 import { dialogStyling } from '../../scripts/dialog.css'
-import { Plus, Files, House, Edit, More, Refresh, FolderOpened, Delete, Upload } from '@element-plus/icons-vue'
+import { Plus, Files, House, Edit, More, Refresh, FolderOpened, Delete, Upload, Download } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { ref, watch } from 'vue';
 import { StoryInfo, StoryLocation, resolveStoriesFromFS } from '../../scripts/story';
@@ -59,9 +59,16 @@ function prepareStoryDeletion(storyInfo: StoryInfo) {
     });
 }
 
-function refreshStoryInfos() {
-  storyCreator.value.refreshStoryInfos();
+async function refreshStoryInfos() {
+  await storyCreator.value.refreshStoryInfos();
   ElMessage({ message: 'Refreshed!', grouping: true, type: 'success' });
+}
+
+async function importStory() {
+  const importAction = await StorySaveManager.importStory(StoryLocation.Workspace);
+  if (!importAction) { return }
+  await storyCreator.value.refreshStoryInfos();
+  ElMessage({ message: 'Imported!', grouping: true, type: 'success' });
 }
 
 watch(newStoryInfo.value, () => {
@@ -140,7 +147,12 @@ watch(newStoryInfo.value, () => {
               </div>
             </div>
           </el-card>
-          <el-button id="refresh-button" :icon="Refresh" @click="refreshStoryInfos()">Refresh</el-button>
+          <div class="list-bottom">
+            <el-button id="refresh-button" class="list-bottom-button" :icon="Refresh"
+              @click="refreshStoryInfos()">Refresh</el-button>
+            <el-button id="import-button" class="list-bottom-button" :icon="Download"
+              @click="importStory()">Import</el-button>
+          </div>
         </el-scrollbar>
       </div>
     </el-dialog>

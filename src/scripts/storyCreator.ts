@@ -1,6 +1,5 @@
 import { StoryInfo, StoryLocation, resolveStoriesFromFS, workspacePath } from './story';
-import { v4 as uuidv4 } from 'uuid';
-import { joinPath } from './utils';
+import { joinPath, newUUID } from './utils';
 import { strings } from './strings';
 import { createDir, removeDir, writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
 import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
@@ -34,10 +33,7 @@ export class StoryCreator {
   async createNewStory(story_title: string, story_description: string, story_author: string): Promise<string> {
 
     // Generates a new UUID for use as new story directory name
-    let uuidDirName =
-      window.isSecureContext ?
-        self.crypto.randomUUID()
-        : uuidv4();
+    let uuidDirName = newUUID();
 
     // Declare the paths for story directory
     const baseDir = joinPath(this.workspacePath, uuidDirName);

@@ -1,8 +1,9 @@
-import { save } from "@tauri-apps/api/dialog";
-import { StoryInfo, StoryLocation } from "./story";
-import { desktopDir } from "@tauri-apps/api/path";
+import { open, save } from "@tauri-apps/api/dialog";
+import { StoryInfo, StoryLocation, collectionsPath, workspacePath } from "./story";
+import { desktopDir, downloadDir } from "@tauri-apps/api/path";
 import { strings } from "./strings";
 import { RustBackend } from "./rustBackend";
+import { joinPath, newUUID } from "./utils";
 
 /**
  * Story save manager for managing saves in collections and workspaces.
@@ -18,8 +19,11 @@ export class StorySaveManager {
     console.log(`${storyInfo.base_dir} to ${destination}`);
   }
 
-  // TODO: Implement
-  static async exportStory(storyInfo: StoryInfo) {
+  /**
+   * Exports the story to a compressed archive.
+   * @param storyInfo Story to export
+   */
+  static async exportStory(storyInfo: StoryInfo): Promise<boolean> {
 
     // Directory to export the story to (selected by user)
     const saveDir = await save({
@@ -36,16 +40,47 @@ export class StorySaveManager {
 
     // If user cancels the save dialog, do nothing
     if (saveDir === null) {
-      return;
+      return false
     }
 
     // Compress the story directory into selected save directory
     await RustBackend.archiveManager.compressFolder(storyInfo.base_dir, saveDir);
-    return;
+    return true;
   }
 
-  // TODO: Implement
-  static importStory(sourceDir: string, destination: StoryLocation) {
-    console.log(`Import ${sourceDir} to ${destination}`);
+  /**
+   * Imports a story from a compressed archive.
+   * @param destination Destination of the import
+   */
+  static async importStory(destination: StoryLocation): Promise<boolean> {
+
+    // File to import the story from (selected by user)
+    const storyDir = await open({
+      title: "Select the story save file for importing",
+      filters: [{
+        name: strings.fileTypes.storySave.description,
+        extensions: [strings.fileTypes.storySave.extension]
+      }],
+      defaultPath: await downloadDir(),
+      directory: false,
+      multiple: false
+    });
+
+    // If user cancels the open dialog, do nothing
+    if (storyDir === null || Array.isArray(storyDir)) {
+      return false;
+    }
+
+    // Determine the destination of the import
+    let importDestination: string;
+    if (destination === StoryLocation.Collections) {
+      importDestination = collectionsPath;
+    } else {
+      importDestination = workspacePath;
+    }
+
+    // Decompress the story archive into the destination
+    await RustBackend.archiveManager.decompressArchive(storyDir, joinPath(importDestination, newUUID()));
+    return true;
   }
 }
