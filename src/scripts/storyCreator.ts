@@ -1,7 +1,7 @@
 import { StoryInfo, StoryLocation, resolveStoriesFromFS, workspacePath } from './story';
 import { joinPath, newUUID } from './utils';
 import { strings } from './strings';
-import { createDir, removeDir, writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
+import { createDir, writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
 import { templateSceneInfo1, templateSceneInfo2, templateStoryInfo } from './templateStoryData';
 import { bookUint8Array } from './book.png';
 
@@ -69,13 +69,5 @@ export class StoryCreator {
 
     // Return the base directory to the story.
     return baseDir;
-  }
-
-  /**
-   * Deletes a story from the workspace.
-   * @param storyInfo Path to the base directory of the story.
-   */
-  async deleteStory(storyInfo: StoryInfo) {
-    await removeDir(storyInfo.base_dir, { recursive: true })
   }
 }

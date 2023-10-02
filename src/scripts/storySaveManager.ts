@@ -4,6 +4,7 @@ import { desktopDir, downloadDir } from "@tauri-apps/api/path";
 import { strings } from "./strings";
 import { RustBackend } from "./rustBackend";
 import { joinPath, newUUID } from "./utils";
+import { removeDir } from "@tauri-apps/api/fs";
 
 /**
  * Story save manager for managing saves in collections and workspaces.
@@ -82,5 +83,13 @@ export class StorySaveManager {
     // Decompress the story archive into the destination
     await RustBackend.archiveManager.decompressArchive(storyDir, joinPath(importDestination, newUUID()));
     return true;
+  }
+
+  /**
+   * Deletes the specified story.
+   * @param storyInfo Path to the base directory of the story.
+   */
+  static async deleteStory(storyInfo: StoryInfo) {
+    await removeDir(storyInfo.base_dir, { recursive: true })
   }
 }
