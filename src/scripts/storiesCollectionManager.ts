@@ -1,6 +1,7 @@
+import router from "../router";
 import { StoryInfo, StoryLocation, collectionsPath, resolveStoriesFromFS } from "./story";
 
-export class PlayableStoriesManager {
+export class storiesCollectionManager {
   collectionsPath: string;
   storyInfos: StoryInfo[];
   constructor(storyInfos: StoryInfo[]) {
@@ -13,5 +14,20 @@ export class PlayableStoriesManager {
    */
   async refreshStoryInfo() {
     this.storyInfos = await resolveStoriesFromFS(StoryLocation.Collections);
+  }
+
+  /**
+   * Playback the specified story.
+   * @param storyInfo Story to playback
+   */
+  playbackStory(storyInfo: StoryInfo) {
+    router.push(`/storyplayback/${(encodeURIComponent(storyInfo.base_dir))}`);
+  }
+
+  /**
+   * Imports a story into story collections.
+   */
+  importStory() {
+    // TODO: implement
   }
 }
