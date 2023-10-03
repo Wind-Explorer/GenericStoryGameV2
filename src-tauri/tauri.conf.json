@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "GenericStoryGameV2",
+    "productName": "Generic Story Game V2",
     "version": "0.0.124"
   },
   "tauri": {
