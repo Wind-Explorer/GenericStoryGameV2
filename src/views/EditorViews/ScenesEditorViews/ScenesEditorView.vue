@@ -60,13 +60,13 @@ function renameScene(sceneIndex: number) {
     inputPattern: /^(?!.*[<>:"/\\|?*\x00-\x1F]).*$/,
     inputErrorMessage: 'Prohibited characters found in name',
   })
-    .then(({ value }) => {
+    .then(async ({ value }) => {
       const newName = sanitizeFileName(value);
       if (scenesManager.value.sceneExists(newName)) {
         sceneExistsErrMsg();
         return;
       } else {
-        scenesManager.value.renameScene(sceneIndex, newName);
+        await scenesManager.value.renameScene(sceneIndex, newName);
       }
     })
     .catch(() => {

@@ -56,19 +56,21 @@ export class ScenesManager {
     });
     return nameAlreadyExists;
   }
-
+  
   /**
    * Renames the selected scene in the scenes list.
    * @param sceneIndex The index of the scene in scenes list
    * @param newName New name given to the selected scene.
    */
-  renameScene(sceneIndex: number, newName: string) {
+  async renameScene(sceneIndex: number, newName: string) {
     const oldScenePath = this.scenesList[sceneIndex].scene_path;
-    renameFile(oldScenePath, resolveNewPathFromNewName(oldScenePath, newName))
+    await (renameFile(oldScenePath, resolveNewPathFromNewName(oldScenePath, newName))
+      .then(() => {
+        this.loadScenesFromFS();
+      })
       .catch((error) => {
         throw new Error('Failed to rename scene: ' + error);
-      });
-    this.loadScenesFromFS();
+      }));
   }
 
   /**
