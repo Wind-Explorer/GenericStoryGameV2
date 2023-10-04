@@ -130,7 +130,7 @@ watch(newStoryInfo.value, () => {
             <div class="story-entry" :key="storyInfo.entry_point">
               <StoriesListEntry :story-info="storyInfo" />
               <div class="play-button-div">
-                <el-dropdown class="story-entry-dropdown">
+                <el-dropdown class="story-entry-dropdown" trigger="click">
                   <el-icon>
                     <More />
                   </el-icon>

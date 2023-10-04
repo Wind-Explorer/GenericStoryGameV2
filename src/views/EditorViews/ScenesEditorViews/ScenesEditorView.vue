@@ -98,20 +98,21 @@ watch(newSceneName, () => {
             </div>
           </div>
         </button>
-        <button v-for="scene in scenesManager.scenesList" style="position: relative;" class="scene-entry"
-          @click="$router.push(`/sceneeditor/${encodeURIComponent(scene.scene_path)}`)">
-          <img class="scene-background img" v-if="scene.base_scene_info.media != null"
-            :src="convertFileSrc(scene.base_scene_info.media)" />
-          <div class="scene-background div" v-if="scene.base_scene_info.background_color != null"
-            :style="`background-color: ${scene.base_scene_info.background_color}`"></div>
-          <div class="scene-entry-preview-text">
-            <h3 class="background-neutral-text scene-entry-preview-title">{{ scene.scene_name }}</h3>
-            <div>
-              <p class="background-neutral-text">{{ scene.base_scene_info.center_text }}</p>
-              <p class="background-neutral-text">{{ scene.base_scene_info.narration_text }}</p>
+        <button v-for="scene in scenesManager.scenesList" style="position: relative;" class="scene-entry">
+          <div class="scene-entry-content" @click="$router.push(`/sceneeditor/${encodeURIComponent(scene.scene_path)}`)">
+            <img class="scene-background img" v-if="scene.base_scene_info.media != null"
+              :src="convertFileSrc(scene.base_scene_info.media)" />
+            <div class="scene-background div" v-if="scene.base_scene_info.background_color != null"
+              :style="`background-color: ${scene.base_scene_info.background_color}`"></div>
+            <div class="scene-entry-preview-text">
+              <h3 class="background-neutral-text scene-entry-preview-title">{{ scene.scene_name }}</h3>
+              <div>
+                <p class="background-neutral-text">{{ scene.base_scene_info.center_text }}</p>
+                <p class="background-neutral-text">{{ scene.base_scene_info.narration_text }}</p>
+              </div>
             </div>
           </div>
-          <el-dropdown class="story-entry-dropdown">
+          <el-dropdown class="story-entry-dropdown" trigger="click">
             <el-icon>
               <More />
             </el-icon>
@@ -237,6 +238,11 @@ watch(newSceneName, () => {
   padding-bottom: 20px;
 }
 
+.scene-entry-content {
+  width: 100%;
+  height: 100%;
+}
+
 .scene-background {
   position: absolute;
   top: 0;
@@ -271,11 +277,6 @@ watch(newSceneName, () => {
 .scene-entry:hover {
   transform: scale(1.02);
   box-shadow: -1px 3px 5px #00000077;
-}
-
-.scene-entry:active {
-  transform: unset;
-  box-shadow: unset;
 }
 
 .scene-entry-preview-text {
@@ -355,10 +356,12 @@ html.dark {
 
 .story-entry-dropdown {
   position: absolute;
-  top: 15px;
+  top: 10px;
   right: 15px;
   font-size: 20px;
   filter: drop-shadow(0px 0px 5px #000000);
   color: #fff;
+  margin: 5px;
+  z-index: 10;
 }
 </style>
