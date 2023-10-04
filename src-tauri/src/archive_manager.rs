@@ -21,7 +21,11 @@ fn add_folder_to_zip(
         if path.is_dir() {
             add_folder_to_zip(zip, &path, base_path)?;
         } else {
-            let relative_path = path.strip_prefix(base_path).unwrap();
+            let relative_path = path
+                .strip_prefix(base_path)
+                .unwrap()
+                .to_string_lossy()
+                .replace("\\", "/");
             let options = FileOptions::default()
                 .unix_permissions(0o755)
                 .compression_method(CompressionMethod::Deflated)
@@ -29,7 +33,7 @@ fn add_folder_to_zip(
             let mut file = File::open(&path)?;
             let mut buffer = Vec::new();
             file.read_to_end(&mut buffer)?;
-            zip.start_file(relative_path.to_str().unwrap(), options)?;
+            zip.start_file(relative_path.as_str(), options)?;
             zip.write_all(&buffer)?;
         }
     }
