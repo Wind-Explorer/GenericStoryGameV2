@@ -309,6 +309,10 @@ watch(newSceneName, () => {
   margin-top: 0;
 }
 
+.bottom-text * {
+  margin: auto 0;
+}
+
 .new-scene-dialog-content {
   display: flex;
   justify-content: center;
