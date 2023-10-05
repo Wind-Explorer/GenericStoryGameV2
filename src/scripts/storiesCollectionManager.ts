@@ -23,11 +23,4 @@ export class storiesCollectionManager {
   playbackStory(storyInfo: StoryInfo) {
     router.push(`/storyplayback/${(encodeURIComponent(storyInfo.base_dir))}`);
   }
-
-  /**
-   * Imports a story into story collections.
-   */
-  importStory() {
-    // TODO: implement
-  }
 }

@@ -1,18 +1,39 @@
 <script setup lang="ts">
 // Scripts for the component
-import { VideoPlay, Files, House, Refresh, FolderOpened, Download } from '@element-plus/icons-vue'
+import { VideoPlay, Files, House, Refresh, FolderOpened, Download, Delete } from '@element-plus/icons-vue'
 import { dialogStyling } from '../../scripts/dialog.css'
 import { ref } from 'vue';
 import MenuBackground from '../../components/MenuBackground.vue';
 import PageTitle from '../../components/PageTitle.vue';
-import { ElMessage, ElScrollbar } from 'element-plus';
+import { ElMessage, ElMessageBox, ElScrollbar } from 'element-plus';
 import { storiesCollectionManager } from '../../scripts/storiesCollectionManager';
-import { resolveStoriesFromFS } from '../../scripts/story';
+import { StoryInfo, StoryLocation, resolveStoriesFromFS } from '../../scripts/story';
 import StoriesListEntry from '../../components/StoriesListEntry.vue';
+import { StorySaveManager } from '../../scripts/storySaveManager';
 
 const storiesListDialogVisible = ref(false);
 const story_entry_scroll = ref<InstanceType<typeof ElScrollbar>>();
 const playableStoriesManager = ref(new storiesCollectionManager(await resolveStoriesFromFS()));
+
+function prepareStoryDeletion(storyInfo: StoryInfo) {
+  ElMessageBox.confirm(
+    'This action is irreversable.',
+    'Are you sure?',
+    {
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      type: 'warning',
+    }
+  )
+    .then(async () => {
+      await StorySaveManager.deleteStory(storyInfo);
+      ElMessage({ message: 'Poof.', grouping: true, type: 'success' });
+      await playableStoriesManager.value.refreshStoryInfo();
+    })
+    .catch(() => {
+      // silence.
+    });
+}
 
 async function refreshStoriesList() {
   playableStoriesManager.value.refreshStoryInfo();
@@ -20,6 +41,13 @@ async function refreshStoriesList() {
     story_entry_scroll.value.setScrollTop(0);
   }
   ElMessage({ message: 'Refreshed', grouping: true, type: 'success' })
+}
+
+async function importStory() {
+  const importAction = await StorySaveManager.importStory(StoryLocation.Collections);
+  if (!importAction) { return }
+  await playableStoriesManager.value.refreshStoryInfo();
+  ElMessage({ message: 'Imported!', grouping: true, type: 'success' });
 }
 
 </script>
@@ -58,15 +86,28 @@ async function refreshStoriesList() {
             <el-card v-for="storyInfo in playableStoriesManager.storyInfos" shadow="hover" class="story-entry-card">
               <div class="story-entry" :key="storyInfo.entry_point">
                 <StoriesListEntry :story-info="storyInfo" />
-                <el-button @click="$router.push(`/storyplayback/${(encodeURIComponent(storyInfo.base_dir))}`)"
-                  type="success" plain size="large" :icon="VideoPlay" round class="play-button">Play</el-button>
+                <div class="play-button-div">
+                  <el-dropdown class="story-entry-dropdown" trigger="click">
+                    <el-icon>
+                      <More />
+                    </el-icon>
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item :icon="Delete"
+                          @click="prepareStoryDeletion(storyInfo)">Delete</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
+                  <el-button @click="$router.push(`/storyplayback/${(encodeURIComponent(storyInfo.base_dir))}`)"
+                    type="success" plain size="large" :icon="VideoPlay" round class="play-button">Play</el-button>
+                </div>
               </div>
             </el-card>
             <div class="list-bottom">
               <el-button id="refresh-button" class="list-bottom-button" :icon="Refresh"
                 @click="refreshStoriesList()">Refresh</el-button>
               <el-button id="import-button" class="list-bottom-button" :icon="Download"
-                @click="playableStoriesManager.importStory()">Import</el-button>
+                @click="importStory()">Import</el-button>
             </div>
           </el-scrollbar>
         </div>

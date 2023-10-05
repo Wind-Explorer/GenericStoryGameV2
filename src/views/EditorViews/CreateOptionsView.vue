@@ -52,7 +52,7 @@ function prepareStoryDeletion(storyInfo: StoryInfo) {
     .then(async () => {
       await StorySaveManager.deleteStory(storyInfo);
       ElMessage({ message: 'Poof.', grouping: true, type: 'success' });
-      storyCreator.value.refreshStoryInfos();
+      await storyCreator.value.refreshStoryInfos();
     })
     .catch(() => {
       // silence.
