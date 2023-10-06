@@ -33,7 +33,7 @@ export class SceneEditor {
       this.scene.scene_actions.multiple_choice = [];
     }
     if (this.scene.scene_actions.single_choice == null) {
-      this.scene.scene_actions.single_choice = '';
+      this.scene.scene_actions.single_choice = strings.navigationKeywords.end;
     }
     if (this.scene.media == null) {
       this.scene.media = '';
