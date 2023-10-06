@@ -1,6 +1,6 @@
-import { FileEntry, readDir, writeTextFile } from "@tauri-apps/api/fs";
+import { FileEntry, writeTextFile } from "@tauri-apps/api/fs";
 import { ExtraStoryInfo, resolveScenesFromFS, sceneNameToRelativePath } from "./story";
-import { convertAbsoluteToRelative, getObjFromPath, joinPath } from "./utils";
+import { convertAbsoluteToRelative, filteredReadDir, getObjFromPath, joinPath } from "./utils";
 import { strings } from "./strings";
 
 /**
@@ -70,7 +70,7 @@ export class StoryInfoEditor {
    * @returns A list of available resources.
    */
   async resolveStoryResources(): Promise<FileEntry[]> {
-    return await readDir(joinPath(this.baseDir, strings.fileNames.resourcesFolder));
+    return await filteredReadDir(joinPath(this.baseDir, strings.fileNames.resourcesFolder));
   }
 
   /**

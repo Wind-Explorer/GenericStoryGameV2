@@ -1,4 +1,4 @@
-import { createDir, exists } from "@tauri-apps/api/fs";
+import { FileEntry, FsDirOptions, createDir, exists, readDir } from "@tauri-apps/api/fs";
 import { sep } from "@tauri-apps/api/path";
 import { Command } from "@tauri-apps/api/shell";
 import { RustBackend } from "./rustBackend";
@@ -149,4 +149,16 @@ export function newUUID(): string {
   return window.isSecureContext ?
     self.crypto.randomUUID()
     : uuidv4();
+}
+
+/**
+ * Same old `readDir()`, but filters out hidden files from a directory.
+ * @param dir Directory to read from.
+ * @param options Optional FS Dir options.
+ */
+export async function filteredReadDir(dir: string, options?: FsDirOptions | undefined): Promise<FileEntry[]> {
+  const files = await readDir(dir, options);
+  return files
+    .filter((file) => file.name != null && !file.name.startsWith('.'))
+    .map((file) => file);
 }

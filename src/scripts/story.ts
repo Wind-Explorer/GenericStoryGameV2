@@ -1,6 +1,6 @@
 import { appDataDir } from '@tauri-apps/api/path';
-import { FileEntry, readDir, readTextFile } from '@tauri-apps/api/fs';
-import { getObjFromPath, ensureDirExists, joinPath, sanitizePath } from './utils';
+import { FileEntry, readTextFile } from '@tauri-apps/api/fs';
+import { getObjFromPath, ensureDirExists, joinPath, sanitizePath, filteredReadDir } from './utils';
 import { sep } from "@tauri-apps/api/path";
 import { strings } from './strings';
 
@@ -121,8 +121,8 @@ export async function resolveStoriesFromFS(location: StoryLocation = StoryLocati
   const collectionsDirContent =
     // Determine if reading from collections or workspace.
     location == StoryLocation.Collections ?
-      await readDir(collectionsPath) :
-      await readDir(workspacePath);
+      await filteredReadDir(collectionsPath) :
+      await filteredReadDir(workspacePath);
 
   // If application data directory is empty, return empty array.
   if (collectionsDirContent.length <= 0) { return []; }
@@ -150,7 +150,7 @@ export async function resolveStoriesFromFS(location: StoryLocation = StoryLocati
  * @returns Array of `ExtraSceneInfo` objects.
  */
 export async function resolveScenesFromFS(baseDir: string): Promise<ExtraSceneInfo[]> {
-  return readDir(joinPath(baseDir, strings.fileNames.scenesFolder)).then(async (scenes) => {
+  return filteredReadDir(joinPath(baseDir, strings.fileNames.scenesFolder)).then(async (scenes) => {
 
     // TODO: If story save directory is empty, return empty array.
 
@@ -217,8 +217,8 @@ export async function resolveStoryInfo(baseDir: string): Promise<StoryInfo> {
  */
 export async function resolveExtraStoryInfo(baseDir: string): Promise<ExtraStoryInfo> {
   const baseStoryInfo = await resolveStoryInfo(baseDir);
-  const resourcesCount = await readDir(joinPath(baseDir, strings.fileNames.resourcesFolder)).then((resources) => resources.length);
-  const scenesCount = await readDir(joinPath(baseDir, strings.fileNames.scenesFolder)).then((scenes) => scenes.length);
+  const resourcesCount = await filteredReadDir(joinPath(baseDir, strings.fileNames.resourcesFolder)).then((resources) => resources.length);
+  const scenesCount = await filteredReadDir(joinPath(baseDir, strings.fileNames.scenesFolder)).then((scenes) => scenes.length);
   return {
     base_story_info: baseStoryInfo,
     resources_count: resourcesCount,
@@ -309,7 +309,7 @@ export async function resolveSceneInfo(scenePath: string) {
  * @returns A list of available story resources.
  */
 export async function resolveAvailableStoryResource(baseDir: string): Promise<FileEntry[]> {
-  let availableResourcesFromSave = await readDir(joinPath(baseDir, strings.fileNames.resourcesFolder));
+  let availableResourcesFromSave = await filteredReadDir(joinPath(baseDir, strings.fileNames.resourcesFolder));
   return availableResourcesFromSave;
 }
 
