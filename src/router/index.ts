@@ -10,12 +10,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/playoptions',
     name: 'PlayOptions',
-    component: () => import('../views/PlayerViews/PlayOptionsView.vue')
+    component: () => import('../views/PlayerViews/CollectionsView.vue')
   },
   {
     path: '/createoptions',
     name: 'CreateOptions',
-    component: () => import('../views/EditorViews/CreateOptionsView.vue')
+    component: () => import('../views/EditorViews/WorkspaceView.vue')
   },
   {
     path: '/storyplayback/:baseDir',
