@@ -79,7 +79,7 @@ async function importStory() {
           <el-empty id="empty-story-list" v-if="playableStoriesManager.storyInfos.length == 0"
             description="Looks like you've got no stories in your collection!">
             <el-button :icon="Refresh" @click="refreshStoriesList">Refresh</el-button>
-            <el-button :icon="FolderOpened" disabled>Import...</el-button>
+            <el-button :icon="FolderOpened" @click="importStory()">Import...</el-button>
           </el-empty>
           <el-scrollbar id="story-entry-scroll" ref="story_entry_scroll"
             v-if="playableStoriesManager.storyInfos.length > 0">

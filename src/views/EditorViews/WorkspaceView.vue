@@ -123,7 +123,7 @@ watch(newStoryInfo.value, () => {
         <el-empty id="empty-story-list" v-if="storyCreator.storyInfos.length == 0"
           description="Looks like you've got no stories in your workspace!">
           <el-button :icon="Refresh" @click="storyCreator.refreshStoryInfos()">Refresh</el-button>
-          <el-button :icon="FolderOpened" disabled>Import...</el-button>
+          <el-button :icon="FolderOpened" @click="importStory()">Import...</el-button>
         </el-empty>
         <el-scrollbar id="story-entry-scroll" ref="story_entry_scroll" v-if="storyCreator.storyInfos.length > 0">
           <el-card v-for="storyInfo in storyCreator.storyInfos" shadow="hover" class="story-entry-card">
