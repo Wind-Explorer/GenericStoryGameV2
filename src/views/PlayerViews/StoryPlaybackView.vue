@@ -23,13 +23,6 @@ let splashElement: HTMLElement;
 const isPlaying = ref(false);
 
 /**
- * Playback scene changing animation.
- */
-function toggleSceneAnimation() {
-  sceneElement.style.opacity = sceneElement.style.opacity == '0' ? '1' : '0';
-}
-
-/**
  * Playback intro animation.
  */
 async function playbackIntroAnimation() {
@@ -65,59 +58,18 @@ const current_scene = ref<SceneInfo>(
 );
 
 /**
- * Set the state of the navigation buttons with animations.
- * @param enabled 
- * @param element 
- */
-function setNavButtonsState(enabled: boolean, element: HTMLElement) {
-  const elementBtn = element.querySelector('button') as HTMLButtonElement;
-  if (!enabled) {
-    elementBtn.disabled = true;
-    element.style.filter = `blur(2vw)`;
-    element.style.opacity = '0';
-  } else {
-    elementBtn.disabled = false;
-    element.style.filter = '';
-    element.style.opacity = '1';
-  }
-}
-
-/**
  * Prepare scene navigation with animation playback.
  * @param scenePath 
  * @param single_choice 
  */
-async function initiateNavigation(scenePath: string, single_choice: boolean = false) {
+async function initiateNavigation(scenePath: string) {
   // Check if destination is the end.
   if (scenePath == strings.navigationKeywords.end) {
     // Router back to where user came from (PlayOptionsPage).
     router.go(-1);
     return;
   }
-
-  // If the navigation is triggered by single choice, skip button animations.
-  if (single_choice) {
-    toggleSceneAnimation();
-    await sleep(1000);
-    navigateToScene(scenePath);
-    toggleSceneAnimation();
-  }
-
-  // Navigation is triggered by one of the navigation buttons.
-  // Playback button animations.
-  const mcq = document.getElementsByClassName('mcq') as HTMLCollectionOf<HTMLElement>;
-  for (var i = 0; i < mcq.length; i++) {
-    const btnDiv = mcq[i];
-    if (btnDiv.id != encodeURIComponent(scenePath)) {
-      setNavButtonsState(false, btnDiv);
-      await sleep(2000);
-      toggleSceneAnimation();
-      await sleep(1000);
-      navigateToScene(scenePath);
-      setNavButtonsState(true, btnDiv);
-      toggleSceneAnimation();
-    }
-  }
+  navigateToScene(scenePath);
 }
 
 /**
@@ -139,7 +91,7 @@ async function navigateToScene(scenePath: string) {
       <div class="center-text-div" :hidden="current_scene.center_text == null">
         <p class="center-text">{{ current_scene.center_text }}</p>
         <div class="click-anywhere-to-continue-div" :hidden="current_scene.scene_actions.single_choice == null"
-          @click="initiateNavigation(current_scene.scene_actions.single_choice as string, true)">
+          @click="initiateNavigation(current_scene.scene_actions.single_choice as string)">
           <p>
             Click
             anywhere to continue</p>
