@@ -89,16 +89,16 @@ async function navigateToScene(scenePath: string) {
     </div>
     <div id="scene" :hidden="!isPlaying">
       <div class="center-text-div" :hidden="current_scene.center_text == null">
-        <p class="center-text">{{ current_scene.center_text }}</p>
+        <p class="playback-text-attention">{{ current_scene.center_text }}</p>
         <div class="click-anywhere-to-continue-div" :hidden="current_scene.scene_actions.single_choice == null"
           @click="initiateNavigation(current_scene.scene_actions.single_choice as string)">
-          <p>
+          <p class="playback-text-catc">
             Click
             anywhere to continue</p>
         </div>
       </div>
       <div class="narration-text-div">
-        <p>{{ current_scene.narration_text }}</p>
+        <p class="playback-text-narration">{{ current_scene.narration_text }}</p>
       </div>
       <div class="mcq-div">
         <div class="mcq" :hidden="current_scene.scene_actions.multiple_choice == null"
@@ -162,12 +162,10 @@ button {
   height: 100vh;
 }
 
-.center-text {
+.center-text-div p {
   position: relative;
   font-size: 6vw;
-  font-weight: 600;
   height: min-content;
-  text-shadow: 0px 0px 0.3vw rgba(0, 0, 0, 1), 0px 0px 1.4vw rgba(0, 0, 0, 1);
   margin: auto 3vw;
   text-align: center;
 }
@@ -187,17 +185,7 @@ button {
   right: 0;
   text-align: center;
   font-size: 1.8vw;
-  text-shadow: 0px 0px 0.1vw rgba(0, 0, 0, 1), 0px 0px 0.3vw rgba(0, 0, 0, 0.5), 0px 0px 0.8vw rgba(0, 0, 0, 0.5);
-  opacity: 0.8;
-  font-weight: 300;
 }
-
-/* 
-  font-size: 1.8vw;
-  text-shadow: 0px 0px 0.3vw rgba(0, 0, 0, 1), 0px 0px 1.4vw rgba(0, 0, 0, 1);
-  opacity: 0.7;
-  font-weight: 400;
-*/
 
 .narration-text-div p {
   position: absolute;
@@ -205,8 +193,6 @@ button {
   margin: 3vw;
   margin-right: 60vw;
   font-size: 2.3vw;
-  text-shadow: 0px 0px 0.3vw rgba(0, 0, 0, 1), 0px 0px 1vw rgba(0, 0, 0, 1);
-  font-weight: 400;
 }
 
 .mcq {

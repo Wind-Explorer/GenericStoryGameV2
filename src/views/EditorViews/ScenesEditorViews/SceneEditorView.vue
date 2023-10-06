@@ -170,18 +170,18 @@ function saveChanges() {
               </template>
             </el-image>
             <p v-if="sceneEditorData.sceneTextType === SceneTextType.Narration" id="scene-preview-narration-text"
-              class="background-neutral-text">
+              class="playback-text-narration">
               {{ sceneEditorData.scene.narration_text }}
             </p>
             <p v-if="sceneEditorData.sceneTextType === SceneTextType.Attention" id="scene-preview-center-text"
-              class="background-neutral-text">{{ sceneEditorData.scene.center_text }}</p>
+              class="playback-text-attention">{{ sceneEditorData.scene.center_text }}</p>
             <div v-if="sceneEditorData.sceneNavigationType == SceneNavigationType.MultipleChoice" id="scene-preview-mcq">
               <div class="mcq-button" v-for="mcqEntry in sceneEditorData.scene.scene_actions.multiple_choice">
-                <p class="background-neutral-text">{{ mcqEntry.action }}</p>
+                <p class="playback-text-action">{{ mcqEntry.action }}</p>
               </div>
             </div>
             <div v-if="sceneEditorData.sceneNavigationType == SceneNavigationType.SingleChoice" id="scene-preview-catc"
-              class="background-neutral-text">
+              class="playback-text-catc">
               <p>Click anywhere to continue</p>
             </div>
           </div>

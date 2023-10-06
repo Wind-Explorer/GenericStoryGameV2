@@ -105,10 +105,10 @@ watch(newSceneName, () => {
             <div class="scene-background div" v-if="scene.base_scene_info.background_color != null"
               :style="`background-color: ${scene.base_scene_info.background_color}`"></div>
             <div class="scene-entry-preview-text">
-              <h3 class="background-neutral-text scene-entry-preview-title">{{ scene.scene_name }}</h3>
+              <h3 class="playback-text-attention scene-entry-preview-title">{{ scene.scene_name }}</h3>
               <div>
-                <p class="background-neutral-text">{{ scene.base_scene_info.center_text }}</p>
-                <p class="background-neutral-text">{{ scene.base_scene_info.narration_text }}</p>
+                <p class="playback-text-narration">{{ scene.base_scene_info.center_text }}</p>
+                <p class="playback-text-narration">{{ scene.base_scene_info.narration_text }}</p>
               </div>
             </div>
           </div>

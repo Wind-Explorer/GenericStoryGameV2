@@ -73,11 +73,6 @@ html.dark {
   margin-bottom: -30px;
 }
 
-.background-neutral-text {
-  color: #fff;
-  text-shadow: 0 0 0.3vw rgba(0, 0, 0, 1), 0 0 1.4vw rgba(0, 0, 0, 1);
-}
-
 .img-select-entry {
   display: flex;
   flex-direction: row;
@@ -150,4 +145,39 @@ html.dark {
 
 .list-bottom-button {
   width: 100%;
+}
+
+.playback-text-narration {
+  color: #fff;
+  text-shadow:
+    0px 0px 0.3vw rgba(0, 0, 0, 1),
+    0px 0px 1vw rgba(0, 0, 0, 1) !important;
+  font-weight: 500 !important;
+}
+
+.playback-text-attention {
+  color: #fff;
+  text-shadow:
+    0px 0px 0.3vw rgba(0, 0, 0, 1),
+    0px 0px 1.4vw rgba(0, 0, 0, 1) !important;
+  font-weight: 600 !important;
+}
+
+.playback-text-catc {
+  color: #fff;
+  text-shadow:
+    0px 0px 0.1vw rgba(0, 0, 0, 1),
+    0px 0px 0.3vw rgba(0, 0, 0, 0.5),
+    0px 0px 0.8vw rgba(0, 0, 0, 0.5) !important;
+  font-weight: 300 !important;
+  opacity: 0.8 !important;
+}
+
+.playback-text-action {
+  color: #fff !important;
+  text-shadow:
+    0px 0px 0.1vw rgba(0, 0, 0, 1),
+    0px 0px 0.3vw rgba(0, 0, 0, 0.5),
+    0px 0px 0.8vw rgba(0, 0, 0, 0.5) !important;
+  font-weight: 500 !important;
 }
