@@ -19,6 +19,7 @@ const storyInfo = ref<StoryInfo>(
 
 let sceneElement: HTMLElement;
 let splashElement: HTMLElement;
+let pauseButton: HTMLElement;
 
 const isPlaying = ref(false);
 
@@ -45,11 +46,16 @@ async function playbackIntroAnimation() {
   // Wait for half a second before setting scene's opacity to one.
   await sleep(500);
   sceneElement.style.opacity = '1';
+
+  // Wait for a bit before hiding pause menu button.
+  await sleep(500);
+  pauseButton.classList.add('hidden');
 }
 
 onMounted(() => {
   sceneElement = document.getElementById('scene') as HTMLElement;
   splashElement = document.getElementById('splash') as HTMLElement;
+  pauseButton = document.querySelector('.pause-button') as HTMLElement;
   playbackIntroAnimation();
 })
 
@@ -79,6 +85,15 @@ async function initiateNavigation(scenePath: string) {
 async function navigateToScene(scenePath: string) {
   current_scene.value = await resolveSceneInfo(scenePath);
 }
+
+function togglePauseBtn(visible: boolean) {
+  if (visible) {
+    pauseButton.classList.remove('hidden');
+  } else {
+    pauseButton.classList.add('hidden');
+  }
+}
+
 </script>
 
 <template>
@@ -88,6 +103,11 @@ async function navigateToScene(scenePath: string) {
       <h1>{{ storyInfo.title }}</h1>
     </div>
     <div id="scene" :hidden="!isPlaying">
+      <div class="pause-button" @mouseenter="togglePauseBtn(true)" @mouseleave="togglePauseBtn(false)">
+        <el-icon>
+          <VideoPause />
+        </el-icon>
+      </div>
       <div class="center-text-div" :hidden="current_scene.center_text == null">
         <p class="playback-text-attention">{{ current_scene.center_text }}</p>
         <div class="click-anywhere-to-continue-div" :hidden="current_scene.scene_actions.single_choice == null"
@@ -226,5 +246,27 @@ button {
 
 .mcq-button:hover {
   box-shadow: inset -0.3vw 0 0 #fff, 0.2vw 0 #000;
+}
+
+.pause-button {
+  position: absolute;
+  right: 0;
+  top: 1vw;
+  width: 5vw;
+  height: 5vw;
+  background-color: #77777777;
+  border-radius: 50% 0 0 50%;
+  font-size: 5vw;
+  transition: 0.2s;
+  z-index: 1000;
+}
+
+.pause-button * {
+  color: white;
+}
+
+.pause-button.hidden {
+  transform: translateX(3vw);
+  opacity: 0.1;
 }
 </style>
