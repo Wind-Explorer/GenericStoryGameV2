@@ -78,7 +78,7 @@ function togglePauseBtn(visible: boolean) {
   <div class="container">
     <!-- HTML elements for the component -->
     <div id="splash" :hidden="isPlaying">
-      <h1>{{ storyPlaybackHandler.storyInfo.title }}</h1>
+      <h1 class="splash-text">{{ storyPlaybackHandler.storyInfo.title }}</h1>
     </div>
     <div id="scene" :hidden="!isPlaying">
       <el-dialog :style="dialogStyling" v-model="playbackPaused" :show-close="false" width="80%" align-center>
@@ -151,14 +151,17 @@ function togglePauseBtn(visible: boolean) {
 #splash {
   position: absolute;
   width: 100vw;
-  height: 100vh;
   opacity: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  top: 0;
+  bottom: 0;
 }
 
-#splash h1 {
+.splash-text {
   font-size: 6vw;
   position: relative;
-  line-height: 100vh;
   text-align: center;
 }
 
