@@ -1,20 +1,23 @@
 <script setup lang="ts">
 // Scripts for the component
 import { onMounted, ref } from 'vue';
-import { StoryInfo, resolveStoryInfo, SceneInfo, resolveSceneInfo } from '../../scripts/story';
+import { resolveStoryInfo, resolveSceneInfo } from '../../scripts/story';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
-import router from '../../router';
 import { dialogStyling } from '../../scripts/dialog.css'
 import { sleep } from '../../scripts/utils';
 import { strings } from '../../scripts/strings';
+import { StoryPlaybackHandler } from '../../scripts/storyPlaybackHandler';
 
 const props = defineProps({
   baseDir: String
 })
 
-const storyInfo = ref<StoryInfo>(
-  await resolveStoryInfo(
-    decodeURIComponent(props.baseDir as string)
+const storyInfo = await resolveStoryInfo(decodeURIComponent(props.baseDir as string));
+
+const storyPlaybackHandler = ref<StoryPlaybackHandler>(
+  new StoryPlaybackHandler(
+    storyInfo,
+    await resolveSceneInfo(storyInfo.entry_point)
   )
 );
 
@@ -61,33 +64,6 @@ onMounted(() => {
   playbackIntroAnimation();
 })
 
-const current_scene = ref<SceneInfo>(
-  await resolveSceneInfo(storyInfo.value.entry_point)
-);
-
-/**
- * Prepare scene navigation with animation playback.
- * @param scenePath 
- * @param single_choice 
- */
-function initiateNavigation(scenePath: string) {
-  // Check if destination is the end.
-  if (scenePath == strings.navigationKeywords.end) {
-    // Router back to where user came from (PlayOptionsPage).
-    router.go(-1);
-    return;
-  }
-  navigateToScene(scenePath);
-}
-
-/**
- * Executes changing of scene data.
- * @param scenePath 
- */
-async function navigateToScene(scenePath: string) {
-  current_scene.value = await resolveSceneInfo(scenePath);
-}
-
 function togglePauseBtn(visible: boolean) {
   if (visible) {
     pauseButton.classList.remove('hidden');
@@ -102,24 +78,25 @@ function togglePauseBtn(visible: boolean) {
   <div class="container">
     <!-- HTML elements for the component -->
     <div id="splash" :hidden="isPlaying">
-      <h1>{{ storyInfo.title }}</h1>
+      <h1>{{ storyPlaybackHandler.storyInfo.title }}</h1>
     </div>
     <div id="scene" :hidden="!isPlaying">
       <el-dialog :style="dialogStyling" v-model="playbackPaused" :show-close="false" width="80%" align-center>
         <div class="pause-menu-div-1">
-          <img class="pause-menu-thumbnail" :src="convertFileSrc(storyInfo.thumbnail)" />
+          <img class="pause-menu-thumbnail" :src="convertFileSrc(storyPlaybackHandler.storyInfo.thumbnail)" />
           <div class="pause-menu-div-2">
             <div class="pause-menu-story-details">
-              <h1>{{ storyInfo.title }}</h1>
-              <h3 class="pause-menu-story-details author">by {{ storyInfo.author }}</h3>
-              <p class="pause-menu-story-details description">{{ storyInfo.description }}</p>
+              <h1>{{ storyPlaybackHandler.storyInfo.title }}</h1>
+              <h3 class="pause-menu-story-details author">by {{ storyPlaybackHandler.storyInfo.author }}</h3>
+              <p class="pause-menu-story-details description">{{ storyPlaybackHandler.storyInfo.description }}</p>
             </div>
             <div class="pause-menu-actions">
               <el-dropdown split-button trigger="click" size="large">
                 Save & Leave
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="initiateNavigation(strings.navigationKeywords.end)">Leave without
+                    <el-dropdown-item @click="storyPlaybackHandler.navigateToScene(strings.navigationKeywords.end)">Leave
+                      without
                       saving</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -136,31 +113,33 @@ function togglePauseBtn(visible: boolean) {
           <VideoPause />
         </el-icon>
       </div>
-      <div class="center-text-div" :hidden="current_scene.center_text == null">
-        <p class="playback-text-attention">{{ current_scene.center_text }}</p>
-        <div class="click-anywhere-to-continue-div" :hidden="current_scene.scene_actions.single_choice == null"
-          @click="initiateNavigation(current_scene.scene_actions.single_choice as string)">
+      <div class="center-text-div" :hidden="storyPlaybackHandler.currentScene.center_text == null">
+        <p class="playback-text-attention">{{ storyPlaybackHandler.currentScene.center_text }}</p>
+        <div class="click-anywhere-to-continue-div"
+          :hidden="storyPlaybackHandler.currentScene.scene_actions.single_choice == null"
+          @click="storyPlaybackHandler.navigateToScene(storyPlaybackHandler.currentScene.scene_actions.single_choice as string)">
           <p class="playback-text-catc">
             Click
             anywhere to continue</p>
         </div>
       </div>
       <div class="narration-text-div">
-        <p class="playback-text-narration">{{ current_scene.narration_text }}</p>
+        <p class="playback-text-narration">{{ storyPlaybackHandler.currentScene.narration_text }}</p>
       </div>
       <div class="mcq-div">
-        <div class="mcq" :hidden="current_scene.scene_actions.multiple_choice == null"
-          v-for="navigation_option in current_scene.scene_actions.multiple_choice"
+        <div class="mcq" :hidden="storyPlaybackHandler.currentScene.scene_actions.multiple_choice == null"
+          v-for="navigation_option in storyPlaybackHandler.currentScene.scene_actions.multiple_choice"
           :id="encodeURIComponent(navigation_option.destination)">
           <button class="mcq-button" :key="navigation_option.destination"
-            @click="initiateNavigation(navigation_option.destination)">{{
+            @click="storyPlaybackHandler.navigateToScene(navigation_option.destination)">{{
               navigation_option.action }}</button>
         </div>
       </div>
       <div class="media">
-        <div :hidden="current_scene.background_color == null" class="plain-color-media"
-          :style="`background-color: ${current_scene.background_color};`"></div>
-        <img :hidden="current_scene.media == null" :src="convertFileSrc(current_scene.media as string)" />
+        <div :hidden="storyPlaybackHandler.currentScene.background_color == null" class="plain-color-media"
+          :style="`background-color: ${storyPlaybackHandler.currentScene.background_color};`"></div>
+        <img :hidden="storyPlaybackHandler.currentScene.media == null"
+          :src="convertFileSrc(storyPlaybackHandler.currentScene.media as string)" />
       </div>
     </div>
   </div>
