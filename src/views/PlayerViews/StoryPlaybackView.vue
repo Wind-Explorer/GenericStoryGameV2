@@ -112,7 +112,7 @@ function togglePauseBtn(visible: boolean) {
             <div class="pause-menu-story-details">
               <h1>{{ storyInfo.title }}</h1>
               <h3 class="pause-menu-story-details author">by {{ storyInfo.author }}</h3>
-              <p>{{ storyInfo.description }}</p>
+              <p class="pause-menu-story-details description">{{ storyInfo.description }}</p>
             </div>
             <div class="pause-menu-actions">
               <el-dropdown split-button trigger="click" size="large">
@@ -309,12 +309,14 @@ function togglePauseBtn(visible: boolean) {
   object-fit: cover;
   border-radius: 4px;
   border: 1px solid #77777777;
+  margin: auto 0;
 }
 
 .pause-menu-div-2 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 20px;
 }
 
 .pause-menu-story-details {
