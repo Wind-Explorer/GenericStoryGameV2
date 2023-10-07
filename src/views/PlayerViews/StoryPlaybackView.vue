@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue';
 import { StoryInfo, resolveStoryInfo, SceneInfo, resolveSceneInfo } from '../../scripts/story';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import router from '../../router';
+import { dialogStyling } from '../../scripts/dialog.css'
 import { sleep } from '../../scripts/utils';
 import { strings } from '../../scripts/strings';
 
@@ -22,6 +23,7 @@ let splashElement: HTMLElement;
 let pauseButton: HTMLElement;
 
 const isPlaying = ref(false);
+const playbackPaused = ref(false);
 
 /**
  * Playback intro animation.
@@ -68,7 +70,7 @@ const current_scene = ref<SceneInfo>(
  * @param scenePath 
  * @param single_choice 
  */
-async function initiateNavigation(scenePath: string) {
+function initiateNavigation(scenePath: string) {
   // Check if destination is the end.
   if (scenePath == strings.navigationKeywords.end) {
     // Router back to where user came from (PlayOptionsPage).
@@ -103,7 +105,33 @@ function togglePauseBtn(visible: boolean) {
       <h1>{{ storyInfo.title }}</h1>
     </div>
     <div id="scene" :hidden="!isPlaying">
-      <div class="pause-button" @mouseenter="togglePauseBtn(true)" @mouseleave="togglePauseBtn(false)">
+      <el-dialog :style="dialogStyling" v-model="playbackPaused" :show-close="false" width="80%" align-center>
+        <div class="pause-menu-div-1">
+          <img class="pause-menu-thumbnail" :src="convertFileSrc(storyInfo.thumbnail)" />
+          <div class="pause-menu-div-2">
+            <div class="pause-menu-story-details">
+              <h1>{{ storyInfo.title }}</h1>
+              <h3 class="pause-menu-story-details author">by {{ storyInfo.author }}</h3>
+              <p>{{ storyInfo.description }}</p>
+            </div>
+            <div class="pause-menu-actions">
+              <el-dropdown split-button trigger="click" size="large">
+                Save & Leave
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="initiateNavigation(strings.navigationKeywords.end)">Leave without
+                      saving</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+              <el-button @click="playbackPaused = false" class="pause-menu-actions resume-button" size="large"
+                type="success" plain>Resume</el-button>
+            </div>
+          </div>
+        </div>
+      </el-dialog>
+      <div class="pause-button" @click="playbackPaused = true" @mouseenter="togglePauseBtn(true)"
+        @mouseleave="togglePauseBtn(false)">
         <el-icon>
           <VideoPause />
         </el-icon>
@@ -140,12 +168,6 @@ function togglePauseBtn(visible: boolean) {
 
 <style scoped>
 /* CSS styles for the component */
-
-p,
-button {
-  all: unset;
-  color: white;
-}
 
 #splash {
   position: absolute;
@@ -230,6 +252,8 @@ button {
 }
 
 .mcq-button {
+  all: unset;
+  color: white;
   font-size: 2.2vw;
   padding: 0.3vw 1vw;
   font-weight: 400;
@@ -268,5 +292,48 @@ button {
 .pause-button.hidden {
   transform: translateX(3vw);
   opacity: 0.1;
+}
+
+/* Pause menu CSS */
+.pause-menu-div-1 {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  margin: 0 30px 30px 30px;
+  gap: 30px;
+}
+
+.pause-menu-thumbnail {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #77777777;
+}
+
+.pause-menu-div-2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.pause-menu-story-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pause-menu-story-details.author {
+  opacity: 0.7;
+}
+
+.pause-menu-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.pause-menu-actions.resume-button {
+  flex-grow: 1;
 }
 </style>
