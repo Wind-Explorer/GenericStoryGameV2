@@ -17,11 +17,17 @@ export class StoryPlaybackHandler {
   async navigateToScene(scenePath: string) {
     // Check if destination is the end.
     if (scenePath == strings.navigationKeywords.end) {
-      // Router back to where user came from.
-      router.go(-1);
-      return;
+      // Exit story.
+      this.exitStory();
     }
 
     this.currentScene = await resolveSceneInfo(scenePath);
+  }
+
+  /**
+   * Exit the story.
+   */
+  exitStory() {
+    router.go(-1);
   }
 }

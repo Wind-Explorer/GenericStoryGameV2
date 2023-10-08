@@ -5,7 +5,6 @@ import { resolveStoryInfo, resolveSceneInfo } from '../../scripts/story';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { dialogStyling } from '../../scripts/dialog.css'
 import { sleep } from '../../scripts/utils';
-import { strings } from '../../scripts/strings';
 import { StoryPlaybackHandler } from '../../scripts/storyPlaybackHandler';
 
 const props = defineProps({
@@ -95,7 +94,7 @@ function togglePauseBtn(visible: boolean) {
                 Save & Leave
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="storyPlaybackHandler.navigateToScene(strings.navigationKeywords.end)">Leave
+                    <el-dropdown-item @click="storyPlaybackHandler.exitStory()">Leave
                       without
                       saving</el-dropdown-item>
                   </el-dropdown-menu>
