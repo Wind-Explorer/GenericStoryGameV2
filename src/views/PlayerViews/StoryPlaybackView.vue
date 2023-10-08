@@ -122,14 +122,15 @@ function togglePauseBtn(visible: boolean) {
             anywhere to continue</p>
         </div>
       </div>
-      <div class="narration-text-div">
+      <div class="narration-text-div"
+        :hidden="storyPlaybackHandler.currentScene.narration_text == null || storyPlaybackHandler.currentScene.narration_text.length <= 0">
         <p class="playback-text-narration">{{ storyPlaybackHandler.currentScene.narration_text }}</p>
       </div>
       <div class="mcq-div">
         <div class="mcq" :hidden="storyPlaybackHandler.currentScene.scene_actions.multiple_choice == null"
           v-for="navigation_option in storyPlaybackHandler.currentScene.scene_actions.multiple_choice"
           :id="encodeURIComponent(navigation_option.destination)">
-          <button class="mcq-button" :key="navigation_option.destination"
+          <button class="mcq-button playback-text-action" :key="navigation_option.destination"
             @click="storyPlaybackHandler.navigateToScene(navigation_option.destination)">{{
               navigation_option.action }}</button>
         </div>
@@ -236,21 +237,7 @@ function togglePauseBtn(visible: boolean) {
   all: unset;
   color: white;
   font-size: 2.2vw;
-  padding: 0.3vw 1vw;
-  font-weight: 400;
-  text-shadow: 0px 0px 0.3vw rgba(0, 0, 0, 1), 0px 0px 1vw rgba(0, 0, 0, 1);
   transition: 0.1s;
-}
-
-.mcq-button:hover,
-.mcq-button:focus {
-  font-weight: 600;
-  backdrop-filter: blur(0.08vw);
-  -webkit-backdrop-filter: blur(0.08vw);
-}
-
-.mcq-button:hover {
-  box-shadow: inset -0.3vw 0 0 #fff, 0.2vw 0 #000;
 }
 
 .pause-button {

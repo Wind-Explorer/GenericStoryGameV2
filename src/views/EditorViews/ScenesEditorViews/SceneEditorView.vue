@@ -292,8 +292,12 @@ function saveChanges() {
 .mcq-button {
   all: unset;
   font-size: 1.5vw;
-  padding: 0.15vw 0.5vw;
   font-weight: 400;
+  display: flex;
+  justify-content: right;
+}
+
+.mcq-button p {
   transition: 0.1s;
 }
 

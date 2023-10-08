@@ -107,8 +107,12 @@ watch(newSceneName, () => {
             <div class="scene-entry-preview-text">
               <h3 class="playback-text-attention scene-entry-preview-title">{{ scene.scene_name }}</h3>
               <div>
-                <p class="playback-text-narration">{{ scene.base_scene_info.center_text }}</p>
-                <p class="playback-text-narration">{{ scene.base_scene_info.narration_text }}</p>
+                <p :hidden="scene.base_scene_info.center_text == null || scene.base_scene_info.center_text.length <= 0"
+                  class="scene-entry-preview-content playback-text-narration">{{
+                    scene.base_scene_info.center_text }}</p>
+                <p :hidden="scene.base_scene_info.narration_text == null || scene.base_scene_info.narration_text.length <= 0"
+                  class="scene-entry-preview-content playback-text-narration">{{ scene.base_scene_info.narration_text }}
+                </p>
               </div>
             </div>
           </div>
@@ -231,11 +235,10 @@ watch(newSceneName, () => {
 .scenes-div {
   display: grid;
   gap: 30px;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  grid-auto-rows: 240px;
-  padding: 0 30px;
-  padding-top: 5px;
-  padding-bottom: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-auto-rows: 260px;
+  padding: 30px;
+  padding-top: 10px;
 }
 
 .scene-entry-content {
@@ -292,6 +295,12 @@ watch(newSceneName, () => {
 
 .scene-entry-preview-text p {
   font-size: 16px;
+}
+
+.scene-entry-preview-content {
+  border-radius: 10px !important;
+  padding: 10px !important;
+  border: 2px solid #77777744 !important;
 }
 
 .scene-entry-preview-title {
