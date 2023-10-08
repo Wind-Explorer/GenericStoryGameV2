@@ -27,6 +27,7 @@ export const strings = {
     collectionsFolder: 'collections',
     workspaceFolder: 'workspace',
     scenesFolder: 'scenes',
+    consistentData: 'consistent.json',
     firstScene: 'First Scene.json',
     secondScene: 'Second Scene.json'
   },

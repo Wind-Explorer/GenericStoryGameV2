@@ -1,4 +1,4 @@
-import { FileEntry, FsDirOptions, createDir, exists, readDir } from "@tauri-apps/api/fs";
+import { FileEntry, FsDirOptions, createDir, exists, readDir, writeTextFile } from "@tauri-apps/api/fs";
 import { sep } from "@tauri-apps/api/path";
 import { Command } from "@tauri-apps/api/shell";
 import { RustBackend } from "./rustBackend";
@@ -30,12 +30,17 @@ export function getObjFromPath(path: string): string {
  * @param path Path to ensure exists.
  * @returns `Promise<string>` Path that was passed in.
  */
-export async function ensureDirExists(path: string): Promise<string> {
+export async function ensurePathExists(path: string, isDir: boolean = true): Promise<string> {
   if (!await exists(path)) {
-    createDir(path, { recursive: true });
+    if (isDir) {
+      await createDir(path, { recursive: true });
+    } else {
+      await writeTextFile(path, '');
+    }
   }
   return path;
 }
+
 
 /**
  * Opens the file manager in the specified directory.

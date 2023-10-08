@@ -2,16 +2,20 @@
 // Scripts for the component
 import { VideoPlay, Files, House, Refresh, FolderOpened, Download, Delete } from '@element-plus/icons-vue'
 import { dialogStyling } from '../../scripts/dialog.css'
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import MenuBackground from '../../components/MenuBackground.vue';
 import PageTitle from '../../components/PageTitle.vue';
 import { ElMessage, ElMessageBox, ElScrollbar } from 'element-plus';
 import { storiesCollectionManager } from '../../scripts/storiesCollectionManager';
-import { StoryInfo, StoryLocation, resolveStoriesFromFS } from '../../scripts/story';
+import { StoryInfo, StoryLocation, resolveStoriesFromFS, resolveStoryInfo } from '../../scripts/story';
 import StoriesListEntry from '../../components/StoriesListEntry.vue';
 import { StorySaveManager } from '../../scripts/storySaveManager';
+import { ConsistentDataManager } from '../../scripts/conststentDataManager';
+import { exists } from '@tauri-apps/api/fs';
 
 const storiesListDialogVisible = ref(false);
+const notContinuable = ref<boolean>(true);
+const continuableStoryName = ref<string>("");
 const story_entry_scroll = ref<InstanceType<typeof ElScrollbar>>();
 const playableStoriesManager = ref(new storiesCollectionManager(await resolveStoriesFromFS()));
 
@@ -50,6 +54,24 @@ async function importStory() {
   ElMessage({ message: 'Imported!', grouping: true, type: 'success' });
 }
 
+async function continueStory() {
+  if (notContinuable.value) { return }
+  const lastOpenedStoryPath = (await ConsistentDataManager.safeResolveConsistentData()).lastOpenedStoryPath;
+  if (lastOpenedStoryPath != null && await exists(lastOpenedStoryPath)) {
+    const storyToBeContinued = await resolveStoryInfo(lastOpenedStoryPath);
+    await playableStoriesManager.value.playbackStory(storyToBeContinued);
+  } else {
+    ElMessage({ message: 'Oops! The story seems to be missing.', grouping: true, type: 'error' });
+  }
+}
+
+onMounted(async () => {
+  // If `continuable()` is true, `notContinuable` would be false. Vise versa.
+  // Why `notContinuable` you asked? Well a button has a `disabled` property, not `enabled` property.
+  notContinuable.value = !(await ConsistentDataManager.continuable());
+  continuableStoryName.value = await ConsistentDataManager.continuableStoryName() ?? '';
+})
+
 </script>
 
 <template>
@@ -60,7 +82,8 @@ async function importStory() {
     <div class="navigation-button">
       <div class="main-navigation-buttons">
         <el-button-group>
-          <el-button size="large" :icon="VideoPlay" type="primary" plain>Continue</el-button>
+          <el-button :disabled="notContinuable" @click="continueStory()" size="large" :icon="VideoPlay" type="primary"
+            plain>Last played{{ continuableStoryName!.length > 0 ? ':' : '' }} {{ continuableStoryName }}</el-button>
           <el-button @click="storiesListDialogVisible = true" size="large" :icon="Files" type="primary" plain>From
             Collection</el-button>
         </el-button-group>
@@ -98,8 +121,8 @@ async function importStory() {
                       </el-dropdown-menu>
                     </template>
                   </el-dropdown>
-                  <el-button @click="$router.push(`/storyplayback/${(encodeURIComponent(storyInfo.base_dir))}`)"
-                    type="success" plain size="large" :icon="VideoPlay" round class="play-button">Play</el-button>
+                  <el-button @click="playableStoriesManager.playbackStory(storyInfo)" type="success" plain size="large"
+                    :icon="VideoPlay" round class="play-button">Play</el-button>
                 </div>
               </div>
             </el-card>

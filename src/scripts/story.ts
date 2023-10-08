@@ -1,27 +1,27 @@
 import { appDataDir } from '@tauri-apps/api/path';
 import { FileEntry, readTextFile } from '@tauri-apps/api/fs';
-import { getObjFromPath, ensureDirExists, joinPath, sanitizePath, filteredReadDir } from './utils';
+import { getObjFromPath, ensurePathExists, joinPath, sanitizePath, filteredReadDir } from './utils';
 import { sep } from "@tauri-apps/api/path";
 import { strings } from './strings';
 
 /**
  * Path to application data directory.
  */
-const appDataDirPath = await ensureDirExists(await appDataDir());
+export const appDataDirPath = await ensurePathExists(await appDataDir());
 
 /**
  * Path to stories collection directory.
  * 
  * Resolves to `$APPDATA/collections`.
  */
-export const collectionsPath = await ensureDirExists(joinPath(appDataDirPath, strings.fileNames.collectionsFolder));
+export const collectionsPath = await ensurePathExists(joinPath(appDataDirPath, strings.fileNames.collectionsFolder));
 
 /**
  * Path to story creator workspace directory.
  * 
  * Resolves to `$APPDATA/workspace`.
  */
-export const workspacePath = await ensureDirExists(joinPath(appDataDirPath, strings.fileNames.workspaceFolder));
+export const workspacePath = await ensurePathExists(joinPath(appDataDirPath, strings.fileNames.workspaceFolder));
 
 /**
  * Structure of story info.
