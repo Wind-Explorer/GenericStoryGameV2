@@ -1,5 +1,5 @@
 import router from "../router";
-import { ConsistentDataManager } from "./conststentDataManager";
+import { ConsistentDataManager } from "./consistentDataManager";
 import { StoryInfo, StoryLocation, collectionsPath, resolveStoriesFromFS } from "./story";
 
 /**

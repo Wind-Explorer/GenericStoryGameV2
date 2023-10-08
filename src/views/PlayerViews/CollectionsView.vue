@@ -10,7 +10,7 @@ import { storiesCollectionManager } from '../../scripts/storiesCollectionManager
 import { StoryInfo, StoryLocation, resolveStoriesFromFS, resolveStoryInfo } from '../../scripts/story';
 import StoriesListEntry from '../../components/StoriesListEntry.vue';
 import { StorySaveManager } from '../../scripts/storySaveManager';
-import { ConsistentDataManager } from '../../scripts/conststentDataManager';
+import { ConsistentDataManager } from '../../scripts/consistentDataManager';
 import { exists } from '@tauri-apps/api/fs';
 
 const storiesListDialogVisible = ref(false);
@@ -141,4 +141,4 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 /* CSS styles for the component */
-</style>
+</style>../../scripts/consistentDataManager
