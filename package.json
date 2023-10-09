@@ -1,7 +1,7 @@
 {
   "name": "generic-story-game-v2",
   "private": true,
-  "version": "0.0.124",
+  "version": "1.0.545",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Generic Story Game V2",
-    "version": "0.0.124"
+    "version": "1.0.545"
   },
   "tauri": {
     "allowlist": {

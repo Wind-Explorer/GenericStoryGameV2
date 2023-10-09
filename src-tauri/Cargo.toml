@@ -1,7 +1,7 @@
 [package]
 name = "generic-story-game-v2"
-version = "0.0.124"
-description = "Elegant & (VERY) easy story telling derived from the original Generic Story Game by the two."
+version = "1.0.545"
+description = "Elegant visual story telling, made easy."
 authors = ["Wind-Explorer@github.com", "ZhichGaming@github.com"]
 license = "GPL-3.0-or-later"
 repository = "https://github.com/wind-explorer/GenericStoryGameV2"
