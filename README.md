@@ -1,16 +1,41 @@
-# Tauri + Vue 3 + TypeScript
+<a name="readme-top"></a>
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/wind-explorer/genericstorygamev2">
+    <img src="src-tauri/icons/icon.png" alt="Logo" width="80" height="80">
+  </a>
 
-## Recommended IDE Setup
+<h3 align="center">Generic Story Game V2</h3>
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+  <p align="center">
+    Elegent visual story telling, made easy.
+    <br />
+    <a href="https://github.com/wind-explorer/genericstorygamev2/releases/latest"><strong><h3>Go to Downloads »</h3></strong></a>
+    <a href="https://github.com/wind-explorer/genericstorygamev2/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/wind-explorer/genericstorygamev2/issues">Request Feature</a>
+  </p>
+</div>
 
-## Type Support For `.vue` Imports in TS
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
+<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
+You've got a creative mind for visual novels, but you are struggling to understand how those visual novel creator software out there works.
 
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+Introducing Generic Story Game V2, a simple visual novel software that lets you focus less on the technical matters, and more on expressing yourself with your creations.
+
+### Elegant Story Player
+
+<img src="repo_assets/p.png">
+
+### Intuitive Story Editor
+
+<img src="repo_assets/e.png">
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<hr>
+A software derived from the original GSG by Wind & Zhich.
