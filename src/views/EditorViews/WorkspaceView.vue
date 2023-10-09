@@ -95,7 +95,7 @@ watch(newStoryInfo.value, () => {
       <template #header>
         <h2 class="dialog-center-title">New story</h2>
       </template>
-      <el-form :model="newStoryInfo" label-width="200px" label-position="top">
+      <el-form class="new-story-form" :model="newStoryInfo" label-width="200px" label-position="top">
         <el-form-item :required="true" label="Title for your new story">
           <el-input v-model="newStoryInfo.title" size="large" maxlength="69"
             placeholder="my ridiculous experience today" />
@@ -161,4 +161,11 @@ watch(newStoryInfo.value, () => {
 
 <style scoped>
 /* CSS styles for the component */
+.new-story-form {
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
+}
 </style>
