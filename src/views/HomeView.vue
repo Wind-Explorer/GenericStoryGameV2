@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Scripts for the component
-import { VideoPlay, Edit, Setting, SwitchButton } from '@element-plus/icons-vue'
+import { VideoPlay, Edit, SwitchButton } from '@element-plus/icons-vue'
 import { exit } from '@tauri-apps/api/process';
 import MenuBackground from '../components/MenuBackground.vue';
 import PageTitle from '../components/PageTitle.vue';
@@ -23,7 +23,10 @@ async function quitApp() {
           <el-button @click="$router.push('/createoptions')" size="large" :icon="Edit" type="primary"
             plain>Create</el-button>
         </el-button-group>
+        <!-- To be implemented when there are some settings for the app available. -->
+        <!--
         <el-button size="large" :icon="Setting" type="info" plain>Options</el-button>
+        -->
       </div>
       <el-button size="large" :icon="SwitchButton" type="danger" plain @click="quitApp"></el-button>
     </div>

@@ -90,6 +90,8 @@ function togglePauseBtn(visible: boolean) {
               <p class="pause-menu-story-details description">{{ storyPlaybackHandler.storyInfo.description }}</p>
             </div>
             <div class="pause-menu-actions">
+              <!-- To be implemented when per-story progress save is introduced. -->
+              <!--
               <el-dropdown split-button trigger="click" size="large">
                 Save & Leave
                 <template #dropdown>
@@ -100,6 +102,9 @@ function togglePauseBtn(visible: boolean) {
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
+              -->
+              <el-button @click="storyPlaybackHandler.exitStory()" size="large"
+                class="pause-menu-actions exit-button">Leave</el-button>
               <el-button @click="playbackPaused = false" class="pause-menu-actions resume-button" size="large"
                 type="success" plain>Resume</el-button>
             </div>
@@ -304,7 +309,10 @@ function togglePauseBtn(visible: boolean) {
 .pause-menu-actions {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+}
+
+.pause-menu-actions.exit-button {
+  padding: 0 40px;
 }
 
 .pause-menu-actions.resume-button {
