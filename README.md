@@ -12,7 +12,9 @@
   <p align="center">
     Elegent visual story telling, made easy.
     <br />
-    <a href="https://github.com/wind-explorer/genericstorygamev2/releases/latest"><strong><h3>Go to Downloads »</h3></strong></a>
+    <br/>
+    <a href="https://github.com/wind-explorer/genericstorygamev2/releases/latest"><strong>Go to Downloads »</strong></a>
+    <br/>
     <a href="https://github.com/wind-explorer/genericstorygamev2/issues">Report Bug</a>
     ·
     <a href="https://github.com/wind-explorer/genericstorygamev2/issues">Request Feature</a>
