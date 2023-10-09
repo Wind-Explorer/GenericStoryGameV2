@@ -4,6 +4,14 @@ import { VideoPlay, Edit, SwitchButton } from '@element-plus/icons-vue'
 import { exit } from '@tauri-apps/api/process';
 import MenuBackground from '../components/MenuBackground.vue';
 import PageTitle from '../components/PageTitle.vue';
+import { app } from '@tauri-apps/api';
+import { onMounted, ref } from 'vue';
+
+const appVersion = ref('');
+
+onMounted(async () => {
+  appVersion.value = await app.getVersion();
+});
 
 async function quitApp() {
   await exit(1);
@@ -13,7 +21,7 @@ async function quitApp() {
 <template>
   <div class="container">
     <!-- HTML elements for the component -->
-    <PageTitle title="Generic Story Game" subtitle="Version 0.5.0" />
+    <PageTitle title="Generic Story Game" :subtitle="'Version ' + appVersion" />
     <MenuBackground />
     <div class="navigation-button">
       <div class="main-navigation-buttons">
