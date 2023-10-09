@@ -248,6 +248,8 @@ function togglePauseBtn(visible: boolean) {
   height: 5vw;
   background-color: #77777777;
   border-radius: 50% 0 0 50%;
+  border: 2px solid #777777cc;
+  border-right: 0px;
   font-size: 5vw;
   transition: 0.2s;
   z-index: 1000;
@@ -258,8 +260,9 @@ function togglePauseBtn(visible: boolean) {
 }
 
 .pause-button.hidden {
-  transform: translateX(3vw);
-  opacity: 0.1;
+  transform: translateX(5vw);
+  padding: 0 0 0 1vw;
+  border-radius: 10px 0 0 10px;
 }
 
 /* Pause menu CSS */
@@ -285,6 +288,7 @@ function togglePauseBtn(visible: boolean) {
   flex-direction: column;
   justify-content: space-between;
   gap: 20px;
+  flex-grow: 1;
 }
 
 .pause-menu-story-details {

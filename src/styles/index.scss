@@ -193,6 +193,7 @@ html.dark {
 }
 
 .playback-text-action:hover {
-  transform: scale(1.1) !important;
-  transform-origin: right !important;
+  border: 0.2vw solid #777777 !important;
+  backdrop-filter: blur(4vw) brightness(1.1) saturate(1.5) !important;
+  -webkit-backdrop-filter: blur(4vw) brightness(1.1) saturate(1.5) !important;
 }
