@@ -39,5 +39,6 @@ Introducing Generic Story Game V2, a simple visual novel software that lets you 
 <img src="repo_assets/e.png">
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-<hr>
+<hr/>
+<br/>
 A software derived from the original GSG by Wind & Zhich.
