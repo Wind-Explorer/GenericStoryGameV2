@@ -80,7 +80,7 @@ watch(newStoryInfo.value, () => {
   <div class="container">
     <!-- HTML elements for the component -->
     <PageTitle title="Create" subtitle="Tell a story the way you want." />
-    <MenuBackground />
+    <MenuBackground page="create" />
     <div class="navigation-button">
       <div class="main-navigation-buttons">
         <el-button-group>
