@@ -27,7 +27,7 @@ const props = defineProps({
 
 .titles h1 {
   font-size: 45px;
-  opacity: 0.65;
+  opacity: 0.90;
 }
 
 .titles p {

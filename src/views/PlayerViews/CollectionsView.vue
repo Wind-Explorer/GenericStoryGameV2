@@ -78,7 +78,7 @@ onMounted(async () => {
   <div class="container">
     <!-- HTML elements for the component -->
     <PageTitle title="Play" subtitle="Pick up where you left off or select one from your collection." />
-    <MenuBackground />
+    <MenuBackground page="play" />
     <div class="navigation-button">
       <div class="main-navigation-buttons">
         <el-button-group>
