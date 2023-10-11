@@ -132,6 +132,17 @@ async function saveData() {
 						type="primary">Edit</el-button>
 				</div>
 			</el-descriptions-item>
+			<el-descriptions-item label-align="left" align="left">
+				<template #label>
+					<LabelWithTooltip label="Navigation" tooltip="Tree organization of how scenes are connected" />
+				</template>
+				<div class="resources-entry">
+					<el-text size="large"></el-text> <!-- bad practice but works -->
+					<el-button
+						@click='$router.push(`/navigationeditor/${encodeURIComponent(storyInfoEditor.storyInfo.base_story_info.base_dir)}`)'
+						type="primary">Edit</el-button>
+				</div>
+			</el-descriptions-item>
 		</el-descriptions>
 	</div>
 </template>

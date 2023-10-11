@@ -40,6 +40,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'SceneEditor',
     component: () => import('../views/EditorViews/ScenesEditorViews/SceneEditorView.vue'),
     props: true
+  },
+  {
+    path: '/navigationeditor/:baseDir',
+    name: 'NavigationEditor',
+    component: () => import('../views/EditorViews/NavigationEditorViews/NavigationEditorView.vue'),
+    props: true
   }
 ]
 
