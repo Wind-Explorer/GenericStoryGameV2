@@ -6,6 +6,8 @@ import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { dialogStyling } from '../../scripts/dialog.css'
 import { sleep } from '../../scripts/utils';
 import { StoryPlaybackHandler } from '../../scripts/storyPlaybackHandler';
+import { ConsistentDataManager, SavedScene } from '../../scripts/consistentDataManager';
+import { Close, SwitchButton, VideoPlay } from '@element-plus/icons-vue';
 
 const props = defineProps({
   baseDir: String
@@ -71,6 +73,15 @@ function togglePauseBtn(visible: boolean) {
   }
 }
 
+function saveAndExit() {
+  const savedScene: SavedScene = {
+    storyPath: storyInfo.base_dir,
+    scene: storyPlaybackHandler.value.currentScenePath
+  }
+  ConsistentDataManager.updateUserStoryProgress(savedScene);
+  storyPlaybackHandler.value.exitStory();
+}
+
 </script>
 
 <template>
@@ -80,7 +91,7 @@ function togglePauseBtn(visible: boolean) {
       <h1 class="splash-text">{{ storyPlaybackHandler.storyInfo.title }}</h1>
     </div>
     <div id="scene" :hidden="!isPlaying">
-      <el-dialog :style="dialogStyling" v-model="playbackPaused" :show-close="false" width="80%" align-center>
+      <el-dialog :style="dialogStyling" v-model="playbackPaused" :show-close="false" width="90%" align-center>
         <div class="pause-menu-div-1">
           <img class="pause-menu-thumbnail" :src="convertFileSrc(storyPlaybackHandler.storyInfo.thumbnail)" />
           <div class="pause-menu-div-2">
@@ -90,23 +101,28 @@ function togglePauseBtn(visible: boolean) {
               <p class="pause-menu-story-details description">{{ storyPlaybackHandler.storyInfo.description }}</p>
             </div>
             <div class="pause-menu-actions">
-              <!-- To be implemented when per-story progress save is introduced. -->
-              <!--
-              <el-dropdown split-button trigger="click" size="large">
-                Save & Leave
+              <el-dropdown @click="saveAndExit()" split-button trigger="click" size="large">
+                <el-icon>
+                  <SwitchButton />
+                </el-icon>
+                <p style="margin-left: 8px">Save & Leave</p>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="storyPlaybackHandler.exitStory()">Leave
+                    <el-dropdown-item :icon="Close" @click="storyPlaybackHandler.exitStory()">Leave
                       without
                       saving</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
-              -->
-              <el-button @click="storyPlaybackHandler.exitStory()" size="large"
-                class="pause-menu-actions exit-button">Leave</el-button>
+              <!-- <el-button @click="storyPlaybackHandler.exitStory()" size="large"
+                class="pause-menu-actions exit-button">Leave</el-button> -->
               <el-button @click="playbackPaused = false" class="pause-menu-actions resume-button" size="large"
-                type="success" plain>Resume</el-button>
+                type="success" plain>
+                <el-icon>
+                  <VideoPlay />
+                </el-icon>
+                <p style="margin-left: 8px">Resume</p>
+              </el-button>
             </div>
           </div>
         </div>
@@ -309,6 +325,7 @@ function togglePauseBtn(visible: boolean) {
 .pause-menu-actions {
   display: flex;
   flex-direction: row;
+  gap: 15px;
 }
 
 .pause-menu-actions.exit-button {
