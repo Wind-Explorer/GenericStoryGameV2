@@ -7,7 +7,7 @@ import { Ref, ref } from 'vue'
 import { ScenesManager } from '../../../scripts/scenesManager';
 import { ExtraSceneInfo, SceneInfo, resolveSceneInfo, resolveScenesFromFS, resolveStoryInfo } from '../../../scripts/story';
 import { newUUID } from '../../../scripts/utils';
-import { en } from 'element-plus/es/locale/index.mjs';
+import { en, pa } from 'element-plus/es/locale/index.mjs';
 
 const props = defineProps({
   baseDir: String,
@@ -15,70 +15,100 @@ const props = defineProps({
 
 const baseDir = decodeURIComponent(props.baseDir as string);
 
-var elements = ref([
-  {
-    id: '1',
-    label: 'node 1',
-    position: { x: 100, y: 100 },
-  },
-  {
-    id: '2',
-    label: 'node 2',
-    position: { x: 100, y: 200 },
-  },
-  {
-    id: 'e1-2',
-    target: '2',
-    source: '1',
-  },
-])
-
-console.log(baseDir)
+var elements: Ref<any[]> = ref([])
 
 const scenesManager = ref(new ScenesManager(await resolveScenesFromFS(baseDir), baseDir));
 
-async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = null) {
-  const isLeaf = currentScene.scene_actions.single_choice == null && currentScene.scene_actions.multiple_choice == null;
+async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = null, iteratedScenes: SceneInfo[] = []) {
+  const isLeaf = (currentScene.scene_actions.single_choice == null || currentScene.scene_actions.single_choice == "#END") && currentScene.scene_actions.multiple_choice == null;
   const id = newUUID().toString();
+  let newIteratedScenes = new Array(...iteratedScenes) ?? [];
+  newIteratedScenes.push(currentScene);
+  
+  console.log("leaf")
+  // console.log(currentScene.scene_actions.single_choice)
+  // console.log(currentScene.scene_actions.multiple_choice)
+  console.log(isLeaf)
+
+  console.log("contains scenes")
+  console.log(iteratedScenes)
+  console.log(currentScene);
+  console.log(iteratedScenes.some(elem => { return JSON.stringify(currentScene) === JSON.stringify(elem) }))
+  if (iteratedScenes.some(elem => { return JSON.stringify(currentScene) === JSON.stringify(elem) })) {
+    const newId = newUUID().toString();
+    pushNode(newId, "[Loop] " + currentScene.center_text ?? currentScene.narration_text ?? "No text", parentId);
+    pushEdge(parentId!, newId);
+
+    return
+  }
 
   if (isLeaf) {
-    elements.value.push({
-      id: id,
-      label: currentScene.center_text ?? "No text",
-      position: { x: 100, y: 100 },
-      type: "output",
-      parentNode: parentId,
-      // target: null,
-    })
+    pushNode(id, currentScene.center_text ?? currentScene.narration_text ?? "No text", parentId);
 
     return
   } else {
-    if (currentScene.scene_actions.single_choice != null) {
-      const child = await resolveSceneInfo(currentScene.scene_actions.single_choice);
-      loadSceneTree(child, id);
-    }
+    console.log("1")
+    console.log(currentScene.scene_actions.single_choice)
 
-    if (currentScene.scene_actions.multiple_choice != null) {
+    if (currentScene.scene_actions.single_choice != null) {
+      if (currentScene.scene_actions.single_choice == "#END") {
+        const newId = newUUID().toString();
+        pushNode(newId, "End", id);
+        pushEdge(id, newId);
+
+        return
+      }
+
+      const child = await resolveSceneInfo(currentScene.scene_actions.single_choice);
+
+      loadSceneTree(child, id, newIteratedScenes);
+    } else if (currentScene.scene_actions.multiple_choice != null) {
       for (const choice of currentScene.scene_actions.multiple_choice) {
-        const child = await resolveSceneInfo(choice.destination);
-        loadSceneTree(child, id);
+        if (choice.destination == "#END") {
+          const newId = newUUID().toString();
+          pushNode(newId, "End", id);
+          pushEdge(id, newId);
+
+          continue
+        } else {
+          const child = await resolveSceneInfo(choice.destination);
+
+          console.log("dest")
+          console.log(choice.destination)
+
+          loadSceneTree(child, id, newIteratedScenes);
+        }
       }
     }
 
-    elements.value.push({
-      id: id,
-      label: currentScene.center_text ?? "No text",
-      position: { x: 100, y: 100 },
-      type: "default",
-      parentNode: parentId
-    })
+    pushNode(id, currentScene.center_text ?? currentScene.narration_text ?? "No text", parentId);
+    pushEdge(parentId!, id);
   }
+}
+
+function pushNode(id: string, label: string, parentId: string | null = null) {
+  elements.value.push({
+    id: id,
+    label: label,
+    position: { x: 100, y: 100 },
+    parentNode: parentId
+  })
+}
+
+function pushEdge(sourceId: string, targetId: string) {
+  elements.value.push({
+    id: "e" + sourceId + "-" + targetId,
+    source: sourceId,
+    target: targetId
+  })
 }
 
 const storyInfo = await resolveStoryInfo(baseDir);
 const entryPoint = await resolveSceneInfo(storyInfo.entry_point);
 
 loadSceneTree(entryPoint);
+console.log("elements")
+console.log(elements.value);
 
 </script>
 
