@@ -8,10 +8,12 @@ import { ensurePathExists, joinPath } from "./utils";
  */
 export interface ConsistentData {
   lastOpenedStoryPath: string | null;
-  savedScenes: {
-    storyPath: string;
-    scene: string;
-  }[] | null;
+  savedScenes: SavedScene[] | null;
+}
+
+export interface SavedScene {
+  storyPath: string;
+  scene: string;
 }
 
 const emptyConsistentData: ConsistentData = {
@@ -100,12 +102,55 @@ export class ConsistentDataManager {
   }
 
   /**
+   * Writes new consistent data into disk.
+   * @param newConsistentData New consistent data
+   */
+  static async updateConsistentData(newConsistentData: ConsistentData) {
+    await writeTextFile(consistentDataPath, JSON.stringify(newConsistentData));
+  }
+
+  /**
    * Updates the value of the story last played by the user.
    * @param lastPlayedStoryDir Path to the last played story.
    */
   static async updateLastPlayed(lastPlayedStoryDir: string | null) {
     const newConsistentData = await this.safeResolveConsistentData();
     newConsistentData.lastOpenedStoryPath = lastPlayedStoryDir;
-    await writeTextFile(consistentDataPath, JSON.stringify(newConsistentData));
+    await this.updateConsistentData(newConsistentData);
+  }
+
+  /**
+   * Updates the value of the progress of the user for a story.
+   * @param storyPath
+   * @param scene 
+   */
+  static async updateUserStoryProgress(sceneToSave: SavedScene) {
+    // Load the current consistent data
+    const newConsistentData = await this.safeResolveConsistentData();
+
+    // Create a new savedScenes array if there isn't one already
+    if (newConsistentData.savedScenes === null) {
+      newConsistentData.savedScenes = [];
+    }
+
+    // Update the saved scene for the current story
+    let storyFound = false;
+    for (const e of newConsistentData.savedScenes) {
+      if (e.storyPath === sceneToSave.storyPath) {
+        e.scene = sceneToSave.scene;
+        storyFound = true;
+        break;
+      }
+    }
+    if (!storyFound) {
+      // If the story was not found, add it to the saved scenes
+      newConsistentData.savedScenes.push({
+        storyPath: sceneToSave.storyPath,
+        scene: sceneToSave.scene,
+      })
+    }
+
+    // Save the updated consistent data
+    await this.updateConsistentData(newConsistentData);
   }
 }

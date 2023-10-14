@@ -5,9 +5,11 @@ import { strings } from "./strings";
 export class StoryPlaybackHandler {
   storyInfo: StoryInfo;
   currentScene: SceneInfo;
+  currentScenePath: string;
   constructor(storyInfo: StoryInfo, firstScene: SceneInfo) {
     this.storyInfo = storyInfo;
     this.currentScene = firstScene;
+    this.currentScenePath = storyInfo.entry_point;
   }
 
   /**
@@ -22,6 +24,7 @@ export class StoryPlaybackHandler {
     }
 
     this.currentScene = await resolveSceneInfo(scenePath);
+    this.currentScenePath = scenePath;
   }
 
   /**

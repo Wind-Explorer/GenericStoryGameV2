@@ -48,11 +48,13 @@ async function saveData() {
 		<!-- HTML elements for the component -->
 		<el-descriptions :column="1" border size="large">
 			<template #title>
-				<h1>{{ storyInfoEditor.storyInfo.base_story_info.title }}</h1>
+				<h1 class="top-story-title">{{ storyInfoEditor.storyInfo.base_story_info.title }}</h1>
 			</template>
 			<template #extra>
-				<el-button @click="saveData" size="large" type="success" :icon="Select" plain>Save</el-button>
-				<el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
+				<div class="overview-actions">
+					<el-button @click="saveData" size="large" type="success" :icon="Select" plain>Save</el-button>
+					<el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
+				</div>
 			</template>
 			<el-descriptions-item label-align="left" align="left">
 				<template #label>
@@ -153,6 +155,15 @@ async function saveData() {
 	max-width: 800px;
 	margin: 30px auto;
 	padding: 0 30px;
+}
+
+.overview-actions {
+	display: flex;
+	flex-direction: row;
+}
+
+.top-story-title {
+	margin-right: 20px;
 }
 
 .story-thumbnail {
