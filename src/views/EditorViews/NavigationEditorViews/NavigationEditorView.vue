@@ -36,14 +36,14 @@ async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = 
   console.log(iteratedScenes.some(elem => { return JSON.stringify(currentScene) === JSON.stringify(elem) }))
   if (iteratedScenes.some(elem => { return JSON.stringify(currentScene) === JSON.stringify(elem) })) {
     const newId = newUUID().toString();
-    pushNode(newId, "[Loop] " + currentScene.center_text ?? currentScene.narration_text ?? "No text", parentId);
+    pushNode(newId, "[Loop] " + currentScene.center_text ?? currentScene.narration_text ?? "No text", parentId, false);
     pushEdge(parentId!, newId);
 
     return
   }
 
   if (isLeaf) {
-    pushNode(id, currentScene.center_text ?? currentScene.narration_text ?? "No text", parentId);
+    pushNode(id, currentScene.center_text ?? currentScene.narration_text ?? "No text", parentId, false);
 
     return
   } else {
@@ -53,7 +53,7 @@ async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = 
     if (currentScene.scene_actions.single_choice != null) {
       if (currentScene.scene_actions.single_choice == "#END") {
         const newId = newUUID().toString();
-        pushNode(newId, "End", id);
+        pushNode(newId, "End", id, false);
         pushEdge(id, newId);
 
         return
@@ -81,16 +81,17 @@ async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = 
       }
     }
 
-    pushNode(id, currentScene.center_text ?? currentScene.narration_text ?? "No text", parentId);
+    pushNode(id, currentScene.center_text ?? currentScene.narration_text ?? "No text", parentId, true);
     pushEdge(parentId!, id);
   }
 }
 
-function pushNode(id: string, label: string, parentId: string | null = null) {
+function pushNode(id: string, label: string, parentId: string | null = null, hasChildren: boolean, num: number = 1, max: number = 1) {
   elements.value.push({
     id: id,
     label: label,
     position: { x: 100, y: 100 },
+    type: parentId == null ? "input" : hasChildren ? "default" : "output",
     parentNode: parentId
   })
 }
