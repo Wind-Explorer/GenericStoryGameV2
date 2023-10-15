@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Scripts for the component
-import { VideoPlay, Files, House, Refresh, FolderOpened, Download, Delete } from '@element-plus/icons-vue'
+import { VideoPlay, Files, House, Refresh, FolderOpened, Download } from '@element-plus/icons-vue'
 import { dialogStyling } from '../../scripts/dialog.css'
 import { onMounted, ref } from 'vue';
 import MenuBackground from '../../components/MenuBackground.vue';
@@ -9,6 +9,7 @@ import { ElMessage, ElMessageBox, ElScrollbar } from 'element-plus';
 import { storiesCollectionManager } from '../../scripts/storiesCollectionManager';
 import { StoryInfo, StoryLocation, resolveStoriesFromFS, resolveStoryInfo } from '../../scripts/story';
 import StoriesListEntry from '../../components/StoriesListEntry.vue';
+import CollectionsPlayControls from '../../components/CollectionsPlayControls.vue';
 import { StorySaveManager } from '../../scripts/storySaveManager';
 import { ConsistentDataManager } from '../../scripts/consistentDataManager';
 import { exists } from '@tauri-apps/api/fs';
@@ -59,7 +60,7 @@ async function continueStory() {
   const lastOpenedStoryPath = (await ConsistentDataManager.safeResolveConsistentData()).lastOpenedStoryPath;
   if (lastOpenedStoryPath != null && await exists(lastOpenedStoryPath)) {
     const storyToBeContinued = await resolveStoryInfo(lastOpenedStoryPath);
-    await playableStoriesManager.value.playbackStory(storyToBeContinued);
+    await playableStoriesManager.value.playbackStory(storyToBeContinued, !(await ConsistentDataManager.storyHasProgress(storyToBeContinued)));
   } else {
     ElMessage({ message: 'Oops! The story seems to be missing.', grouping: true, type: 'error' });
   }
@@ -109,21 +110,8 @@ onMounted(async () => {
             <el-card v-for="storyInfo in playableStoriesManager.storyInfos" shadow="hover" class="story-entry-card">
               <div class="story-entry" :key="storyInfo.entry_point">
                 <StoriesListEntry :story-info="storyInfo" />
-                <div class="play-button-div">
-                  <el-dropdown class="story-entry-dropdown" trigger="click">
-                    <el-icon>
-                      <More />
-                    </el-icon>
-                    <template #dropdown>
-                      <el-dropdown-menu>
-                        <el-dropdown-item :icon="Delete"
-                          @click="prepareStoryDeletion(storyInfo)">Delete</el-dropdown-item>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
-                  <el-button @click="playableStoriesManager.playbackStory(storyInfo)" type="success" plain size="large"
-                    :icon="VideoPlay" round class="play-button">Play</el-button>
-                </div>
+                <CollectionsPlayControls class="play-button" :story-info="storyInfo"
+                  :play-action="playableStoriesManager.playbackStory" :delete-action="prepareStoryDeletion" />
               </div>
             </el-card>
             <div class="list-bottom">

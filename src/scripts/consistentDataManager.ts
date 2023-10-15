@@ -1,5 +1,5 @@
 import { exists, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
-import { appDataDirPath, resolveStoryInfo } from "./story";
+import { StoryInfo, appDataDirPath, resolveStoryInfo } from "./story";
 import { strings } from "./strings";
 import { ensurePathExists, joinPath } from "./utils";
 
@@ -152,5 +152,44 @@ export class ConsistentDataManager {
 
     // Save the updated consistent data
     await this.updateConsistentData(newConsistentData);
+  }
+
+  /**
+   * Determines whether the specified story has saved progress.
+   * @param storyInfo Story to look for
+   * @returns `Promise<boolean>`
+   */
+  static async storyHasProgress(storyInfo: StoryInfo): Promise<boolean> {
+    return await this.storyProgress(storyInfo) !== null;
+  }
+
+  /**
+   * Resolves the saved progress of the specified story.
+   * @param storyInfo Story to look for
+   * @returns Saved scene information or null if not found
+   */
+  static async storyProgress(storyInfo: StoryInfo): Promise<SavedScene | null> {
+    // Load the current consistent data
+    const newConsistentData = await this.safeResolveConsistentData();
+
+    // Create a new savedScenes array if there isn't one already
+    if (newConsistentData.savedScenes === null) {
+      newConsistentData.savedScenes = [];
+    }
+
+    for (const e of newConsistentData.savedScenes) {
+      // Iterate through the saved progress
+      if (e.storyPath === storyInfo.base_dir && e.scene !== null) {
+
+        // If the story progress is the entry point, return null
+        if (e.scene === storyInfo.entry_point) { return null }
+
+        // If the specified story has been found, return it
+        return e;
+      }
+    }
+
+    // Progress save is not found. Return null
+    return null;
   }
 }

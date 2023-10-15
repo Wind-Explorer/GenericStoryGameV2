@@ -18,7 +18,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/EditorViews/WorkspaceView.vue')
   },
   {
-    path: '/storyplayback/:baseDir',
+    path: '/storyplayback/:baseDir/:fromBeginning',
     name: 'StoryPlayBack',
     component: () => import('../views/PlayerViews/StoryPlaybackView.vue'),
     props: true

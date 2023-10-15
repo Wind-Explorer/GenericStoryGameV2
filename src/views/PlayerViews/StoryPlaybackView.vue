@@ -10,15 +10,22 @@ import { ConsistentDataManager, SavedScene } from '../../scripts/consistentDataM
 import { Close, SwitchButton, VideoPlay } from '@element-plus/icons-vue';
 
 const props = defineProps({
-  baseDir: String
+  baseDir: String,
+  fromBeginning: String
 })
+
+const fromBeginning = props.fromBeginning === 'true';
 
 const storyInfo = await resolveStoryInfo(decodeURIComponent(props.baseDir as string));
 
 const storyPlaybackHandler = ref<StoryPlaybackHandler>(
   new StoryPlaybackHandler(
     storyInfo,
-    await resolveSceneInfo(storyInfo.entry_point)
+    await resolveSceneInfo(
+      fromBeginning ?
+        storyInfo.entry_point
+        : (await ConsistentDataManager.storyProgress(storyInfo))?.scene ?? storyInfo.entry_point
+    )
   )
 );
 

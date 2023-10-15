@@ -24,8 +24,8 @@ export class storiesCollectionManager {
    * Playback the specified story.
    * @param storyInfo Story to playback
    */
-  async playbackStory(storyInfo: StoryInfo) {
+  async playbackStory(storyInfo: StoryInfo, fromBeginning: boolean = false) {
     await ConsistentDataManager.updateLastPlayed(storyInfo.base_dir);
-    router.push(`/storyplayback/${(encodeURIComponent(storyInfo.base_dir))}`);
+    router.push(`/storyplayback/${(encodeURIComponent(storyInfo.base_dir))}/${fromBeginning}`);
   }
 }
