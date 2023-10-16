@@ -22,78 +22,85 @@ const scenesManager = ref(new ScenesManager(await resolveScenesFromFS(baseDir), 
 async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = null, iteratedScenes: SceneInfo[] = []) {
   const isLeaf = (currentScene.scene_actions.single_choice == null || currentScene.scene_actions.single_choice == "#END") && currentScene.scene_actions.multiple_choice == null;
   const id = newUUID().toString();
+  const nodeText = currentScene.center_text ?? currentScene.narration_text ?? "No text";
   let newIteratedScenes = new Array(...iteratedScenes) ?? [];
   newIteratedScenes.push(currentScene);
   
-  console.log("leaf")
+  // console.log("leaf")
   // console.log(currentScene.scene_actions.single_choice)
   // console.log(currentScene.scene_actions.multiple_choice)
-  console.log(isLeaf)
+  // console.log(isLeaf)
 
-  console.log("contains scenes")
-  console.log(iteratedScenes)
-  console.log(currentScene);
-  console.log(iteratedScenes.some(elem => { return JSON.stringify(currentScene) === JSON.stringify(elem) }))
+  // console.log("contains scenes")
+  // console.log(iteratedScenes)
+  // console.log(currentScene);
+  // console.log(iteratedScenes.some(elem => { return JSON.stringify(currentScene) === JSON.stringify(elem) }))
   if (iteratedScenes.some(elem => { return JSON.stringify(currentScene) === JSON.stringify(elem) })) {
     const newId = newUUID().toString();
-    pushNode(newId, "[Loop] " + currentScene.center_text ?? currentScene.narration_text ?? "No text", parentId, false);
-    pushEdge(parentId!, newId);
+    pushNode(newId, "[Loop] " + nodeText, parentId, false);
 
     return
   }
 
   if (isLeaf) {
-    pushNode(id, currentScene.center_text ?? currentScene.narration_text ?? "No text", parentId, false);
+    pushNode(id, nodeText, parentId, false);
 
     return
-  } else {
-    console.log("1")
-    console.log(currentScene.scene_actions.single_choice)
+  }
 
-    if (currentScene.scene_actions.single_choice != null) {
-      if (currentScene.scene_actions.single_choice == "#END") {
-        const newId = newUUID().toString();
-        pushNode(newId, "End", id, false);
-        pushEdge(id, newId);
+  // console.log("1")
+  // console.log(currentScene.scene_actions.single_choice)
 
-        return
-      }
+  if (currentScene.scene_actions.single_choice != null) {
+    if (currentScene.scene_actions.single_choice == "#END") {
+      const newId = newUUID().toString();
+      pushNode(newId, "End", id, false);
 
-      const child = await resolveSceneInfo(currentScene.scene_actions.single_choice);
-
-      loadSceneTree(child, id, newIteratedScenes);
-    } else if (currentScene.scene_actions.multiple_choice != null) {
-      for (const choice of currentScene.scene_actions.multiple_choice) {
-        if (choice.destination == "#END") {
-          const newId = newUUID().toString();
-          pushNode(newId, "End", id);
-          pushEdge(id, newId);
-
-          continue
-        } else {
-          const child = await resolveSceneInfo(choice.destination);
-
-          console.log("dest")
-          console.log(choice.destination)
-
-          loadSceneTree(child, id, newIteratedScenes);
-        }
-      }
+      return
     }
 
-    pushNode(id, currentScene.center_text ?? currentScene.narration_text ?? "No text", parentId, true);
-    pushEdge(parentId!, id);
+    const child = await resolveSceneInfo(currentScene.scene_actions.single_choice);
+
+    loadSceneTree(child, id, newIteratedScenes);
+  } else if (currentScene.scene_actions.multiple_choice != null) {
+    for (let i = 0; i < currentScene.scene_actions.multiple_choice.length; i++) {
+      const choice = currentScene.scene_actions.multiple_choice[i];
+
+      if (choice.destination == "#END") {
+        const newId = newUUID().toString();
+        pushNode(newId, "End", id, false, i + 1, currentScene.scene_actions.multiple_choice.length);
+
+        continue
+      } else {
+        const child = await resolveSceneInfo(choice.destination);
+
+        // console.log("dest")
+        // console.log(choice.destination)
+
+        loadSceneTree(child, id, newIteratedScenes);
+      }
+    }
   }
+
+  pushNode(id, nodeText, parentId, true);
 }
 
 function pushNode(id: string, label: string, parentId: string | null = null, hasChildren: boolean, num: number = 1, max: number = 1) {
+  let position = num == 1 ? { x: 0, y: 150 } : { x: (num * 150) / max, y: 150 };
+
+  console.log("elements")
+  console.log(elements.value);
   elements.value.push({
     id: id,
     label: label,
-    position: { x: 100, y: 100 },
+    position: position,
     type: parentId == null ? "input" : hasChildren ? "default" : "output",
     parentNode: parentId
   })
+
+  if (parentId != null) {
+    pushEdge(parentId!, id);
+  }
 }
 
 function pushEdge(sourceId: string, targetId: string) {
@@ -108,8 +115,6 @@ const storyInfo = await resolveStoryInfo(baseDir);
 const entryPoint = await resolveSceneInfo(storyInfo.entry_point);
 
 loadSceneTree(entryPoint);
-console.log("elements")
-console.log(elements.value);
 
 </script>
 
