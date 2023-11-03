@@ -107,7 +107,7 @@ function pushNode(id: string, label: string, parentId: string | null = null, has
 
   elements.value.push({
     id: id,
-    label: label,
+    label: label.substring(0, 50) + (label.length > 50 ? "..." : ""),
     position,
     type: parentId == null ? "input" : hasChildren ? "default" : "output",
     // parentNode: parentId
