@@ -81,7 +81,7 @@ async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = 
 
     const child = await resolveSceneInfo(currentScene.scene_actions.single_choice);
 
-    loadSceneTree(child, id, newIteratedScenes);
+    await loadSceneTree(child, id, newIteratedScenes);
   } else if (currentScene.scene_actions.multiple_choice != null) {
     for (let i = 0; i < currentScene.scene_actions.multiple_choice.length; i++) {
       const choice = currentScene.scene_actions.multiple_choice[i];
@@ -94,7 +94,7 @@ async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = 
       } else {
         const child = await resolveSceneInfo(choice.destination);
 
-        loadSceneTree(child, id, newIteratedScenes);
+        await loadSceneTree(child, id, newIteratedScenes);
       }
     }
   }
