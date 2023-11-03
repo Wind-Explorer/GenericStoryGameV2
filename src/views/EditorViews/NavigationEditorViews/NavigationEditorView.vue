@@ -129,7 +129,7 @@ function pushEdge(sourceId: string, targetId: string) {
 const storyInfo = await resolveStoryInfo(baseDir);
 const entryPoint = await resolveSceneInfo(storyInfo.entry_point);
 
-loadSceneTree(entryPoint);
+await loadSceneTree(entryPoint);
 onLayout('TB')
 
 </script>
