@@ -25,11 +25,6 @@ const dagreGraph = new dagre.graphlib.Graph()
 
 dagreGraph.setDefaultEdgeLabel(() => ({}))
 
-const nodeExtent: CoordinateExtent = [
-  [0, -100],
-  [1000, 500],
-]
-
 const elements = ref<Elements>([])
 
 function onLayout(direction: string) {
@@ -62,16 +57,7 @@ async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = 
   const nodeText = currentScene.center_text ?? currentScene.narration_text ?? "No text";
   let newIteratedScenes = new Array(...iteratedScenes) ?? [];
   newIteratedScenes.push(currentScene);
-  
-  // console.log("leaf")
-  // console.log(currentScene.scene_actions.single_choice)
-  // console.log(currentScene.scene_actions.multiple_choice)
-  // console.log(isLeaf)
 
-  // console.log("contains scenes")
-  // console.log(iteratedScenes)
-  // console.log(currentScene);
-  // console.log(iteratedScenes.some(elem => { return JSON.stringify(currentScene) === JSON.stringify(elem) }))
   if (iteratedScenes.some(elem => { return JSON.stringify(currentScene) === JSON.stringify(elem) })) {
     const newId = newUUID().toString();
     pushNode(newId, "[Loop] " + nodeText, parentId, false);
@@ -84,9 +70,6 @@ async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = 
 
     return
   }
-
-  // console.log("1")
-  // console.log(currentScene.scene_actions.single_choice)
 
   if (currentScene.scene_actions.single_choice != null) {
     if (currentScene.scene_actions.single_choice == "#END") {
@@ -111,9 +94,6 @@ async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = 
       } else {
         const child = await resolveSceneInfo(choice.destination);
 
-        // console.log("dest")
-        // console.log(choice.destination)
-
         loadSceneTree(child, id, newIteratedScenes);
       }
     }
@@ -125,8 +105,6 @@ async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = 
 function pushNode(id: string, label: string, parentId: string | null = null, hasChildren: boolean) {
   let position: XYPosition = { x: 0, y: 0 };
 
-  console.log("elements")
-  console.log(elements.value);
   elements.value.push({
     id: id,
     label: label,
@@ -163,7 +141,7 @@ onLayout('TB')
       <h1>Story navigation</h1>
       <el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
     </div>
-    <VueFlow v-model="elements" :node-extent="nodeExtent" :connection-mode="ConnectionMode.Loose" @pane-ready="onLayout('TB')">
+    <VueFlow v-model="elements" :connection-mode="ConnectionMode.Loose" @pane-ready="onLayout('TB')">
       <Background/>
       <Controls />
     </VueFlow>
