@@ -120,7 +120,7 @@ function pushNode(id: string, label: string, parentId: string | null = null, has
 
 function pushEdge(sourceId: string, targetId: string) {
   elements.value.push({
-    id: "e" + sourceId + "-" + targetId,
+    id: "edge:" + sourceId + "+" + targetId,
     source: sourceId,
     target: targetId
   })
