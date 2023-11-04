@@ -10,6 +10,7 @@ import dagre from 'dagre'
 import { Controls } from '@vue-flow/controls'
 import { Background } from '@vue-flow/background'
 import '@vue-flow/controls/dist/style.css'
+import router from '../../../router';
 
 const props = defineProps({
   baseDir: String,
@@ -51,7 +52,7 @@ function onLayout(direction: string) {
   })
 }
 
-async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = null, iteratedScenes: SceneInfo[] = []) {
+async function loadSceneTree(currentScene: SceneInfo, currentScenePath: string, parentId: string | null = null, iteratedScenes: SceneInfo[] = []) {
   const isLeaf = (currentScene.scene_actions.single_choice == null || currentScene.scene_actions.single_choice == "#END") && currentScene.scene_actions.multiple_choice == null;
   const id = newUUID().toString();
   const nodeText = currentScene.center_text ?? currentScene.narration_text ?? "No text";
@@ -60,13 +61,13 @@ async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = 
 
   if (iteratedScenes.some(elem => { return JSON.stringify(currentScene) === JSON.stringify(elem) })) {
     const newId = newUUID().toString();
-    pushNode(newId, "[Loop] " + nodeText, parentId, false);
+    pushNode(newId, "[Loop] " + nodeText, parentId, false, currentScenePath);
 
     return
   }
 
   if (isLeaf) {
-    pushNode(id, nodeText, parentId, false);
+    pushNode(id, nodeText, parentId, false, currentScenePath);
 
     return
   }
@@ -74,35 +75,35 @@ async function loadSceneTree(currentScene: SceneInfo, parentId: string | null = 
   if (currentScene.scene_actions.single_choice != null) {
     if (currentScene.scene_actions.single_choice == "#END") {
       const newId = newUUID().toString();
-      pushNode(newId, "End", id, false);
+      pushNode(newId, "End", id, false, currentScenePath);
 
       return
     }
 
     const child = await resolveSceneInfo(currentScene.scene_actions.single_choice);
 
-    await loadSceneTree(child, id, newIteratedScenes);
+    await loadSceneTree(child, currentScene.scene_actions.single_choice, id, newIteratedScenes);
   } else if (currentScene.scene_actions.multiple_choice != null) {
     for (let i = 0; i < currentScene.scene_actions.multiple_choice.length; i++) {
       const choice = currentScene.scene_actions.multiple_choice[i];
 
       if (choice.destination == "#END") {
         const newId = newUUID().toString();
-        pushNode(newId, "End", id, false);
+        pushNode(newId, "End", id, false, currentScenePath);
 
         continue
       } else {
         const child = await resolveSceneInfo(choice.destination);
 
-        await loadSceneTree(child, id, newIteratedScenes);
+        await loadSceneTree(child, choice.destination, id, newIteratedScenes);
       }
     }
   }
 
-  pushNode(id, nodeText, parentId, true);
+  pushNode(id, nodeText, parentId, true, currentScenePath);
 }
 
-function pushNode(id: string, label: string, parentId: string | null = null, hasChildren: boolean) {
+function pushNode(id: string, label: string, parentId: string | null = null, hasChildren: boolean, scenePath: string) {
   let position: XYPosition = { x: 0, y: 0 };
 
   elements.value.push({
@@ -110,7 +111,11 @@ function pushNode(id: string, label: string, parentId: string | null = null, has
     label: label.substring(0, 50) + (label.length > 50 ? "..." : ""),
     position,
     type: parentId == null ? "input" : hasChildren ? "default" : "output",
-    // parentNode: parentId
+    events: {
+      click: () => {
+        router.push(`/sceneeditor/${encodeURIComponent(scenePath)}`)
+      }
+    }
   })
 
   if (parentId != null) {
@@ -129,7 +134,7 @@ function pushEdge(sourceId: string, targetId: string) {
 const storyInfo = await resolveStoryInfo(baseDir);
 const entryPoint = await resolveSceneInfo(storyInfo.entry_point);
 
-await loadSceneTree(entryPoint);
+await loadSceneTree(entryPoint, storyInfo.entry_point);
 onLayout('TB')
 
 </script>
