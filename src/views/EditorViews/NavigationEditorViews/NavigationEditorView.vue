@@ -2,7 +2,7 @@
 // Scripts for the component
 import { House, InfoFilled } from '@element-plus/icons-vue';
 import { VueFlow, XYPosition, isNode, Position, Elements, ConnectionMode, useVueFlow } from '@vue-flow/core'
-import { nextTick, ref, watch } from 'vue'
+import { ref } from 'vue'
 // import { ScenesManager } from '../../../scripts/scenesManager';
 import { ExtraSceneInfo, SceneInfo, resolveSceneInfo, resolveScenesFromFS, resolveStoryInfo } from '../../../scripts/story';
 import { newUUID } from '../../../scripts/utils';
@@ -12,6 +12,7 @@ import { Background } from '@vue-flow/background'
 import '@vue-flow/controls/dist/style.css'
 import router from '../../../router';
 import { ScenesManager } from '../../../scripts/scenesManager';
+import DeletableEdge from './DeletableEdge.vue';
 
 const props = defineProps({
   baseDir: String,
@@ -23,20 +24,13 @@ const baseDir = decodeURIComponent(props.baseDir as string);
 
 const scenesManager = ref(new ScenesManager(await resolveScenesFromFS(baseDir), baseDir));
 
-const { findNode, onConnect, addEdges, addNodes, project, vueFlowRef } = useVueFlow()
+const { updateEdge, findNode, addEdges, addNodes, project, vueFlowRef } = useVueFlow()
 
 const dagreGraph = new dagre.graphlib.Graph()
 
 dagreGraph.setDefaultEdgeLabel(() => ({}))
 
 const elements = ref<Elements>([])
-
-elements.value.push({
-  id: "origin",
-  type: "input",
-  position: { x: 0, y: 0 },
-  label: "Origin",
-})
 
 function onLayout(direction: string) {
   const isHorizontal = direction === 'LR'
@@ -136,8 +130,10 @@ function pushNode(id: string, label: string, parentId: string | null = null, has
 function pushEdge(sourceId: string, targetId: string) {
   elements.value.push({
     id: "edge:" + sourceId + "+" + targetId,
+    type: 'custom',
     source: sourceId,
-    target: targetId
+    target: targetId,
+    updatable: true,
   })
 }
 
@@ -201,6 +197,25 @@ function onDragOver(event: any) {
   }
 }
 
+function onEdgeUpdateStart(edge: any) {
+  return console.log('start update', edge)
+}
+
+function onEdgeUpdateEnd(edge: any) {
+  return console.log('end update', edge)
+}
+
+function onEdgeUpdate({ edge, connection }: { edge: any; connection: any }) {
+  return updateEdge(edge, connection)
+}
+
+function onConnect(params: any) {
+  let newEdge = params;
+  newEdge.type = 'custom';
+
+  return addEdges([newEdge])
+}
+
 const storyInfo = await resolveStoryInfo(baseDir);
 const entryPoint = await resolveSceneInfo(storyInfo.entry_point);
 
@@ -217,7 +232,20 @@ onLayout('TB')
       <el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
     </div>
     <div class="content" @dragend="onDrop($event)">
-      <VueFlow v-model="elements" :connection-mode="ConnectionMode.Loose" @pane-ready="onLayout('TB')" @dragover="onDragOver">
+      <VueFlow 
+        v-model="elements" 
+        :connection-mode="ConnectionMode.Loose" 
+        @pane-ready="onLayout('TB')" 
+        @dragover="onDragOver" 
+        @connect="onConnect"
+        @edge-update="onEdgeUpdate"
+        @edge-update-start="onEdgeUpdateStart"
+        @edge-update-end="onEdgeUpdateEnd">
+        
+        <template #edge-custom="props">
+          <DeletableEdge v-bind="props" />
+        </template>
+
         <Background/>
         <Controls />
       </VueFlow>
