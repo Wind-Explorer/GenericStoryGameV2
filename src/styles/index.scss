@@ -1,11 +1,16 @@
 // import dark theme
 @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+@import "@vue-flow/core/dist/style.css";
+@import '@vue-flow/core/dist/theme-default.css';
 
 * {
   margin: 0;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+img {
   -webkit-user-drag: none;
   -khtml-user-drag: none;
   -moz-user-drag: none;

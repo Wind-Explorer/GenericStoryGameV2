@@ -10,6 +10,7 @@ import { templateAttentionSceneInfo, templateBlankSceneInfo, templateNarrationSc
 export class ScenesManager {
   scenesList: ExtraSceneInfo[]; // Array of scenes info
   baseDir: string; // Base directory of the story
+
   constructor(scenesList: ExtraSceneInfo[], baseDir: string) {
     this.baseDir = baseDir;
     this.scenesList = scenesList

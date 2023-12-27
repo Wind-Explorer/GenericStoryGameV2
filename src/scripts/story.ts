@@ -41,7 +41,7 @@ export interface StoryInfo {
  */
 export interface SceneActions {
   multiple_choice: MultipleChoice[] | null;
-  single_choice: string | null;
+  single_choice: string | null; // filepath
 }
 
 /**
@@ -279,7 +279,7 @@ export function resolveBaseDirFromScenePath(scenePath: string) {
 
 /**
  * Resolves scene info from path to scene JSON data.
- * @param scenePath Path to scene JSON file.
+ * @param scenePath Absolute path to scene JSON file.
  */
 export async function resolveSceneInfo(scenePath: string) {
 
