@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Scripts for the component
 import { House, InfoFilled } from '@element-plus/icons-vue';
-import { VueFlow, XYPosition, isNode, Position, Elements, ConnectionMode, useVueFlow } from '@vue-flow/core'
+import { VueFlow, XYPosition, isNode, Position, Elements, ConnectionMode, useVueFlow, Connection } from '@vue-flow/core'
 import { ref } from 'vue'
 // import { ScenesManager } from '../../../scripts/scenesManager';
 import { ExtraSceneInfo, SceneInfo, resolveSceneInfo, resolveScenesFromFS, resolveStoryInfo } from '../../../scripts/story';
@@ -12,6 +12,7 @@ import { Background } from '@vue-flow/background'
 import '@vue-flow/controls/dist/style.css'
 import router from '../../../router';
 import { ScenesManager } from '../../../scripts/scenesManager';
+import CustomStoryNode from './CustomStoryNode.vue';
 import DeletableEdge from './DeletableEdge.vue';
 
 const props = defineProps({
@@ -30,7 +31,7 @@ const dagreGraph = new dagre.graphlib.Graph()
 
 dagreGraph.setDefaultEdgeLabel(() => ({}))
 
-const elements = ref<Elements>([])
+const elements = ref<any>([])
 
 function onLayout(direction: string) {
   const isHorizontal = direction === 'LR'
@@ -65,13 +66,13 @@ async function loadSceneTree(currentScene: SceneInfo, currentScenePath: string, 
 
   if (iteratedScenes.some(elem => { return JSON.stringify(currentScene) === JSON.stringify(elem) })) {
     const newId = newUUID().toString();
-    pushNode(newId, "[Loop] " + nodeText, parentId, false, currentScenePath);
+    pushNode(newId, "[Loop] " + nodeText, parentId, false, currentScenePath, currentScene);
 
     return
   }
 
   if (isLeaf) {
-    pushNode(id, nodeText, parentId, false, currentScenePath);
+    pushNode(id, nodeText, parentId, false, currentScenePath, currentScene);
 
     return
   }
@@ -79,7 +80,7 @@ async function loadSceneTree(currentScene: SceneInfo, currentScenePath: string, 
   if (currentScene.scene_actions.single_choice != null) {
     if (currentScene.scene_actions.single_choice == "#END") {
       const newId = newUUID().toString();
-      pushNode(newId, "End", id, false, currentScenePath);
+      pushNode(newId, "End", id, false, currentScenePath, currentScene);
 
       return
     }
@@ -93,7 +94,7 @@ async function loadSceneTree(currentScene: SceneInfo, currentScenePath: string, 
 
       if (choice.destination == "#END") {
         const newId = newUUID().toString();
-        pushNode(newId, "End", id, false, currentScenePath);
+        pushNode(newId, "End", id, false, currentScenePath, currentScene);
 
         continue
       } else {
@@ -104,17 +105,28 @@ async function loadSceneTree(currentScene: SceneInfo, currentScenePath: string, 
     }
   }
 
-  pushNode(id, nodeText, parentId, true, currentScenePath);
+  pushNode(id, nodeText, parentId, true, currentScenePath, currentScene);
 }
 
-function pushNode(id: string, label: string, parentId: string | null = null, hasChildren: boolean, scenePath: string) {
+function pushNode(id: string, label: string, parentId: string | null = null, hasChildren: boolean, scenePath: string, scene: SceneInfo) {
   let position: XYPosition = { x: 0, y: 0 };
+  const nodetype = parentId == null ? "input" : hasChildren ? "default" : "output"
 
   elements.value.push({
     id: id,
     label: label.substring(0, 50) + (label.length > 50 ? "..." : ""),
     position,
-    type: parentId == null ? "input" : hasChildren ? "default" : "output",
+    type: "custom",
+    data: { nodetype: nodetype },
+    isValidSourcePos: () => {
+      if (scene.scene_actions.single_choice != null) {
+        return scene.scene_actions.single_choice == "";
+      } else if (scene.scene_actions.multiple_choice != null) {
+        return scene.scene_actions.multiple_choice.length < 4;
+      }
+
+      return false;
+    },
     events: {
       click: () => {
         router.push(`/sceneeditor/${encodeURIComponent(scenePath)}`)
@@ -235,6 +247,7 @@ onLayout('TB')
       <VueFlow 
         v-model="elements" 
         :connection-mode="ConnectionMode.Loose" 
+        class="validationflow"
         @pane-ready="onLayout('TB')" 
         @dragover="onDragOver" 
         @connect="onConnect"
@@ -244,6 +257,9 @@ onLayout('TB')
         
         <template #edge-custom="props">
           <DeletableEdge v-bind="props" />
+        </template>
+        <template #node-custom="props">
+          <CustomStoryNode v-bind="props" />
         </template>
 
         <Background/>
