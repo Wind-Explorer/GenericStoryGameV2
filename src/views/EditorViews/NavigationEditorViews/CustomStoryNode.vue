@@ -6,7 +6,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  // nodetype: "input" | "output" | "default"
+  // scene: SceneInfo, nodetype: "input" | "output" | "default"
   data: {
     type: Object,
     required: true,

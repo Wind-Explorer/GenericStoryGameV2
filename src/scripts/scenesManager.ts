@@ -99,4 +99,29 @@ export class ScenesManager {
     await writeTextFile(sceneDir, JSON.stringify(this.resolveTemplateSceneType(sceneTypeIndex), backgroundColorHandler));
     this.loadScenesFromFS();
   }
+
+  /**
+   * Saves the scenes list to the file system.
+   */
+  async saveScenesToFS() {
+    await Promise.all(this.scenesList.map(scene => {
+      let baseSceneInfo = scene.base_scene_info;
+      let scenePath = scene.scene_path;
+
+      if (baseSceneInfo.scene_actions.single_choice != null) {
+        baseSceneInfo.scene_actions.single_choice = baseSceneInfo.scene_actions.single_choice.replace(this.baseDir + "/", "");
+      } else if (baseSceneInfo.scene_actions.multiple_choice != null) {
+        baseSceneInfo.scene_actions.multiple_choice = baseSceneInfo.scene_actions.multiple_choice.map((elem) => {
+          const newDestination = elem.destination.replace(this.baseDir + "/", "");
+          return { ...elem, destination: newDestination };
+        });
+      }
+
+      if (!scene.scene_path.includes(this.baseDir + "/")) {
+        scenePath = joinPath(this.baseDir, scene.scene_path);
+      }
+        
+      return writeTextFile(scenePath, JSON.stringify(baseSceneInfo));
+    }));
+  }
 }

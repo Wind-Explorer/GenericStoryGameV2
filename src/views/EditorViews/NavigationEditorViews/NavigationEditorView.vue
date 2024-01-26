@@ -1,10 +1,10 @@
 <script setup lang="ts">
 // Scripts for the component
-import { House, InfoFilled } from '@element-plus/icons-vue';
-import { VueFlow, XYPosition, isNode, Position, Elements, ConnectionMode, useVueFlow, Connection } from '@vue-flow/core'
+import { House, Select, InfoFilled } from '@element-plus/icons-vue';
+import { VueFlow, XYPosition, isNode, Position, ConnectionMode, useVueFlow } from '@vue-flow/core'
 import { ref } from 'vue'
 // import { ScenesManager } from '../../../scripts/scenesManager';
-import { ExtraSceneInfo, SceneInfo, resolveSceneInfo, resolveScenesFromFS, resolveStoryInfo } from '../../../scripts/story';
+import { ExtraSceneInfo, SceneInfo, resolveSceneInfo, resolveScenesFromFS, resolveStoryInfo, sceneNameToRelativePath } from '../../../scripts/story';
 import { newUUID } from '../../../scripts/utils';
 import dagre from 'dagre'
 import { Controls } from '@vue-flow/controls'
@@ -14,6 +14,7 @@ import router from '../../../router';
 import { ScenesManager } from '../../../scripts/scenesManager';
 import CustomStoryNode from './CustomStoryNode.vue';
 import DeletableEdge from './DeletableEdge.vue';
+import { ElMessage } from 'element-plus';
 
 const props = defineProps({
   baseDir: String,
@@ -37,7 +38,7 @@ function onLayout(direction: string) {
   const isHorizontal = direction === 'LR'
   dagreGraph.setGraph({ rankdir: direction })
 
-  elements.value.forEach((el) => {
+  elements.value.forEach((el: any) => {
     if (isNode(el)) {
       dagreGraph.setNode(el.id, { width: 150, height: 50 })
     } else {
@@ -47,7 +48,7 @@ function onLayout(direction: string) {
 
   dagre.layout(dagreGraph)
 
-  elements.value.forEach((el) => {
+  elements.value.forEach((el: any) => {
     if (isNode(el)) {
       const nodeWithPosition = dagreGraph.node(el.id)
       el.targetPosition = isHorizontal ? Position.Left : Position.Top
@@ -57,15 +58,19 @@ function onLayout(direction: string) {
   })
 }
 
+function removeBaseDir(path: string) {
+  return path.replace(baseDir + "/", "");
+}
+
 async function loadSceneTree(currentScene: SceneInfo, currentScenePath: string, parentId: string | null = null, iteratedScenes: SceneInfo[] = []) {
   const isLeaf = (currentScene.scene_actions.single_choice == null || currentScene.scene_actions.single_choice == "#END") && currentScene.scene_actions.multiple_choice == null;
-  const id = newUUID().toString();
+  const id = removeBaseDir(currentScenePath) + "#" + newUUID().toString();
   const nodeText = currentScene.center_text ?? currentScene.narration_text ?? "No text";
   let newIteratedScenes = new Array(...iteratedScenes) ?? [];
   newIteratedScenes.push(currentScene);
 
   if (iteratedScenes.some(elem => { return JSON.stringify(currentScene) === JSON.stringify(elem) })) {
-    const newId = newUUID().toString();
+    const newId = removeBaseDir(currentScenePath) + "#" + newUUID().toString();
     pushNode(newId, "[Loop] " + nodeText, parentId, false, currentScenePath, currentScene);
 
     return
@@ -79,7 +84,7 @@ async function loadSceneTree(currentScene: SceneInfo, currentScenePath: string, 
 
   if (currentScene.scene_actions.single_choice != null) {
     if (currentScene.scene_actions.single_choice == "#END") {
-      const newId = newUUID().toString();
+      const newId = removeBaseDir(currentScenePath) + "#" + newUUID().toString();
       pushNode(newId, "End", id, false, currentScenePath, currentScene);
 
       return
@@ -93,7 +98,7 @@ async function loadSceneTree(currentScene: SceneInfo, currentScenePath: string, 
       const choice = currentScene.scene_actions.multiple_choice[i];
 
       if (choice.destination == "#END") {
-        const newId = newUUID().toString();
+        const newId = removeBaseDir(currentScenePath) + "#" + newUUID().toString();
         pushNode(newId, "End", id, false, currentScenePath, currentScene);
 
         continue
@@ -109,15 +114,22 @@ async function loadSceneTree(currentScene: SceneInfo, currentScenePath: string, 
 }
 
 function pushNode(id: string, label: string, parentId: string | null = null, hasChildren: boolean, scenePath: string, scene: SceneInfo) {
-  let position: XYPosition = { x: 0, y: 0 };
   const nodetype = parentId == null ? "input" : hasChildren ? "default" : "output"
 
+  pushNodeLone(id, label, { x: 0, y: 0 }, nodetype, removeBaseDir(scenePath), scene);
+
+  if (parentId != null) {
+    pushEdge(parentId!, id);
+  }
+}
+
+function pushNodeLone(id: string, label: string, position: XYPosition, nodetype: string, scenePath: string, scene: SceneInfo) {
   elements.value.push({
     id: id,
     label: label.substring(0, 50) + (label.length > 50 ? "..." : ""),
-    position,
+    position: position,
     type: "custom",
-    data: { nodetype: nodetype },
+    data: { scene: scene, nodetype: nodetype },
     isValidSourcePos: () => {
       if (scene.scene_actions.single_choice != null) {
         return scene.scene_actions.single_choice == "";
@@ -133,10 +145,6 @@ function pushNode(id: string, label: string, parentId: string | null = null, has
       }
     }
   })
-
-  if (parentId != null) {
-    pushEdge(parentId!, id);
-  }
 }
 
 function pushEdge(sourceId: string, targetId: string) {
@@ -174,17 +182,24 @@ function onDrop(event: any) {
   const hasChildren = (scene.scene_actions.single_choice != null && scene.scene_actions.single_choice != "#END") || (scene.scene_actions.multiple_choice?.length ?? 0) > 0;
   const label = scene.center_text ?? scene.narration_text ?? "No text";
 
-  const newNode = {
-    id: newUUID().toString(),
-    type: draggedScene!.scene_path == storyInfo.entry_point ? "input" : hasChildren ? "default" : "output",
+  const scenePath = sceneNameToRelativePath(draggedScene!.scene_name);
+  const fullScenePath = draggedScene!.scene_path;
+
+  pushNodeLone(
+    scenePath + "#" + newUUID().toString(), 
+    label,
     position,
-    label: label.substring(0, 50) + (label.length > 50 ? "..." : ""),
-  }
+    fullScenePath == storyInfo.entry_point ? "input" : hasChildren ? "default" : "output", 
+    scenePath, 
+    scene
+  );
+
+  // // update scene
+  // const index = scenesManager.value.scenesList.findIndex(elem => elem.scene_path == fullScenePath);
+  // const newSceneInfo = { ...scenesManager.value.scenesList[index].base_scene_info };
+
 
   // addNodes([newNode])
-
-  elements.value.push(newNode)
-
   // align node position after drop, so it's centered to the mouse
   // nextTick(() => {
   //   const node = findNode(newNode.id)!
@@ -224,8 +239,69 @@ function onEdgeUpdate({ edge, connection }: { edge: any; connection: any }) {
 function onConnect(params: any) {
   let newEdge = params;
   newEdge.type = 'custom';
+  newEdge.id = "edge:" + params.source + "+" + params.target;
+
+  // update graph to data and filestructure
+  const sourceSceneInfo = { ...findNode(newEdge.source)!.data.scene } as SceneInfo;
+  const targetSceneInfo = { ...findNode(newEdge.target)!.data.scene } as SceneInfo;
+
+  const sourcePath = params.source.split("#")[0];
+  const targetPath = params.target.split("#")[0];
+
+  if (sourcePath == targetPath) {
+    return
+  }
+
+  if (sourceSceneInfo.scene_actions.single_choice != null) {
+    sourceSceneInfo.scene_actions.single_choice = targetPath;
+  } else if (sourceSceneInfo.scene_actions.multiple_choice != null) {
+    sourceSceneInfo.scene_actions.multiple_choice.push({ action: "New choice", destination: targetPath });
+  }
+
+  const oldSourceExtraSceneInfo = scenesManager.value.scenesList.find(elem => removeBaseDir(elem.scene_path) == sourcePath);
+  const oldTargetExtraSceneInfo = scenesManager.value.scenesList.find(elem => removeBaseDir(elem.scene_path) == targetPath);
+  const newSourceExtraSceneInfo: ExtraSceneInfo = { 
+    scene_name: oldSourceExtraSceneInfo?.scene_name ?? "", 
+    scene_path: sourcePath, 
+    base_scene_info: sourceSceneInfo 
+  };
+  const newTargetExtraSceneInfo: ExtraSceneInfo = { 
+    scene_name: oldTargetExtraSceneInfo?.scene_name ?? "", 
+    scene_path: targetPath, 
+    base_scene_info: targetSceneInfo 
+  };
+
+  // update scenes
+  scenesManager.value.scenesList = scenesManager.value.scenesList.map(elem => {
+    if (removeBaseDir(elem.scene_path) == sourcePath) {
+      return newSourceExtraSceneInfo;
+    } else if (removeBaseDir(elem.scene_path) == targetPath) {
+      return newTargetExtraSceneInfo;
+    }
+
+    return elem;
+  }); 
+
+  // if (sourceSceneInfo.scene_actions.single_choice != null) {
+  //   sourceSceneInfo.scene_actions.single_choice = targetSceneInfo.scene_path;
+  // } else if (sourceSceneInfo.scene_actions.multiple_choice != null) {
+  //   for (let i = 0; i < sourceSceneInfo.scene_actions.multiple_choice.length; i++) {
+  //     const choice = sourceSceneInfo.scene_actions.multiple_choice[i];
+
+  //     if (choice.destination == targetSceneInfo.scene_path) {
+  //       choice.destination = "#END";
+  //     }
+  //   }
+  // }
+
+  // scenesManager.value.scenesList.push(new ExtraSceneInfo(newEdge.target, newEdge.data.scene, newEdge.target));
 
   return addEdges([newEdge])
+}
+
+async function saveData() {
+	await scenesManager.value.saveScenesToFS();
+	ElMessage({ message: 'Saved', grouping: true, type: 'success' })
 }
 
 const storyInfo = await resolveStoryInfo(baseDir);
@@ -241,7 +317,10 @@ onLayout('TB')
     <!-- HTML elements for the component -->
     <div class="page-title">
       <h1>Story navigation</h1>
-      <el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
+      <div>
+        <el-button @click="saveData" size="large" type="success" :icon="Select" plain>Save</el-button>
+        <el-button @click="$router.go(-1)" size="large" :icon="House" type="info" plain></el-button>
+      </div>
     </div>
     <div class="content" @dragend="onDrop($event)">
       <VueFlow 
@@ -284,7 +363,7 @@ onLayout('TB')
       <el-icon>
         <InfoFilled />
       </el-icon>
-      <p>Select a scene to edit or add a new scene.</p>
+      <p>Select a scene to edit and drag to add a new scene.</p>
     </div>
   </div>
 </template>
