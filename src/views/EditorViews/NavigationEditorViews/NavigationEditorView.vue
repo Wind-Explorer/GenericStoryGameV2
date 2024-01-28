@@ -230,28 +230,30 @@ function onDragOver(event: any) {
 }
 
 onEdgesChange((edges: any) => {
-  for (let i = 0; i < edges.length; i++) {
-    // remove connection from source edge to target edge in scenes list
-    const sourceSceneInfo = { ...findNode(edges[i].source)!.data.scene } as SceneInfo;
-    const extraSourceSceneInfo = scenesManager.value.scenesList.find(elem => removeBaseDir(elem.scene_path) == edges[i].source.split("#")[0]);
-    const extraTargetSceneInfo = scenesManager.value.scenesList.find(elem => removeBaseDir(elem.scene_path) == edges[i].target.split("#")[0]);
-    // const targetSceneInfo = { ...findNode(edges[i].target)!.data.scene } as SceneInfo;
+  if (edges.type == "remove") {
+    for (let i = 0; i < edges.length; i++) {
+      // remove connection from source edge to target edge in scenes list
+      const sourceSceneInfo = { ...findNode(edges[i].source)!.data.scene } as SceneInfo;
+      const extraSourceSceneInfo = scenesManager.value.scenesList.find(elem => removeBaseDir(elem.scene_path) == edges[i].source.split("#")[0]);
+      const extraTargetSceneInfo = scenesManager.value.scenesList.find(elem => removeBaseDir(elem.scene_path) == edges[i].target.split("#")[0]);
+      // const targetSceneInfo = { ...findNode(edges[i].target)!.data.scene } as SceneInfo;
 
-    if (sourceSceneInfo.scene_actions.single_choice != null) {
-      sourceSceneInfo.scene_actions.single_choice = null;
-    } else if (sourceSceneInfo.scene_actions.multiple_choice != null) {
-      // remove targetSceneInfo
-      for (let j = 0; j < sourceSceneInfo.scene_actions.multiple_choice.length; j++) {
-        const choice = sourceSceneInfo.scene_actions.multiple_choice[j];
+      if (sourceSceneInfo.scene_actions.single_choice != null) {
+        sourceSceneInfo.scene_actions.single_choice = "#END";
+      } else if (sourceSceneInfo.scene_actions.multiple_choice != null) {
+        // remove targetSceneInfo
+        for (let j = 0; j < sourceSceneInfo.scene_actions.multiple_choice.length; j++) {
+          const choice = sourceSceneInfo.scene_actions.multiple_choice[j];
 
-        if (choice.destination == extraTargetSceneInfo?.scene_path) {
-          sourceSceneInfo.scene_actions.multiple_choice.splice(j, 1);
+          if (choice.destination == extraTargetSceneInfo?.scene_path) {
+            sourceSceneInfo.scene_actions.multiple_choice.splice(j, 1);
+          }
         }
       }
-    }
 
-    const index = scenesManager.value.scenesList.findIndex(elem => elem.scene_path == extraSourceSceneInfo?.scene_path);
-    scenesManager.value.scenesList[index].base_scene_info = sourceSceneInfo;
+      const index = scenesManager.value.scenesList.findIndex(elem => elem.scene_path == extraSourceSceneInfo?.scene_path);
+      scenesManager.value.scenesList[index].base_scene_info = sourceSceneInfo;
+    }
   }
 })
 
