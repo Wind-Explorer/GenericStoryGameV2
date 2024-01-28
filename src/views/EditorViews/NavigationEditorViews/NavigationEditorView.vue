@@ -230,7 +230,7 @@ function onDragOver(event: any) {
 }
 
 onEdgesChange((edges: any) => {
-  if (edges.type == "remove") {
+  if (edges.type == null) {
     for (let i = 0; i < edges.length; i++) {
       // remove connection from source edge to target edge in scenes list
       const sourceSceneInfo = { ...findNode(edges[i].source)!.data.scene } as SceneInfo;
