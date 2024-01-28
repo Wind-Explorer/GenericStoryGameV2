@@ -137,7 +137,7 @@ function pushNodeLone(id: string, label: string, position: XYPosition, nodetype:
     data: { scene: scene, nodetype: nodetype },
     isValidSourcePos: () => {
       if (scene.scene_actions.single_choice != null) {
-        return scene.scene_actions.single_choice == "";
+        return scene.scene_actions.single_choice == "#END";
       } else if (scene.scene_actions.multiple_choice != null) {
         return scene.scene_actions.multiple_choice.length < 4;
       }
