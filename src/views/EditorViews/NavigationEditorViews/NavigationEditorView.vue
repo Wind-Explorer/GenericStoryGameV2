@@ -79,6 +79,11 @@ async function loadSceneTree(currentScene: SceneInfo, currentScenePath: string, 
   if (isLeaf) {
     pushNode(id, nodeText, parentId, false, currentScenePath, currentScene);
 
+    if (currentScene.scene_actions.single_choice == "#END") {
+      const newId = removeBaseDir(currentScenePath) + "#" + newUUID().toString();
+      pushNode(newId, "End", id, false, currentScenePath, currentScene);
+    }
+
     return
   }
 
