@@ -230,8 +230,8 @@ function onDragOver(event: any) {
 }
 
 onEdgesChange((edges: any) => {
-  if (edges.type == null) {
-    for (let i = 0; i < edges.length; i++) {
+  for (let i = 0; i < edges.length; i++) {
+    if (edges[i].type == "remove") {
       // remove connection from source edge to target edge in scenes list
       const sourceSceneInfo = { ...findNode(edges[i].source)!.data.scene } as SceneInfo;
       const extraSourceSceneInfo = scenesManager.value.scenesList.find(elem => removeBaseDir(elem.scene_path) == edges[i].source.split("#")[0]);
